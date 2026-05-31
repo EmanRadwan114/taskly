@@ -25,8 +25,8 @@
   --heading-1: 56px;
   --heading-2: 32px;
   --heading-3: 18px;
-  --body-md: 14px;
-  --body-sm: 11px;
+  --body: 14px;
+  --label: 11px;
 }
 
 @theme inline {
@@ -47,12 +47,33 @@
   --color-error: var(--error);
   --color-warning: var(--warning);
 
-  /* Font Size */
-  --font-size-heading-1: var(--heading-1);
-  --font-size-heading-2: var(--heading-2);
-  --font-size-heading-3: var(--heading-3);
-  --font-size-body-md: var(--body-md);
-  --font-size-body-sm: var(--body-sm);
+  /* Font variables */
+  --text-heading-1: var(--heading-1);
+  --text-heading-2: var(--heading-2);
+  --text-heading-3: var(--heading-3);
+  --text-body: var(--body);
+  --text-label: var(--label);
+}
+
+/* utilities */
+@utility text-display-lg {
+  @apply text-heading-1 font-bold leading-14 tracking-[-2.8px];
+}
+
+@utility text-headline-lg {
+  @apply text-heading-2 font-semibold leading-10 tracking-normal;
+}
+
+@utility text-title-md {
+  @apply text-heading-3 font-medium leading-6.75 tracking-normal;
+}
+
+@utility text-body-md {
+  @apply text-body font-normal leading-[22.75px] tracking-normal;
+}
+
+@utility text-label-sm {
+  @apply text-label font-bold leading-[16.5px] tracking-[1.1px];
 }
 
 body {

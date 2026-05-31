@@ -1,4 +1,6 @@
 import Button from '@/components/ui/Button';
+import FormField from '@/components/ui/FormField';
+import Input from '@/components/ui/Input';
 
 export default function Home() {
   return (
@@ -12,6 +14,19 @@ export default function Home() {
       <Button>button</Button>
       <Button variant="secondary">button</Button>
       <Button variant="ghost">button</Button>
+      <Input placeholder="write your name" />
+      <Input placeholder="write your name" variant="error" />
+      <FormField
+        label="Email"
+        placeholder="write your email"
+        fieldMsg="should have 5 chars"
+      />
+      <FormField
+        label="Email"
+        variant="error"
+        placeholder="write your email"
+        fieldMsg="invalid email"
+      />
     </div>
   );
 }

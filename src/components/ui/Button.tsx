@@ -1,6 +1,6 @@
-import React, { HTMLAttributes } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
-interface IProps extends HTMLAttributes<HTMLButtonElement> {
+interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   children: React.ReactNode;
 }
@@ -12,7 +12,7 @@ const Button: React.FC<IProps> = ({
 }) => {
   const btnVariants = {
     primary:
-      'text-white rounded-2px primary-gradient shadow-primary font-semibold',
+      'text-white rounded-4px primary-gradient shadow-primary font-semibold',
     secondary: 'text-primary font-semibold',
     ghost: 'text-slate-md/60 font-medium',
   };

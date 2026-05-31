@@ -23,6 +23,12 @@ export default function Home() {
       />
       <FormField
         label="Email"
+        placeholder="write your email"
+        fieldMsg="should have 5 chars"
+        isOptional
+      />
+      <FormField
+        label="Email"
         variant="error"
         placeholder="write your email"
         fieldMsg="invalid email"

@@ -5,12 +5,14 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
+  isOptional?: boolean;
 }
 
 const FormField: React.FC<IProps> = ({
   label,
   variant = 'default',
   fieldMsg,
+  isOptional = false,
   ...props
 }) => {
   return (
@@ -20,9 +22,17 @@ const FormField: React.FC<IProps> = ({
         htmlFor={label}
       >
         {label}
+        {isOptional && (
+          <span className="text-secondary-light tracking-normal">
+            {' '}
+            (optional)
+          </span>
+        )}
       </label>
       <Input id={label} variant={variant} {...props} />
-      <p className={variant === 'error' ? 'text-error' : 'text-slate-light'}>
+      <p
+        className={`${variant === 'error' ? 'text-error' : 'text-slate-light'} text-label`}
+      >
         {fieldMsg}
       </p>
     </div>

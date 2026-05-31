@@ -6,6 +6,7 @@ export default function Home() {
       <h3 className="text-title-md">Taskly</h3>
       <p className="text-body-md">Taskly</p>
       <p className="text-label-sm">Taskly</p>
+      <button className="primary-gradient rounded-lg">btn</button>
     </div>
   );
 }

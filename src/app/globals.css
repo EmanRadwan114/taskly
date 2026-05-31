@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 
+/*^--------------------------- CSS Variables ---------------------------- */
 :root {
   --background: #f9f9ff;
   --foreground: #041b3c;
@@ -7,9 +8,11 @@
   /* Action Blue & Tonal Range */
   --primary: #003d9b;
   --primary-container: #0052cc;
+  --secondary: #434654;
   --surface-high: #d7e2ff;
   --surface-low: #f1f3ff;
   --background: #f9f9ff;
+  --border: #f1f3ff;
 
   /* Slate Neutrals */
   --slate-dark: #041b3c;
@@ -29,13 +32,16 @@
   --label: 11px;
 }
 
+/*^-------------------------- tailwind theme --------------------------- */
 @theme inline {
   /* Action Blue & Tonal Range */
   --color-primary: var(--primary);
   --color-primary-container: var(--primary-container);
+  --color-secondary: var(--secondary);
   --color-surface-high: var(--surface-high);
   --color-surface-low: var(--surface-low);
   --color-background: var(--background);
+  --color-border: var(--border);
 
   /* Slate Neutrals */
   --color-slate-dark: var(--slate-dark);
@@ -53,9 +59,14 @@
   --text-heading-3: var(--heading-3);
   --text-body: var(--body);
   --text-label: var(--label);
+
+  /* border-radius */
+  --radius-lg: 8px;
+  --radius-md: 4px;
+  --radius-sm: 2px;
 }
 
-/* utilities */
+/*^----------------------------- utilities ----------------------------- */
 @utility text-display-lg {
   @apply text-heading-1 font-bold leading-14 tracking-[-2.8px];
 }
@@ -76,6 +87,12 @@
   @apply text-label font-bold leading-[16.5px] tracking-[1.1px];
 }
 
+@utility primary-gradient {
+  @apply bg-linear-[135deg] from-primary to-primary-container;
+  color: white;
+}
+
+/*^----------------------------- base style ----------------------------- */
 body {
   background: var(--background);
   color: var(--foreground);

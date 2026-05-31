@@ -48,6 +48,9 @@
   --app-space-24px: 1.5rem; /*24px*/
   --app-space-32px: 2rem; /*32px*/
   --app-space-48px: 3rem; /*48px*/
+
+  /* shadow */
+  --app-shadow: 0 1px 2px 0px #0000000d;
 }
 
 /*^-------------------------- tailwind theme --------------------------- */
@@ -95,6 +98,8 @@
   --spacing-24px: var(--app-space-24px); /*1.5rem = 24px*/
   --spacing-32px: var(--app-space-32px); /*2rem = 32px*/
   --spacing-48px: var(--app-space-48px); /*3rem = 48px*/
+
+  --shadow-primary: var(--app-shadow);
 }
 
 /*^----------------------------- utilities ----------------------------- */

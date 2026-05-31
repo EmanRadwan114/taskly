@@ -1,26 +1,99 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
+/*^--------------------------- CSS Variables ---------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9f9ff;
+  --foreground: #041b3c;
+
+  /* Action Blue & Tonal Range */
+  --primary: #003d9b;
+  --primary-container: #0052cc;
+  --secondary: #434654;
+  --surface-high: #d7e2ff;
+  --surface-low: #f1f3ff;
+  --background: #f9f9ff;
+  --border: #f1f3ff;
+
+  /* Slate Neutrals */
+  --slate-dark: #041b3c;
+  --slate-md: #4f5f7b;
+  --slate-light: #c3c6d6;
+
+  /* semantic colors */
+  --success: #82f9be;
+  --error: #ba1a1a;
+  --warning: #ffb300;
+
+  /* font-size */
+  --heading-1: 56px;
+  --heading-2: 32px;
+  --heading-3: 18px;
+  --body: 14px;
+  --label: 11px;
 }
 
+/*^-------------------------- tailwind theme --------------------------- */
 @theme inline {
+  /* Action Blue & Tonal Range */
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-secondary: var(--secondary);
+  --color-surface-high: var(--surface-high);
+  --color-surface-low: var(--surface-low);
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-border: var(--border);
+
+  /* Slate Neutrals */
+  --color-slate-dark: var(--slate-dark);
+  --color-slate-md: var(--slate-md);
+  --color-slate-light: var(--slate-light);
+
+  /* Semantic Colors */
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+
+  /* Font variables */
+  --text-heading-1: var(--heading-1);
+  --text-heading-2: var(--heading-2);
+  --text-heading-3: var(--heading-3);
+  --text-body: var(--body);
+  --text-label: var(--label);
+
+  /* border-radius */
+  --radius-lg: 8px;
+  --radius-md: 4px;
+  --radius-sm: 2px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*^----------------------------- utilities ----------------------------- */
+@utility text-display-lg {
+  @apply text-heading-1 font-bold leading-14 tracking-[-2.8px];
 }
 
+@utility text-headline-lg {
+  @apply text-heading-2 font-semibold leading-10 tracking-normal;
+}
+
+@utility text-title-md {
+  @apply text-heading-3 font-medium leading-6.75 tracking-normal;
+}
+
+@utility text-body-md {
+  @apply text-body font-normal leading-[22.75px] tracking-normal;
+}
+
+@utility text-label-sm {
+  @apply text-label font-bold leading-[16.5px] tracking-[1.1px];
+}
+
+@utility primary-gradient {
+  @apply bg-linear-[135deg] from-primary to-primary-container;
+  color: white;
+}
+
+/*^----------------------------- base style ----------------------------- */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

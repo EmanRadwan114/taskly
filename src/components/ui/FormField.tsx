@@ -6,6 +6,7 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
   fieldMsg?: string;
   isOptional?: boolean;
+  containerClassName?: string;
 }
 
 const FormField: React.FC<IProps> = ({
@@ -13,10 +14,11 @@ const FormField: React.FC<IProps> = ({
   variant = 'default',
   fieldMsg,
   isOptional = false,
+  containerClassName,
   ...props
 }) => {
   return (
-    <div className="flex flex-col gap-6px">
+    <div className={`flex flex-col gap-6px ${containerClassName}`}>
       <label
         className={`text-label-sm tracking-[0.55px] uppercase ${variant === 'error' ? 'text-error' : 'text-slate-md'}`}
         htmlFor={label}

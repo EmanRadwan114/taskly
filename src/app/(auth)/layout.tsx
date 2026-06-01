@@ -13,8 +13,12 @@ export default function AuthLayout({
           <Logo />
         </Container>
       </header>
-      <main className="flex items-center justify-center">
-        <Container>{children}</Container>
+      <main className="w-full flex items-center justify-start sm:justify-center mb-48px md:max-w-5/6 lg:max-w-4/6 md:mx-auto xl:max-w-1/2">
+        <Container>
+          <div className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form">
+            {children}
+          </div>
+        </Container>
       </main>
     </div>
   );

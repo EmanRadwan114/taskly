@@ -23,7 +23,7 @@ const Input: React.FC<IProps> = ({ variant = 'default', ...props }) => {
     >
       <input
         {...props}
-        className={`w-full focus-within:outline-0 focus-visible:outline-0 px-16px py-14px`}
+        className={`w-3/4 focus-within:outline-0 focus-visible:outline-0 ps-16px py-14px`}
         type={
           props.type === 'password'
             ? isPasswordShown

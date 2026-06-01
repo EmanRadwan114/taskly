@@ -12,7 +12,6 @@ const SignUpForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
-    reset,
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<TSignupInput>({
@@ -28,6 +27,16 @@ const SignUpForm: React.FC = ({}) => {
       confirm_password: '',
     },
   });
+
+  // watchers
+  const watchedPassword = watch('password');
+  const isPassLengthValid = /^.{8,}$/.test(watchedPassword);
+  const isPassFormateValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(
+    watchedPassword
+  );
+  const hasSpecialChar = /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(
+    watchedPassword
+  );
 
   // handlers
   const onSubmit: SubmitHandler<TSignupInput> = (data) => {
@@ -93,9 +102,18 @@ const SignUpForm: React.FC = ({}) => {
 
         {/* password validation */}
         <div className="hidden md:block space-y-1.75 rounded-8px p-16px bg-slate-lighter md:col-span-2">
-          <PassValidationItem label="At least 8 characters" isValid={true} />
-          <PassValidationItem label="One uppercase, lowercase, and digit" />
-          <PassValidationItem label="One special character" />
+          <PassValidationItem
+            label="At least 8 characters"
+            isValid={isPassLengthValid}
+          />
+          <PassValidationItem
+            label="One uppercase, lowercase, and digit"
+            isValid={isPassFormateValid}
+          />
+          <PassValidationItem
+            label="One special character"
+            isValid={hasSpecialChar}
+          />
         </div>
 
         {/* submit */}

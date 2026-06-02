@@ -1,13 +1,12 @@
 'use client';
 
-import React, { InputHTMLAttributes, ReactNode } from 'react';
+import { InputHTMLAttributes, ReactNode } from 'react';
 import Input from './Input';
 import {
   FieldValues,
   useController,
   UseControllerProps,
 } from 'react-hook-form';
-import Label from './Label';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
@@ -16,7 +15,6 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   label: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
-  isOptional?: boolean;
   containerClassName?: string;
   icon?: ReactNode;
 }
@@ -29,7 +27,6 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     label,
     variant = 'default',
     fieldMsg,
-    isOptional = false,
     containerClassName = '',
     control,
     rules,

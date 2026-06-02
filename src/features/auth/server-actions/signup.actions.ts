@@ -37,8 +37,8 @@ export const createUserAccountAction = async (
 
     return {
       success: true,
-      data: response,
-      message: 'User account created successfully!',
+      user: response?.user,
+      message: 'Account created successfully!',
     };
   } catch (error) {
     return {

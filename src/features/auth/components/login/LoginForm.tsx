@@ -30,7 +30,7 @@ const LoginForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleLogin, isPending } = useLogin();
+  const { onHandleLogin, isPending } = useLogin(rememberMe);
 
   // handlers
   const onSubmit: SubmitHandler<TLoginInput> = (data) => {

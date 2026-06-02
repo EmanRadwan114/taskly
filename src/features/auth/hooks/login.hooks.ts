@@ -5,10 +5,14 @@ import { TSignupInput } from '../validation/signup.validation';
 import { userLoginAction } from '../server-actions/login.actions';
 import { TLoginInput } from '../validation/login.validation';
 
-export const useLogin = () => {
+export const useLogin = (rememberMe: boolean) => {
   const router = useRouter();
 
-  const [state, formAction, isPending] = useActionState(userLoginAction, null);
+  const loginActionRemeberMe = userLoginAction.bind(null, rememberMe);
+  const [state, formAction, isPending] = useActionState(
+    loginActionRemeberMe,
+    null
+  );
   const [_, startTransition] = useTransition();
 
   // effects

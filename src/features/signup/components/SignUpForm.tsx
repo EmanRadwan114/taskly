@@ -1,7 +1,7 @@
 'use client';
 
-import Button from '@/components/ui/Button';
-import FormField from '@/components/ui/FormField';
+import Button from '@/shared/components/ui/Button';
+import FormField from '@/shared/components/ui/FormField';
 import PassValidationItem from './PassValidationItem';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';

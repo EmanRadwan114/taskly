@@ -1,5 +1,5 @@
-import Container from '@/components/ui/Container';
-import Logo from '@/components/ui/Logo';
+import Container from '@/shared/components/ui/Container';
+import Logo from '@/shared/components/ui/Logo';
 
 export default function AuthLayout({
   children,

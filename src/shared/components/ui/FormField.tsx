@@ -1,12 +1,13 @@
 'use client';
 
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, ReactNode } from 'react';
 import Input from './Input';
 import {
   FieldValues,
   useController,
   UseControllerProps,
 } from 'react-hook-form';
+import Label from './Label';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
@@ -17,6 +18,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   fieldMsg?: string;
   isOptional?: boolean;
   containerClassName?: string;
+  icon?: ReactNode;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -33,6 +35,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     rules,
     shouldUnregister,
     disabled,
+    icon,
     ...restHtmlProps
   } = props;
 
@@ -40,26 +43,13 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <div className={`flex flex-col gap-6px ${containerClassName}`}>
-      <div className="flex justify-between items-center">
-        <label
-          className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
-          htmlFor={label}
-        >
-          {label}
-          {isOptional && (
-            <span className="text-secondary-light tracking-normal">
-              {' '}
-              (optional)
-            </span>
-          )}
-        </label>
-      </div>
       <Input
         id={label}
         variant={activeVariant}
         disabled={disabled}
         {...field}
         {...restHtmlProps}
+        icon={icon}
       />
 
       {/* Message feedback */}

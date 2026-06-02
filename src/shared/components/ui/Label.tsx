@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { LabelHTMLAttributes } from 'react';
 
-interface IProps {
-  isOptional: boolean;
-  label: string;
-  activeVariant: 'error' | 'default';
+interface IProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  isOptional?: boolean;
+  activeVariant?: 'error' | 'default';
+  children: React.ReactNode;
 }
 
-const Label: React.FC<IProps> = ({ isOptional, label, activeVariant }) => {
+const Label: React.FC<IProps> = ({
+  isOptional = false,
+  children,
+  activeVariant = 'default',
+  ...props
+}) => {
   return (
     <label
       className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
-      htmlFor={label}
+      {...props}
     >
-      {label}
+      {children}
       {isOptional && (
         <span className="text-secondary-light tracking-normal">
           {' '}

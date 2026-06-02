@@ -1,14 +1,15 @@
 'use client';
 
-import React, { InputHTMLAttributes, useState } from 'react';
+import React, { InputHTMLAttributes, ReactNode, useState } from 'react';
 import EyeShow from '@/assets/icons/eye-show.svg';
 import EyeHide from '@/assets/icons/eye-hide.svg';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
+  icon?: ReactNode;
 }
 
-const Input: React.FC<IProps> = ({ variant = 'default', ...props }) => {
+const Input: React.FC<IProps> = ({ variant = 'default', icon, ...props }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const inputVariants = {
@@ -47,6 +48,8 @@ const Input: React.FC<IProps> = ({ variant = 'default', ...props }) => {
           )}
         </div>
       )}
+      {/* icon */}
+      {icon && <div className="px-16px py-14px">{icon}</div>}
     </div>
   );
 };

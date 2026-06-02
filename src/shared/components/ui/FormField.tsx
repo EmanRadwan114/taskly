@@ -1,6 +1,6 @@
 'use client';
 
-import React, { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, ReactNode } from 'react';
 import Input from './Input';
 import {
   FieldValues,
@@ -15,8 +15,8 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   label: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
-  isOptional?: boolean;
   containerClassName?: string;
+  icon?: ReactNode;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -27,12 +27,12 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     label,
     variant = 'default',
     fieldMsg,
-    isOptional = false,
     containerClassName = '',
     control,
     rules,
     shouldUnregister,
     disabled,
+    icon,
     ...restHtmlProps
   } = props;
 
@@ -40,24 +40,13 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <div className={`flex flex-col gap-6px ${containerClassName}`}>
-      <label
-        className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
-        htmlFor={label}
-      >
-        {label}
-        {isOptional && (
-          <span className="text-secondary-light tracking-normal">
-            {' '}
-            (optional)
-          </span>
-        )}
-      </label>
       <Input
         id={label}
         variant={activeVariant}
         disabled={disabled}
         {...field}
         {...restHtmlProps}
+        icon={icon}
       />
 
       {/* Message feedback */}

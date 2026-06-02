@@ -8,13 +8,14 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { signupSchema, TSignupInput } from '../../validation/signup.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateAccount } from '../../hooks/signup.hooks';
+import Label from '@/shared/components/ui/Label';
 
 const SignUpForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
     watch,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<TSignupInput>({
     resolver: zodResolver(signupSchema),
     mode: 'onChange',
@@ -59,49 +60,86 @@ const SignUpForm: React.FC = ({}) => {
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* name */}
-        <FormField
-          label="name"
-          control={control}
-          name="data.name"
-          placeholder="Enter your full name"
-          containerClassName="md:col-span-2"
-          fieldMsg="3-50 characters, letters only."
-        />
+        <div className="flex flex-col gap-6px md:col-span-2">
+          <Label
+            htmlFor="name"
+            activeVariant={errors.data?.name ? 'error' : 'default'}
+          >
+            name
+          </Label>
+          <FormField
+            label="name"
+            control={control}
+            name="data.name"
+            placeholder="Enter your full name"
+            fieldMsg="3-50 characters, letters only."
+          />
+        </div>
+
         {/* email */}
-        <FormField
-          control={control}
-          name="email"
-          label="email"
-          placeholder="yourname@company.com"
-          containerClassName="md:col-span-2"
-        />
+        <div className="flex flex-col gap-6px md:col-span-2">
+          <Label
+            htmlFor="email"
+            activeVariant={errors.email ? 'error' : 'default'}
+          >
+            email
+          </Label>
+          <FormField
+            control={control}
+            name="email"
+            label="email"
+            placeholder="yourname@company.com"
+          />
+        </div>
+
         {/* job title */}
-        <FormField
-          control={control}
-          name="data.job_title"
-          label="job title"
-          placeholder="e.g. Project Manager"
-          containerClassName="md:col-span-2"
-          isOptional
-        />
+        <div className="flex flex-col gap-6px md:col-span-2">
+          <Label
+            htmlFor="job title"
+            activeVariant={errors.data?.job_title ? 'error' : 'default'}
+            isOptional
+          >
+            job title
+          </Label>
+          <FormField
+            control={control}
+            name="data.job_title"
+            label="job title"
+            placeholder="e.g. Project Manager"
+          />
+        </div>
 
         {/* password & confirm password */}
-        <FormField
-          control={control}
-          name="password"
-          label="password"
-          placeholder="Password"
-          containerClassName="md:col-span-1"
-          type="password"
-        />
-        <FormField
-          control={control}
-          name="confirm_password"
-          label="confirm password"
-          placeholder="Repeat your password"
-          containerClassName="md:col-span-1"
-          type="password"
-        />
+        <div className="flex flex-col gap-6px">
+          <Label
+            htmlFor="password"
+            activeVariant={errors.password ? 'error' : 'default'}
+          >
+            password
+          </Label>
+          <FormField
+            control={control}
+            name="password"
+            label="password"
+            placeholder="Password"
+            type="password"
+          />
+        </div>
+        <div className="flex flex-col gap-6px">
+          <Label
+            htmlFor="confirm password"
+            activeVariant={errors.confirm_password ? 'error' : 'default'}
+          >
+            confirm password
+          </Label>
+          <FormField
+            control={control}
+            name="confirm_password"
+            label="confirm password"
+            placeholder="Repeat your password"
+            type="password"
+          />
+        </div>
 
         {/* password validation */}
         <div className="hidden md:block space-y-1.75 rounded-8px p-16px bg-slate-lighter md:col-span-2">
@@ -129,9 +167,9 @@ const SignUpForm: React.FC = ({}) => {
       </form>
 
       {/* sign in link */}
-      <div className="flex items-center justify-center gap-x-4px">
+      <div className="flex items-center justify-center gap-x-4px pt-8px">
         <span className="text-slate-md">Already have an account?</span>
-        <Link href="/sign-in" className="text-primary font-semibold">
+        <Link href="/login" className="text-primary font-semibold">
           Log in
         </Link>
       </div>

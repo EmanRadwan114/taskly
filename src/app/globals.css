@@ -151,3 +151,15 @@ body {
   color: var(--foreground);
   font-size: 14px;
 }
+
+input[type='checkbox'] {
+  /* Custom Check mark using SVG */
+  -webkit-appearance: none;
+  appearance: none;
+  @apply border border-slate-light bg-surface-low size-3.5 rounded-2px;
+}
+
+input[type='checkbox']:checked {
+  border: 1px solid var(--primary);
+  background: url('/icons/check2.svg') var(--primary) center no-repeat;
+}

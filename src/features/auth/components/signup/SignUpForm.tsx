@@ -5,15 +5,16 @@ import FormField from '@/shared/components/ui/FormField';
 import PassValidationItem from './PassValidationItem';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { signupSchema, TSignupInput } from '../validation/signup.validation';
+import { signupSchema, TSignupInput } from '../../validation/signup.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useCreateAccount } from '../../hooks/signup.hooks';
 
 const SignUpForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { isValid },
   } = useForm<TSignupInput>({
     resolver: zodResolver(signupSchema),
     mode: 'onChange',
@@ -28,6 +29,8 @@ const SignUpForm: React.FC = ({}) => {
     },
   });
 
+  const { onHandleCreateAccount, isPending } = useCreateAccount();
+
   // watchers
   const watchedPassword = watch('password');
   const isPassLengthValid = /^.{8,}$/.test(watchedPassword);
@@ -40,7 +43,7 @@ const SignUpForm: React.FC = ({}) => {
 
   // handlers
   const onSubmit: SubmitHandler<TSignupInput> = (data) => {
-    console.log(data);
+    onHandleCreateAccount(data);
   };
 
   return (
@@ -119,7 +122,7 @@ const SignUpForm: React.FC = ({}) => {
         {/* submit */}
         <Button
           className="md:col-span-2 py-14px"
-          disabled={!isValid || isSubmitting}
+          disabled={!isValid || isPending}
         >
           Create Account
         </Button>

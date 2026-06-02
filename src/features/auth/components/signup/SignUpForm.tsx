@@ -15,7 +15,7 @@ const SignUpForm: React.FC = ({}) => {
     handleSubmit,
     control,
     watch,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<TSignupInput>({
     resolver: zodResolver(signupSchema),
     mode: 'onChange',
@@ -61,7 +61,12 @@ const SignUpForm: React.FC = ({}) => {
       >
         {/* name */}
         <div className="flex flex-col gap-6px md:col-span-2">
-          <Label htmlFor="name">name</Label>
+          <Label
+            htmlFor="name"
+            activeVariant={errors.data?.name ? 'error' : 'default'}
+          >
+            name
+          </Label>
           <FormField
             label="name"
             control={control}
@@ -73,7 +78,12 @@ const SignUpForm: React.FC = ({}) => {
 
         {/* email */}
         <div className="flex flex-col gap-6px md:col-span-2">
-          <Label htmlFor="email">email</Label>
+          <Label
+            htmlFor="email"
+            activeVariant={errors.email ? 'error' : 'default'}
+          >
+            email
+          </Label>
           <FormField
             control={control}
             name="email"
@@ -84,7 +94,11 @@ const SignUpForm: React.FC = ({}) => {
 
         {/* job title */}
         <div className="flex flex-col gap-6px md:col-span-2">
-          <Label htmlFor="job title" isOptional>
+          <Label
+            htmlFor="job title"
+            activeVariant={errors.data?.job_title ? 'error' : 'default'}
+            isOptional
+          >
             job title
           </Label>
           <FormField
@@ -97,7 +111,12 @@ const SignUpForm: React.FC = ({}) => {
 
         {/* password & confirm password */}
         <div className="flex flex-col gap-6px">
-          <Label htmlFor="password">password</Label>
+          <Label
+            htmlFor="password"
+            activeVariant={errors.password ? 'error' : 'default'}
+          >
+            password
+          </Label>
           <FormField
             control={control}
             name="password"
@@ -107,7 +126,12 @@ const SignUpForm: React.FC = ({}) => {
           />
         </div>
         <div className="flex flex-col gap-6px">
-          <Label htmlFor="confirm password">confirm password</Label>
+          <Label
+            htmlFor="confirm password"
+            activeVariant={errors.confirm_password ? 'error' : 'default'}
+          >
+            confirm password
+          </Label>
           <FormField
             control={control}
             name="confirm_password"

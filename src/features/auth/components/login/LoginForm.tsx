@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Label from '@/shared/components/ui/Label';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 import EmailIcon from '@/assets/icons/email.svg';
+import { loginSchema, TLoginInput } from '../../validation/login.validation';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -18,31 +19,26 @@ const LoginForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
-    formState: { isValid },
-  } = useForm<TSignupInput>({
-    resolver: zodResolver(signupSchema),
+    formState: { isValid, errors },
+  } = useForm<TLoginInput>({
+    resolver: zodResolver(loginSchema),
     mode: 'onChange',
     defaultValues: {
-      data: {
-        name: '',
-        job_title: '',
-      },
       email: '',
       password: '',
-      confirm_password: '',
     },
   });
 
   const { onHandleCreateAccount, isPending } = useCreateAccount();
 
   // handlers
-  const onSubmit: SubmitHandler<TSignupInput> = (data) => {
-    onHandleCreateAccount(data);
+  const onSubmit: SubmitHandler<TLoginInput> = (data) => {
+    // onHandleCreateAccount(data);
   };
 
   return (
     <div className="space-y-10 flex flex-col h-full">
-      <div className="space-y-8px self-start md:text-center">
+      <div className="space-y-8px text-start md:text-center">
         <h1 className="form-headline text-center">Welcome Back</h1>
         <p className="text-slate-md text-center max-w-3/4 md:w-full mx-auto">
           Please enter your details to access your workspace
@@ -54,7 +50,12 @@ const LoginForm: React.FC = ({}) => {
       >
         {/* email */}
         <div className="flex flex-col gap-6px md:col-span-2">
-          <Label htmlFor="email address">email address</Label>
+          <Label
+            htmlFor="email address"
+            activeVariant={errors.email ? 'error' : 'default'}
+          >
+            email address
+          </Label>
           <FormField
             control={control}
             name="email"
@@ -67,7 +68,12 @@ const LoginForm: React.FC = ({}) => {
         {/* password */}
         <div className="flex flex-col gap-6px md:col-span-2">
           <div className="flex justify-between items-center">
-            <Label htmlFor="password">password</Label>
+            <Label
+              htmlFor="password"
+              activeVariant={errors.password ? 'error' : 'default'}
+            >
+              password
+            </Label>
             {/* on mobile show extra link for forget password  */}
             <Link
               href={'/forgot-password'}

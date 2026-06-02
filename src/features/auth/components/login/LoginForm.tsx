@@ -12,6 +12,7 @@ import Label from '@/shared/components/ui/Label';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 import EmailIcon from '@/assets/icons/email.svg';
 import { loginSchema, TLoginInput } from '../../validation/login.validation';
+import { useLogin } from '../../hooks/login.hooks';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -29,11 +30,11 @@ const LoginForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleCreateAccount, isPending } = useCreateAccount();
+  const { onHandleLogin, isPending } = useLogin();
 
   // handlers
   const onSubmit: SubmitHandler<TLoginInput> = (data) => {
-    // onHandleCreateAccount(data);
+    onHandleLogin(data);
   };
 
   return (

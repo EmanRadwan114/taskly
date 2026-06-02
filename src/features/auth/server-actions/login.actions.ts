@@ -1,23 +1,16 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { createUserAccount } from '../services/auth.services';
+import { userLogin } from '../services/auth.services';
 
-export const createUserAccountAction = async (
-  prevState: any,
-  formData: FormData
-) => {
+export const userLoginAction = async (prevState: any, formData: FormData) => {
   const values = {
-    data: {
-      name: formData.get('name') as string,
-      job_title: formData.get('job_title') as string,
-    },
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   };
 
   try {
-    const response = await createUserAccount(values);
+    const response = await userLogin(values);
 
     // set token to cookies
     const cookieStore = await cookies();
@@ -38,7 +31,7 @@ export const createUserAccountAction = async (
     return {
       success: true,
       data: response,
-      message: 'User account created successfully!',
+      message: 'User logged in successfully!',
     };
   } catch (error) {
     return {

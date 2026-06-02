@@ -18,8 +18,8 @@ const Button: React.FC<IProps> = ({
   };
   return (
     <button
-      className={`px-24px py-10px text-body leading-5 flex items-center justify-center gap-2px capitalize ${btnVariants[variant]} ${props.className}`}
       {...props}
+      className={`px-24px py-10px text-body leading-5 flex items-center justify-center gap-2px capitalize w-full cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed ${btnVariants[variant]} ${props.className}`}
     >
       {children}
     </button>

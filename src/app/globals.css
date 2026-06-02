@@ -20,6 +20,7 @@
   --slate-dark: #041b3c;
   --slate-md: #4f5f7b;
   --slate-light: #c3c6d6;
+  --slate-lighter: #e8edff;
 
   /* semantic colors */
   --success: #82f9be;
@@ -55,6 +56,7 @@
 
   /* shadow */
   --app-shadow: 0 1px 2px 0px #0000000d;
+  --form-shadow: 0 24px 48px 0 #041b3c0f;
 }
 
 /*^-------------------------- tailwind theme --------------------------- */
@@ -74,6 +76,7 @@
   --color-slate-dark: var(--slate-dark);
   --color-slate-md: var(--slate-md);
   --color-slate-light: var(--slate-light);
+  --color-slate-lighter: var(--slate-lighter);
 
   /* Semantic Colors */
   --color-success: var(--success);
@@ -107,7 +110,9 @@
   --spacing-32px: var(--app-space-32px); /*2rem = 32px*/
   --spacing-48px: var(--app-space-48px); /*3rem = 48px*/
 
+  /* shadow */
   --shadow-primary: var(--app-shadow);
+  --shadow-form: var(--form-shadow);
 }
 
 /*^----------------------------- utilities ----------------------------- */
@@ -134,6 +139,10 @@
 @utility primary-gradient {
   @apply bg-linear-[135deg] from-primary to-primary-container;
   color: white;
+}
+
+@utility form-headline {
+  @apply text-[28px] md:text-3xl leading-9 tracking-[-0.75px] text-slate-dark font-semibold;
 }
 
 /*^----------------------------- base style ----------------------------- */

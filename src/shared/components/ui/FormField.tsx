@@ -40,18 +40,20 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <div className={`flex flex-col gap-6px ${containerClassName}`}>
-      <label
-        className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
-        htmlFor={label}
-      >
-        {label}
-        {isOptional && (
-          <span className="text-secondary-light tracking-normal">
-            {' '}
-            (optional)
-          </span>
-        )}
-      </label>
+      <div className="flex justify-between items-center">
+        <label
+          className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
+          htmlFor={label}
+        >
+          {label}
+          {isOptional && (
+            <span className="text-secondary-light tracking-normal">
+              {' '}
+              (optional)
+            </span>
+          )}
+        </label>
+      </div>
       <Input
         id={label}
         variant={activeVariant}

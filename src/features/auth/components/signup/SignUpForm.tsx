@@ -129,7 +129,7 @@ const SignUpForm: React.FC = ({}) => {
       </form>
 
       {/* sign in link */}
-      <div className="flex items-center justify-center gap-x-4px">
+      <div className="flex items-center justify-center gap-x-4px pt-8px">
         <span className="text-slate-md">Already have an account?</span>
         <Link href="/sign-in" className="text-primary font-semibold">
           Log in

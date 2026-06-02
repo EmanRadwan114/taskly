@@ -107,7 +107,7 @@ const SignUpForm: React.FC = ({}) => {
           />
         </div>
         <div className="flex flex-col gap-6px">
-          <Label htmlFor="confirm_password">confirm password</Label>
+          <Label htmlFor="confirm password">confirm password</Label>
           <FormField
             control={control}
             name="confirm_password"
@@ -145,7 +145,7 @@ const SignUpForm: React.FC = ({}) => {
       {/* sign in link */}
       <div className="flex items-center justify-center gap-x-4px pt-8px">
         <span className="text-slate-md">Already have an account?</span>
-        <Link href="/sign-in" className="text-primary font-semibold">
+        <Link href="/login" className="text-primary font-semibold">
           Log in
         </Link>
       </div>

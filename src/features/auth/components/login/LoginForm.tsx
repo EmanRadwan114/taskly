@@ -41,7 +41,7 @@ const LoginForm: React.FC = ({}) => {
   };
 
   return (
-    <>
+    <div className="space-y-10 flex flex-col h-full">
       <div className="space-y-8px self-start md:text-center">
         <h1 className="form-headline text-center">Welcome Back</h1>
         <p className="text-slate-md text-center max-w-3/4 md:w-full mx-auto">
@@ -71,9 +71,9 @@ const LoginForm: React.FC = ({}) => {
             {/* on mobile show extra link for forget password  */}
             <Link
               href={'/forgot-password'}
-              className="text-primary font-medium md:hidden"
+              className="text-primary font-medium md:hidden text-label-sm tracking-normal"
             >
-              Forget Password?
+              Forgot Password?
             </Link>
           </div>
           <FormField
@@ -105,7 +105,7 @@ const LoginForm: React.FC = ({}) => {
             href={'/forgot-password'}
             className="text-primary font-medium capitalize hidden md:block"
           >
-            Forget Password?
+            Forgot Password?
           </Link>
         </div>
 
@@ -127,7 +127,7 @@ const LoginForm: React.FC = ({}) => {
           Sign up
         </Link>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,8 +1,7 @@
 'use server';
 
-import z from 'zod';
+import { cookies } from 'next/headers';
 import { createUserAccount } from '../services/signup.services';
-import { signupSchema } from '../validation/signup.validation';
 
 export const createUserAccountAction = async (
   prevState: any,
@@ -19,7 +18,23 @@ export const createUserAccountAction = async (
 
   try {
     const response = await createUserAccount(values);
-    console.log(response);
+
+    // set token to cookies
+    const cookieStore = await cookies();
+
+    cookieStore.set('access_token', response?.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
+    cookieStore.set('refresh_token', response?.refresh_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
+
     return {
       success: true,
       data: response,

@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
 interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'tertiay';
   children: React.ReactNode;
 }
 
@@ -15,6 +15,8 @@ const Button: React.FC<IProps> = ({
       'text-white rounded-4px primary-gradient shadow-primary font-semibold',
     secondary: 'text-primary font-semibold',
     ghost: 'text-slate-md/60 font-medium',
+    tertiay:
+      'bg-surface-low text-secondary-light rounded-4px font-semibold gap-8px',
   };
   return (
     <button

@@ -38,103 +38,119 @@ const LoginForm: React.FC = ({}) => {
   };
 
   return (
-    <div className="space-y-10 flex flex-col h-full">
-      <div className="space-y-8px text-start md:text-center">
-        <h1 className="form-headline text-center">Welcome Back</h1>
-        <p className="text-slate-md text-center max-w-3/4 md:w-full mx-auto">
-          Please enter your details to access your workspace
-        </p>
-      </div>
-      <form
-        className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {/* email */}
-        <div className="flex flex-col gap-6px md:col-span-2">
-          <Label
-            htmlFor="email address"
-            activeVariant={errors.email ? 'error' : 'default'}
-          >
-            email address
-          </Label>
-          <FormField
-            control={control}
-            name="email"
-            label="email address"
-            placeholder="yourname@company.com"
-            icon={<EmailIcon className="text-secondary-light size-4" />}
-          />
-        </div>
-
-        {/* password */}
-        <div className="flex flex-col gap-6px md:col-span-2">
-          <div className="flex justify-between items-center">
+    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form bg-white md:max-w-[90%] md:mx-auto">
+      <div className="space-y-10 flex flex-col h-full">
+        <header className="space-y-8px text-start md:text-center">
+          <h1 className="form-headline text-center">Welcome Back</h1>
+          <p className="text-slate-md text-center max-w-3/4 md:max-w-full mx-auto">
+            Please enter your details to access your workspace
+          </p>
+        </header>
+        <form
+          className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          {/* email */}
+          <div className="flex flex-col gap-6px md:col-span-2">
             <Label
-              htmlFor="password"
-              activeVariant={errors.password ? 'error' : 'default'}
+              htmlFor="email address"
+              activeVariant={errors.email ? 'error' : 'default'}
             >
-              password
+              email address
             </Label>
-            {/* on mobile show extra link for forget password  */}
+            <FormField
+              control={control}
+              name="email"
+              label="email address"
+              placeholder="yourname@company.com"
+              icon={<EmailIcon className="text-secondary-light size-4" />}
+            />
+          </div>
+
+          {/* password */}
+          <div className="flex flex-col gap-6px md:col-span-2">
+            <div className="flex justify-between items-center">
+              <Label
+                htmlFor="password"
+                activeVariant={errors.password ? 'error' : 'default'}
+              >
+                password
+              </Label>
+              {/* on mobile show extra link for forget password  */}
+              <Link
+                href={'/forgot-password'}
+                className="text-primary font-medium md:hidden text-label-sm tracking-normal"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+            <FormField
+              control={control}
+              name="password"
+              label="password"
+              placeholder="Enter your Password"
+              type="password"
+            />
+          </div>
+
+          {/* remember me & forget password */}
+          <div className="flex justify-between items-center md:col-span-2">
+            {/* 1. rememeber me */}
+            <div className="flex items-center gap-x-8px">
+              <input
+                type="checkbox"
+                name="remember-me"
+                id="remember-me"
+                onChange={() => setRememberMe((r) => !r)}
+              />
+              <label
+                htmlFor="remember-me"
+                className="font-medium text-secondary"
+              >
+                Remember Me
+              </label>
+            </div>
+
+            {/* forget password */}
             <Link
               href={'/forgot-password'}
-              className="text-primary font-medium md:hidden text-label-sm tracking-normal"
+              className="text-primary font-medium capitalize hidden md:block"
             >
               Forgot Password?
             </Link>
           </div>
-          <FormField
-            control={control}
-            name="password"
-            label="password"
-            placeholder="Enter your Password"
-            type="password"
-          />
-        </div>
 
-        {/* remember me & forget password */}
-        <div className="flex justify-between items-center md:col-span-2">
-          {/* 1. rememeber me */}
-          <div className="flex items-center gap-x-8px">
-            <input
-              type="checkbox"
-              name="remember-me"
-              id="remember-me"
-              onChange={() => setRememberMe((r) => !r)}
-            />
-            <label htmlFor="remember-me" className="font-medium text-secondary">
-              Remember Me
-            </label>
-          </div>
-
-          {/* forget password */}
-          <Link
-            href={'/forgot-password'}
-            className="text-primary font-medium capitalize hidden md:block"
+          {/* submit */}
+          <Button
+            className="md:col-span-2 py-14px gap-x-8px"
+            disabled={!isValid || isPending}
           >
-            Forgot Password?
+            <span className="hidden md:block">
+              {isPending ? 'Submitting...' : 'Log In'}
+            </span>
+            {isPending ? (
+              <span className="md:hidden">Submitting...</span>
+            ) : (
+              <>
+                <span className="md:hidden">Sign In</span>
+                <ArrowRight className="size-3 md:hidden text-white" />
+              </>
+            )}
+          </Button>
+        </form>
+
+        {/* sign up link */}
+        <div className="flex items-center justify-center gap-x-4px pt-16px mt-auto">
+          <span className="text-slate-md">Don't have an account?</span>
+          <Link
+            href="/sign-up"
+            className="text-primary font-semibold capitalize"
+          >
+            Sign up
           </Link>
         </div>
-
-        {/* submit */}
-        <Button
-          className="md:col-span-2 py-14px gap-x-8px"
-          disabled={!isValid || isPending}
-        >
-          <span className="hidden md:block">Log In</span>
-          <span className="md:hidden">Sign In</span>
-          <ArrowRight className="size-3 md:hidden" />
-        </Button>
-      </form>
-
-      {/* sign up link */}
-      <div className="flex items-center justify-center gap-x-4px pt-16px mt-auto">
-        <span className="text-slate-md">Don't have an account?</span>
-        <Link href="/sign-up" className="text-primary font-semibold capitalize">
-          Sign up
-        </Link>
       </div>
-    </div>
+    </section>
   );
 };
 

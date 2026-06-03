@@ -48,13 +48,13 @@ const SignUpForm: React.FC = ({}) => {
   };
 
   return (
-    <>
-      <div className="space-y-8px self-start md:text-center">
+    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form bg-white">
+      <header className="space-y-8px self-start md:text-center">
         <h1 className="form-headline">Create your workspace</h1>
         <p className="text-slate-md">
           Join the editorial approach to task management.
         </p>
-      </div>
+      </header>
       <form
         className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
         onSubmit={handleSubmit(onSubmit)}
@@ -162,7 +162,7 @@ const SignUpForm: React.FC = ({}) => {
           className="md:col-span-2 py-14px"
           disabled={!isValid || isPending}
         >
-          Create Account
+          {isPending ? 'Submitting...' : 'Create Account'}
         </Button>
       </form>
 
@@ -173,7 +173,7 @@ const SignUpForm: React.FC = ({}) => {
           Log in
         </Link>
       </div>
-    </>
+    </section>
   );
 };
 

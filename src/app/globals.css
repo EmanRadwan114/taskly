@@ -13,6 +13,7 @@
   --surface-high: #d7e2ff;
   --surface-low: #f1f3ff;
   --background: #f9f9ff;
+  --secondary-background: #f0f1f5;
   --border: #f1f3ff;
   --accent: #6b7280;
 
@@ -24,6 +25,7 @@
 
   /* semantic colors */
   --success: #82f9be;
+  --success-text: #005235;
   --error: #ba1a1a;
   --error-dark: #93000a;
   --error-background: #ffdad6;
@@ -57,6 +59,7 @@
   /* shadow */
   --app-shadow: 0 1px 2px 0px #0000000d;
   --form-shadow: 0 24px 48px 0 #041b3c0f;
+  --form-shadow-sm: 0 24px 48px -12px #041b3c0f;
 }
 
 /*^-------------------------- tailwind theme --------------------------- */
@@ -69,6 +72,7 @@
   --color-surface-high: var(--surface-high);
   --color-surface-low: var(--surface-low);
   --color-background: var(--background);
+  --color-secondary-background: var(--secondary-background);
   --color-border: var(--border);
   --color-accent: var(--accent);
 
@@ -80,6 +84,7 @@
 
   /* Semantic Colors */
   --color-success: var(--success);
+  --color-success-text: var(--success-text);
   --color-error: var(--error);
   --color-error-dark: var(--error-dark);
   --color-error-background: var(--error-background);
@@ -113,6 +118,7 @@
   /* shadow */
   --shadow-primary: var(--app-shadow);
   --shadow-form: var(--form-shadow);
+  --shadow-form-sm: var(--form-shadow-sm);
 }
 
 /*^----------------------------- utilities ----------------------------- */
@@ -161,5 +167,5 @@ input[type='checkbox'] {
 
 input[type='checkbox']:checked {
   border: 1px solid var(--primary);
-  background: url('src/assets/icons/check2.svg') var(--primary) center no-repeat;
+  background: url('/icons/check2.svg') var(--primary) center no-repeat;
 }

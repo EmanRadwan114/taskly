@@ -16,9 +16,10 @@ import { useState } from 'react';
 import CheckFill from '@/assets/icons/check-fill.svg';
 import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
+import { useMobile } from '@/shared/hooks/useMobile';
 
 const ResetPasswordForm: React.FC = ({}) => {
-  const [isMobile, setIsMobile] = useState(() => window.screen.width <= 768);
+  const { isMobile } = useMobile();
 
   const {
     handleSubmit,

@@ -113,7 +113,16 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
 
     if (resetPassActionState?.success) {
       timeout = setTimeout(() => {
-        router.replace('/login');
+        // clear has values from url
+        if (window !== undefined) {
+          window.history.replaceState(
+            null,
+            document.title,
+            window.location.pathname
+          );
+        }
+
+        router.push('/login');
       }, 3000);
     }
 

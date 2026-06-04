@@ -22,7 +22,7 @@ export const useResetPassRedirect = () => {
       router.push(`/reset-password?access_token=${accessToken}`);
 
     if (!accessToken) toast.error('Invalid or expired reset link.');
-  }, [router]);
+  }, []);
 };
 
 // ^---------------------- Reset Password Action ------------------------^^

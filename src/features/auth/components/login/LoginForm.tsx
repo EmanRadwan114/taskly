@@ -3,9 +3,7 @@
 import Button from '@/shared/components/ui/Button';
 import FormField from '@/shared/components/ui/FormField';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { signupSchema, TSignupInput } from '../../validation/signup.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateAccount } from '../../hooks/signup.hooks';
 import Link from 'next/link';
 import { useState } from 'react';
 import Label from '@/shared/components/ui/Label';
@@ -13,9 +11,14 @@ import ArrowRight from '@/assets/icons/arrow-right.svg';
 import EmailIcon from '@/assets/icons/email.svg';
 import { loginSchema, TLoginInput } from '../../validation/login.validation';
 import { useLogin } from '../../hooks/login.hooks';
+import LockIcon from '@/assets/icons/lock.svg';
+import Image from 'next/image';
+import gradientImg from '@/assets/imgs/auth-gradient.png';
+import SignupLink from './SignupLink';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.screen.width <= 768);
 
   const {
     handleSubmit,
@@ -23,7 +26,7 @@ const LoginForm: React.FC = ({}) => {
     formState: { isValid, errors },
   } = useForm<TLoginInput>({
     resolver: zodResolver(loginSchema),
-    mode: 'onChange',
+    mode: 'onBlur',
     defaultValues: {
       email: '',
       password: '',
@@ -38,8 +41,8 @@ const LoginForm: React.FC = ({}) => {
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form bg-white md:max-w-[90%] md:mx-auto">
-      <div className="space-y-10 flex flex-col h-full">
+    <section className="w-full space-y-10 md:rounded-8px md:shadow-form md:bg-white md:max-w-[90%] md:mx-auto flex flex-col flex-1 pt-10 md:p-48px">
+      <div className="gap-y-10 flex flex-col flex-1">
         <header className="space-y-8px text-start md:text-center">
           <h1 className="form-headline text-center">Welcome Back</h1>
           <p className="text-slate-md text-center max-w-3/4 md:max-w-full mx-auto">
@@ -90,6 +93,12 @@ const LoginForm: React.FC = ({}) => {
               label="password"
               placeholder="Enter your Password"
               type="password"
+              icon={
+                isMobile ? (
+                  <LockIcon className="text-secondary-light size-4.5" />
+                ) : null
+              }
+              showPassIcon={!isMobile}
             />
           </div>
 
@@ -139,17 +148,20 @@ const LoginForm: React.FC = ({}) => {
           </Button>
         </form>
 
-        {/* sign up link */}
-        <div className="flex items-center justify-center gap-x-4px pt-16px mt-auto">
-          <span className="text-slate-md">Don't have an account?</span>
-          <Link
-            href="/sign-up"
-            className="text-primary font-semibold capitalize"
-          >
-            Sign up
-          </Link>
-        </div>
+        <Image
+          src={gradientImg}
+          alt="blue radial gradient"
+          className="absolute inset-e-0 bottom-0 -z-10 hidden md:block"
+          width={300}
+          height={300}
+        />
+
+        {/* sign up link desktop */}
+        {!isMobile && <SignupLink />}
       </div>
+
+      {/* sign up link mobile */}
+      {isMobile && <SignupLink />}
     </section>
   );
 };

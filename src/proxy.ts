@@ -2,15 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateNewTokens } from './features/auth/services/auth.services';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-const authRoutes = ['login', 'sign-up', 'forget-password'];
+const authRoutes = ['login', 'sign-up', 'forgot-password', 'reset-password'];
 
 export default async function proxy(request: NextRequest) {
-  // pass headers to page routes ==> to access current path in layouts or components
-  const requestHeaders = new Headers(request.headers);
-
   const { pathname } = request.nextUrl;
-
-  requestHeaders.set('x-pathname', request.nextUrl.pathname);
 
   const cookies = request.cookies;
 
@@ -22,8 +17,7 @@ export default async function proxy(request: NextRequest) {
   );
 
   // exclude auth routes form tokens check
-  if (isAuthRoute)
-    return NextResponse.next({ request: { headers: requestHeaders } });
+  if (isAuthRoute) return NextResponse.next();
 
   // login if both tokens expired
   if (!refreshToken || (!refreshToken && !accessToken)) {
@@ -36,9 +30,7 @@ export default async function proxy(request: NextRequest) {
       const result = await generateNewTokens(refreshToken);
       console.log(result);
 
-      const response = NextResponse.next({
-        request: { headers: requestHeaders },
-      });
+      const response = NextResponse.next();
 
       response.cookies.set({
         name: 'access_token',
@@ -60,7 +52,7 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return NextResponse.next();
 }
 
 // Config object controls where the Proxy executes

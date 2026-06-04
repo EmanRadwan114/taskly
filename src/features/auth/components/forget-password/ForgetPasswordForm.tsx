@@ -14,21 +14,24 @@ import {
   forgetPasswordInput,
   forgetPasswordSchema,
 } from '../../validation/forget-password.validation';
+import { useLogin } from '../../hooks/login.hooks';
 
 const ForgetPasswordForm: React.FC = ({}) => {
+  const rememberMe = true;
+
   const {
     handleSubmit,
     control,
     formState: { isValid, errors },
   } = useForm<forgetPasswordInput>({
     resolver: zodResolver(forgetPasswordSchema),
-    mode: 'onChange',
+    mode: 'onBlur',
     defaultValues: {
       email: '',
     },
   });
 
-  //   const { onHandleLogin, isPending } = useLogin(rememberMe);
+  const { onHandleLogin, isPending } = useLogin(rememberMe);
 
   // handlers
   const onSubmit: SubmitHandler<forgetPasswordInput> = (data) => {
@@ -46,7 +49,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
             <h1 className="form-headline text-center md:text-start">
               Forgot password?
             </h1>
-            <p className="text-slate-md text-center max-w-3/4 md:w-full mx-auto md:text-start md:mx-0">
+            <p className="text-slate-md text-center max-w-3/4 md:max-w-full mx-auto md:text-start md:mx-0">
               No worries, we'll send you reset instructions.
             </p>
           </div>
@@ -75,10 +78,10 @@ const ForgetPasswordForm: React.FC = ({}) => {
 
             {/* submit */}
             <Button
-              className="md:col-span-2 gap-x-8px"
-              //   disabled={!isValid || isPending}
+              className="md:col-span-2 gap-x-8px py-14px"
+              disabled={!isValid || isPending}
             >
-              Send Reset Link
+              {isPending ? 'Sending...' : 'Send Reset Link'}
             </Button>
           </form>
 
@@ -108,7 +111,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
               Didn't receive the email?
             </span>
             <Button variant="tertiay">
-              <TimerIcon className="w-4.5 text-secondary-light" />
+              <TimerIcon className="w-4 text-secondary-light" />
               Resend in 5 mins
             </Button>
           </div>

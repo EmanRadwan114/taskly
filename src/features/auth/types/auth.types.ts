@@ -6,3 +6,8 @@ export interface ISignUp {
     job_title?: string;
   };
 }
+
+export interface IResetPassword {
+  password: string;
+  accessToken: string;
+}

@@ -1,7 +1,10 @@
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useActionState, useEffect, useTransition } from 'react';
 import { toast } from 'react-toastify';
+import { resetPasswordAction } from '../server-actions/reset-password.actions';
+import { TResetPasswordInput } from '../validation/reset-password.validation';
 
+// ^---------------------- Reset Password Redirect ------------------------^^
 export const useResetPassRedirect = () => {
   const router = useRouter();
 
@@ -20,4 +23,32 @@ export const useResetPassRedirect = () => {
 
     if (!accessToken) toast.error('Invalid or expired reset link.');
   }, [router]);
+};
+
+// ^---------------------- Reset Password Action ------------------------^^
+export const useResetPassword = (accessToken: string) => {
+  const resetPassWithToken = resetPasswordAction.bind(null, accessToken);
+
+  const [state, formAction, isPending] = useActionState(
+    resetPassWithToken,
+    null
+  );
+  const [_, startTransition] = useTransition();
+
+  // effects
+  useEffect(() => {
+    if (!state?.success) toast.error(state?.message);
+  }, [state]);
+
+  // handlers
+  const onHandleResetPassword = (data: TResetPasswordInput) => {
+    const formData = new FormData();
+    formData.append('password', data.password);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
+  return { onHandleResetPassword, isPending, state };
 };

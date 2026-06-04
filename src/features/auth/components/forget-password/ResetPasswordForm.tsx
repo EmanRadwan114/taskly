@@ -5,21 +5,30 @@ import FormField from '@/shared/components/ui/FormField';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateAccount } from '../../hooks/signup.hooks';
 import Label from '@/shared/components/ui/Label';
 import PassValidationItem from '../ui/PassValidationItem';
 import {
   resetPasswordSchema,
   TResetPasswordInput,
 } from '../../validation/reset-password.validation';
-import { useState } from 'react';
 import CheckFill from '@/assets/icons/check-fill.svg';
 import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
 import { useMobile } from '@/shared/hooks/useMobile';
+import { useResetPassword } from '../../hooks/reset-password.hooks';
+import ArrowRight from '@/assets/icons/arrow-right.svg';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const ResetPasswordForm: React.FC = ({}) => {
+interface IProps {
+  accessToken: string;
+}
+
+const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
+  const router = useRouter();
+
   const { isMobile } = useMobile();
+
   const {
     handleSubmit,
     control,
@@ -34,7 +43,11 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleCreateAccount, isPending } = useCreateAccount();
+  const {
+    onHandleResetPassword,
+    isPending,
+    state: resetPassActionState,
+  } = useResetPassword(accessToken);
 
   // watchers
   const watchedPassword = watch('password');
@@ -92,9 +105,26 @@ const ResetPasswordForm: React.FC = ({}) => {
     ? passValidationsMobile
     : passValidationsDesktop;
 
+  // effects to redirct to login after success reset
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    if (timeout) clearTimeout(timeout);
+
+    if (resetPassActionState?.success) {
+      timeout = setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [resetPassActionState]);
+
   // handlers
   const onSubmit: SubmitHandler<TResetPasswordInput> = (data) => {
-    // onHandleCreateAccount(data);
+    onHandleResetPassword(data);
   };
 
   return (
@@ -179,11 +209,22 @@ const ResetPasswordForm: React.FC = ({}) => {
           </Button>
         </form>
 
+        {/* success msg */}
+        {resetPassActionState?.success && (
+          <div className="bg-success/20 backdrop-blur-md flex justify-center items-center p-16px rounded-4px">
+            <p className="text-success-text font-semibold text-center">
+              Your password has been updated successfully. <br /> You can now
+              log in
+            </p>
+          </div>
+        )}
+
         {/* back to sign in link */}
         <Link
           href="/login"
-          className="text-primary font-semibold flex justify-center"
+          className="text-primary font-semibold flex justify-center items-center gap-6px"
         >
+          <ArrowRight className="size-4 text-primary rotate-180" />
           Back to Log in
         </Link>
       </div>

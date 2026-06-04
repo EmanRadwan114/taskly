@@ -10,5 +10,5 @@ export default async function ResetPasswordPage({
 
   if (!access_token) return <ExpiredResetPassMsg />;
 
-  return <ResetPasswordForm />;
+  return <ResetPasswordForm accessToken={access_token} />;
 }

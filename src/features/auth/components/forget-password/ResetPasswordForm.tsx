@@ -24,7 +24,7 @@ const ResetPasswordForm: React.FC = ({}) => {
     handleSubmit,
     control,
     watch,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<TResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'onBlur',
@@ -174,10 +174,7 @@ const ResetPasswordForm: React.FC = ({}) => {
           </div>
 
           {/* submit */}
-          <Button
-            className="md:col-span-2 py-14px"
-            disabled={!isValid || isPending}
-          >
+          <Button className="md:col-span-2 py-14px" disabled={isPending}>
             {isPending ? 'Submitting...' : 'Update Password'}
           </Button>
         </form>

@@ -24,7 +24,7 @@ const LoginForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<TLoginInput>({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
@@ -133,7 +133,7 @@ const LoginForm: React.FC = ({}) => {
           {/* submit */}
           <Button
             className="md:col-span-2 py-14px gap-x-8px"
-            disabled={!isValid || isPending}
+            disabled={isPending}
           >
             <span className="hidden md:block">
               {isPending ? 'Submitting...' : 'Log In'}

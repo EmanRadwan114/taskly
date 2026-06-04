@@ -164,10 +164,7 @@ const SignUpForm: React.FC = ({}) => {
         </ul>
 
         {/* submit */}
-        <Button
-          className="md:col-span-2 py-14px"
-          disabled={!isValid || isPending}
-        >
+        <Button className="md:col-span-2 py-14px" disabled={isPending}>
           {isPending ? 'Submitting...' : 'Create Account'}
         </Button>
       </form>

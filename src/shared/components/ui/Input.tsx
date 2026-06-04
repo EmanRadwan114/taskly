@@ -30,7 +30,7 @@ const Input: React.FC<IProps> = ({
     >
       <input
         {...props}
-        className={`w-3/4 focus-within:outline-0 focus-visible:outline-0 bg-transparent autofill:transition-colors autofill:duration-[5000000s] ps-16px py-14px`}
+        className={`w-3/4 focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-16px py-14px`}
         type={
           props.type === 'password'
             ? isPasswordShown

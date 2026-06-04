@@ -9,4 +9,4 @@ export const forgetPasswordSchema = z.object({
   }),
 });
 
-export type forgetPasswordInput = z.infer<typeof forgetPasswordSchema>;
+export type TforgetPasswordInput = z.infer<typeof forgetPasswordSchema>;

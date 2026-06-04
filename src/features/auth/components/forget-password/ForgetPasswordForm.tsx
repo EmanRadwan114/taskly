@@ -11,19 +11,18 @@ import ArrowRight from '@/assets/icons/arrow-right.svg';
 import CheckFill from '@/assets/icons/check-fill.svg';
 import TimerIcon from '@/assets/icons/timer.svg';
 import {
-  forgetPasswordInput,
   forgetPasswordSchema,
+  TforgetPasswordInput,
 } from '../../validation/forget-password.validation';
 import { useLogin } from '../../hooks/login.hooks';
+import { useForgetPassword } from '../../hooks/forget-password.hooks';
 
 const ForgetPasswordForm: React.FC = ({}) => {
-  const rememberMe = true;
-
   const {
     handleSubmit,
     control,
-    formState: { isValid, errors },
-  } = useForm<forgetPasswordInput>({
+    formState: { errors },
+  } = useForm<TforgetPasswordInput>({
     resolver: zodResolver(forgetPasswordSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -31,11 +30,15 @@ const ForgetPasswordForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleLogin, isPending } = useLogin(rememberMe);
+  const { onHandleForgetPassword, isPending, actionStateResult } =
+    useForgetPassword();
+
+  //remove msg when error in response or submitting new email
+  const successResponse = actionStateResult?.success && !isPending;
 
   // handlers
-  const onSubmit: SubmitHandler<forgetPasswordInput> = (data) => {
-    // onHandleLogin(data);
+  const onSubmit: SubmitHandler<TforgetPasswordInput> = (data) => {
+    onHandleForgetPassword(data);
   };
 
   return (
@@ -79,7 +82,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
             {/* submit */}
             <Button
               className="md:col-span-2 gap-x-8px py-14px"
-              disabled={!isValid || isPending}
+              disabled={isPending}
             >
               {isPending ? 'Sending...' : 'Send Reset Link'}
             </Button>
@@ -97,13 +100,16 @@ const ForgetPasswordForm: React.FC = ({}) => {
 
         {/* email hint & resend desktop */}
         <section className="flex-col gap-y-24px hidden md:flex">
-          <div className="bg-success/20 p-16px rounded-8px gap-12px flex items-start">
-            <CheckFill className="size-8 pb-2" />
-            <p className="text-success-text leading-[17.5px]">
-              If an account exists with this email, we’ve sent a password reset
-              link.
-            </p>
-          </div>
+          {/* success msg */}
+          {successResponse && (
+            <div className="bg-success/20 p-16px rounded-8px gap-12px flex items-start">
+              <CheckFill className="size-8 pb-2" />
+              <p className="text-success-text leading-[17.5px]">
+                If an account exists with this email, we’ve sent a password
+                reset link.
+              </p>
+            </div>
+          )}
 
           {/* resend link */}
           <div className="flex flex-col items-center gap-y-12px">
@@ -119,17 +125,26 @@ const ForgetPasswordForm: React.FC = ({}) => {
       </div>
 
       {/* email hint & resend mobile */}
-      <section className="flex-col gap-y-12px flex md:hidden bg-success/20 p-16px rounded-4px backdrop-blur-md">
-        <div className="gap-12px flex items-start">
-          <CheckFill className="size-7 pb-2" />
-          <p className="text-success-text font-medium text-[12px] leading-[19.5px]">
-            If an account exists with this email, we’ve sent a password reset
-            link.
-          </p>
-        </div>
+      <section
+        className={`flex-col gap-y-12px flex md:hidden p-16px rounded-4px ${successResponse ? 'bg-success/20 backdrop-blur-md' : ''}`}
+      >
+        {/* success msg */}
+        {successResponse && (
+          <div className="gap-12px flex items-start">
+            <CheckFill className="size-7 pb-2" />
+            <p className="text-success-text font-medium text-[12px] leading-[19.5px]">
+              If an account exists with this email, we’ve sent a password reset
+              link.
+            </p>
+          </div>
+        )}
         {/* resend link */}
-        <div className="flex justify-between border-t border-t-success-text/10 pt-12px ">
-          <span className="text-label-sm uppercase text-success-text/60 flex-1">
+        <div
+          className={`flex justify-between pt-12px ${successResponse ? 'border-t border-t-success-text/10' : ''}`}
+        >
+          <span
+            className={`text-label-sm uppercase flex-1 ${successResponse ? 'text-success-text/60' : 'text-secondary'}`}
+          >
             Didn't receive email?
           </span>
           <Button

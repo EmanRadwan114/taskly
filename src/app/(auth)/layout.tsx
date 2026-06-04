@@ -9,7 +9,7 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`flex flex-col min-h-screen relative`}>
+    <div className={`flex flex-col min-h-screen md:min-h-[90vh] relative`}>
       <header className="py-6.5 shrink-0">
         <Container>
           <Logo />

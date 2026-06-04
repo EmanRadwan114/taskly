@@ -76,7 +76,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
 
   return (
     <section className="space-y-24px md:space-y-0 w-full">
-      <div className="w-full flex flex-col gap-y-8 border border-slate-light/30 bg-white rounded-8px p-24px md:p-10 shadow-form-sm xl:max-w-3/4 2xl:max-w-1/2 mx-auto">
+      <div className="w-full flex flex-col gap-y-8 border border-slate-light/30 bg-white rounded-8px p-24px md:p-10 shadow-form-sm sm:max-w-4/6 lg:max-w-4/6 xl:max-w-3/4 2xl:max-w-1/2 sm:mx-auto">
         <header className="space-y-24px">
           <div className="flex justify-center items-center rounded-xl bg-surface-high size-12 mx-auto md:hidden">
             <SecureIcon className="size-5 text-primary-container" />
@@ -91,7 +91,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
           </div>
         </header>
         {/* form & back to login */}
-        <div className="space-y-24px md:mb-10">
+        <div className="flex flex-col gap-y-24px">
           <form
             className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
             onSubmit={handleSubmit(onSubmit)}

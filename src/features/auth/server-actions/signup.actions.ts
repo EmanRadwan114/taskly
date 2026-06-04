@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { createUserAccount } from '../services/auth.services';
+import { cookieConfig } from '@/shared/utils/utils';
 
 export const createUserAccountAction = async (
   prevState: any,
@@ -22,18 +23,8 @@ export const createUserAccountAction = async (
     // set token to cookies
     const cookieStore = await cookies();
 
-    cookieStore.set('access_token', response?.access_token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    });
-    cookieStore.set('refresh_token', response?.refresh_token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    });
+    cookieStore.set('access_token', response?.access_token, cookieConfig);
+    cookieStore.set('refresh_token', response?.refresh_token, cookieConfig);
 
     return {
       success: true,

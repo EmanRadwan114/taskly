@@ -187,7 +187,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
             </span>
             <Button
               variant="secondary"
-              className="uppercase p-0! justify-end text-label-sm! flex-1 flex-col"
+              className="uppercase p-0! justify-end text-label-sm! flex-1"
               disabled={isTimerPending || isRunning || resendCount === 3}
               onClick={handleSubmit(handleResendEmail)}
             >

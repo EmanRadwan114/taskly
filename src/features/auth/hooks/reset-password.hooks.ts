@@ -19,7 +19,7 @@ export const useResetPassRedirect = () => {
     const type = params.get('type');
 
     if (type === 'recovery')
-      router.push(`/reset-password?access_token=${accessToken}`);
+      router.replace(`/reset-password?access_token=${accessToken}`); // Replaces the login#access_token entry
 
     if (!accessToken) toast.error('Invalid or expired reset link.');
   }, []);

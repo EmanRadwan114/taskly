@@ -47,7 +47,7 @@ const SignUpForm: React.FC = ({}) => {
     },
     {
       id: 3,
-      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
       message: 'One special character',
     },
   ];

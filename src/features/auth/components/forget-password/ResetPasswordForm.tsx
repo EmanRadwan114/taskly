@@ -61,7 +61,7 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
     {
       id: 5,
-      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
       message: 'Special character',
     },
   ];
@@ -83,7 +83,7 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
     {
       id: 4,
-      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
       message: 'Special character (e.g. !@#$)',
     },
   ];
@@ -143,7 +143,7 @@ const ResetPasswordForm: React.FC = ({}) => {
               label="confirm password"
               placeholder="Repeat your password"
               type="password"
-              className={`border border-slate-light/30 ${!errors.password && 'bg-surface-low'}`}
+              className={`border border-slate-light/30 ${!errors.confirm_password && 'bg-surface-low'}`}
               containerClassName="py-3.25"
             />
           </div>

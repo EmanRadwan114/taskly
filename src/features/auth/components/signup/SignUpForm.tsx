@@ -58,7 +58,7 @@ const SignUpForm: React.FC = ({}) => {
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white">
+    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white 2xl:max-w-3/4 2xl:mx-auto">
       <header className="space-y-8px self-start md:text-center">
         <h1 className="form-headline">Create your workspace</h1>
         <p className="text-slate-md">

@@ -1,5 +1,14 @@
+import ExpiredResetPassMsg from '@/features/auth/components/forget-password/ExpiredResetPassMsg';
 import ResetPasswordForm from '@/features/auth/components/forget-password/ResetPasswordForm';
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ access_token: string }>;
+}) {
+  const { access_token } = await searchParams;
+
+  if (!access_token) return <ExpiredResetPassMsg />;
+
   return <ResetPasswordForm />;
 }

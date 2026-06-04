@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export const useTimer = () => {
-  const INITIAL_TIME = 5 * 1; //5mins
+  const INITIAL_TIME = 5 * 60; //5mins
 
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
   const [isRunning, setIsRunning] = useState(false);

@@ -75,8 +75,8 @@ const ForgetPasswordForm: React.FC = ({}) => {
   };
 
   return (
-    <section className="space-y-24px md:space-y-0">
-      <div className="w-full flex flex-col gap-y-8 border border-slate-light/30 bg-white rounded-8px p-24px md:p-10 shadow-form-sm md:max-w-3/4 mx-auto">
+    <section className="space-y-24px md:space-y-0 w-full">
+      <div className="w-full flex flex-col gap-y-8 border border-slate-light/30 bg-white rounded-8px p-24px md:p-10 shadow-form-sm xl:max-w-3/4 2xl:max-w-1/2 mx-auto">
         <header className="space-y-24px">
           <div className="flex justify-center items-center rounded-xl bg-surface-high size-12 mx-auto md:hidden">
             <SecureIcon className="size-5 text-primary-container" />

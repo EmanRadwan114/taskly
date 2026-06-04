@@ -21,7 +21,7 @@ export const forgetPasswordAction = async (
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Something went wrong',
+      message: 'Something went wrong',
     };
   }
 };

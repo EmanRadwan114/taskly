@@ -12,16 +12,17 @@ const Button: React.FC<IProps> = ({
 }) => {
   const btnVariants = {
     primary:
-      'text-white rounded-4px primary-gradient shadow-primary font-semibold',
-    secondary: 'text-primary font-semibold',
+      'text-white rounded-4px primary-gradient shadow-primary font-semibold disabled:opacity-70',
+    secondary:
+      'text-primary [&>*]:text-primary font-semibold disabled:text-secondary-light disabled:[&>*]:text-secondary-light ',
     ghost: 'text-slate-md/60 font-medium',
     tertiay:
-      'bg-surface-low text-secondary-light rounded-4px font-semibold gap-8px',
+      'bg-surface-low text-primary disabled:text-secondary-light rounded-4px font-semibold gap-8px',
   };
   return (
     <button
       {...props}
-      className={`px-24px py-10px text-body leading-5 flex items-center justify-center gap-2px capitalize w-full cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed ${btnVariants[variant]} ${props.className}`}
+      className={`px-24px py-10px text-body leading-5 flex items-center justify-center gap-2px capitalize w-full cursor-pointer disabled:cursor-not-allowed ${btnVariants[variant]} ${props.className}`}
     >
       {children}
     </button>

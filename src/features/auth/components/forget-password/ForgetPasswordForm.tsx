@@ -14,10 +14,13 @@ import {
   forgetPasswordSchema,
   TforgetPasswordInput,
 } from '../../validation/forget-password.validation';
-import { useLogin } from '../../hooks/login.hooks';
 import { useForgetPassword } from '../../hooks/forget-password.hooks';
+import { useEffect, useState } from 'react';
+import { useTimer } from '../../hooks/useTimer';
 
 const ForgetPasswordForm: React.FC = ({}) => {
+  const [resendCount, setResendCount] = useState<number>(0);
+
   const {
     handleSubmit,
     control,
@@ -33,12 +36,42 @@ const ForgetPasswordForm: React.FC = ({}) => {
   const { onHandleForgetPassword, isPending, actionStateResult } =
     useForgetPassword();
 
-  //remove msg when error in response or submitting new email
-  const successResponse = actionStateResult?.success && !isPending;
+  const {
+    onHandleForgetPassword: onHandleTimerAction,
+    isPending: isTimerPending,
+    actionStateResult: timerActionStateResult,
+  } = useForgetPassword();
+
+  //timer hook
+  const { formatedTime, isRunning, startTimer } = useTimer();
+
+  //remove msg when error in response
+  const successResponse =
+    actionStateResult?.success || timerActionStateResult?.success;
+
+  // start timer condition
+  const isTimerActive = successResponse && resendCount <= 3;
+
+  // effect to start timer for first time
+  useEffect(() => {
+    if (isTimerActive) {
+      startTimer();
+    }
+  }, [isTimerActive]);
 
   // handlers
   const onSubmit: SubmitHandler<TforgetPasswordInput> = (data) => {
     onHandleForgetPassword(data);
+  };
+
+  const handleResendEmail: SubmitHandler<TforgetPasswordInput> = (data) => {
+    if (!errors.email) {
+      onHandleTimerAction(data);
+      if (isTimerActive) {
+        setResendCount((prev) => prev + 1);
+        startTimer();
+      }
+    }
   };
 
   return (
@@ -82,7 +115,7 @@ const ForgetPasswordForm: React.FC = ({}) => {
             {/* submit */}
             <Button
               className="md:col-span-2 gap-x-8px py-14px"
-              disabled={isPending}
+              disabled={isPending || successResponse}
             >
               {isPending ? 'Sending...' : 'Send Reset Link'}
             </Button>
@@ -99,9 +132,9 @@ const ForgetPasswordForm: React.FC = ({}) => {
         </div>
 
         {/* email hint & resend desktop */}
-        <section className="flex-col gap-y-24px hidden md:flex">
-          {/* success msg */}
-          {successResponse && (
+        {successResponse && (
+          <section className="flex-col gap-y-24px hidden md:flex">
+            {/* success msg */}
             <div className="bg-success/20 p-16px rounded-8px gap-12px flex items-start">
               <CheckFill className="size-8 pb-2" />
               <p className="text-success-text leading-[17.5px]">
@@ -109,27 +142,33 @@ const ForgetPasswordForm: React.FC = ({}) => {
                 reset link.
               </p>
             </div>
-          )}
 
-          {/* resend link */}
-          <div className="flex flex-col items-center gap-y-12px">
-            <span className="text-label-sm uppercase text-secondary">
-              Didn't receive the email?
-            </span>
-            <Button variant="tertiay">
-              <TimerIcon className="w-4 text-secondary-light" />
-              Resend in 5 mins
-            </Button>
-          </div>
-        </section>
+            {/* resend link */}
+            <div className="flex flex-col items-center gap-y-12px">
+              <span className="text-label-sm uppercase text-secondary">
+                Didn't receive the email?
+              </span>
+              <Button
+                variant="tertiay"
+                disabled={isTimerPending || isRunning || resendCount === 3}
+                onClick={handleSubmit(handleResendEmail)}
+              >
+                <TimerIcon className="w-4" />
+                {isTimerPending && resendCount <= 3
+                  ? 'Sending...'
+                  : `Resend in ${formatedTime}`}
+              </Button>
+            </div>
+          </section>
+        )}
       </div>
 
       {/* email hint & resend mobile */}
-      <section
-        className={`flex-col gap-y-12px flex md:hidden p-16px rounded-4px ${successResponse ? 'bg-success/20 backdrop-blur-md' : ''}`}
-      >
-        {/* success msg */}
-        {successResponse && (
+      {successResponse && (
+        <section
+          className={`flex-col gap-y-12px flex md:hidden p-16px rounded-4px ${successResponse ? 'bg-success/20 backdrop-blur-md' : ''}`}
+        >
+          {/* success msg */}
           <div className="gap-12px flex items-start">
             <CheckFill className="size-7 pb-2" />
             <p className="text-success-text font-medium text-[12px] leading-[19.5px]">
@@ -137,24 +176,28 @@ const ForgetPasswordForm: React.FC = ({}) => {
               link.
             </p>
           </div>
-        )}
-        {/* resend link */}
-        <div
-          className={`flex justify-between pt-12px ${successResponse ? 'border-t border-t-success-text/10' : ''}`}
-        >
-          <span
-            className={`text-label-sm uppercase flex-1 ${successResponse ? 'text-success-text/60' : 'text-secondary'}`}
+          {/* resend link */}
+          <div
+            className={`flex justify-between pt-12px ${successResponse ? 'border-t border-t-success-text/10' : ''}`}
           >
-            Didn't receive email?
-          </span>
-          <Button
-            variant="secondary"
-            className="uppercase p-0! justify-end text-label-sm! flex-1"
-          >
-            Resend in 5 mins
-          </Button>
-        </div>
-      </section>
+            <span
+              className={`text-label-sm uppercase flex-1 ${successResponse ? 'text-success-text/60' : 'text-secondary'}`}
+            >
+              Didn't receive email?
+            </span>
+            <Button
+              variant="secondary"
+              className="uppercase p-0! justify-end text-label-sm! flex-1 flex-col"
+              disabled={isTimerPending || isRunning || resendCount === 3}
+              onClick={handleSubmit(handleResendEmail)}
+            >
+              {isTimerPending && resendCount <= 3
+                ? 'Sending...'
+                : `Resend in ${formatedTime}`}
+            </Button>
+          </div>
+        </section>
+      )}
     </section>
   );
 };

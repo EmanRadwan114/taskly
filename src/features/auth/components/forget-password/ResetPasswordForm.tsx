@@ -18,8 +18,7 @@ import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
 
 const ResetPasswordForm: React.FC = ({}) => {
-  const [isMobile, setIsMobile] = useState(() => window.screen.width <= 768);
-
+  const {} = useMob;
   const {
     handleSubmit,
     control,

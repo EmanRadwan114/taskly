@@ -15,10 +15,11 @@ import LockIcon from '@/assets/icons/lock.svg';
 import Image from 'next/image';
 import gradientImg from '@/assets/imgs/auth-gradient.png';
 import SignupLink from './SignupLink';
+import { useMobile } from '@/shared/hooks/useMobile';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.screen.width <= 768);
+  const { isMobile } = useMobile();
 
   const {
     handleSubmit,

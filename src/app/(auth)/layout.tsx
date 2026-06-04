@@ -15,7 +15,7 @@ export default async function AuthLayout({
           <Logo />
         </Container>
       </header>
-      <main className="w-full flex flex-col items-center justify-center mb-48px md:my-48px md:max-w-5/6 lg:max-w-4/6 md:mx-auto xl:max-w-1/2 flex-1 md:flex-none">
+      <main className="w-full flex flex-col items-center justify-center pb-48px md:py-48px md:max-w-5/6 lg:max-w-4/6 md:mx-auto xl:max-w-1/2 flex-1 md:flex-none">
         <Container className="flex-1 flex flex-col justify-center items-center">
           {children}
         </Container>

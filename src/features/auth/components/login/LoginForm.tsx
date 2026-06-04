@@ -151,9 +151,9 @@ const LoginForm: React.FC = ({}) => {
         <Image
           src={gradientImg}
           alt="blue radial gradient"
-          className="absolute inset-e-0 bottom-0 -z-10 hidden md:block"
-          width={300}
-          height={300}
+          className="absolute inset-e-0 inset-s-0 bottom-0 -z-10 md:hidden"
+          width={500}
+          height={500}
         />
 
         {/* sign up link desktop */}

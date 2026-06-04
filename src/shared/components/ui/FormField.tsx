@@ -17,6 +17,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   fieldMsg?: string;
   containerClassName?: string;
   icon?: ReactNode;
+  showPassIcon?: boolean;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -33,6 +34,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     shouldUnregister,
     disabled,
     icon,
+    showPassIcon = false,
     ...restHtmlProps
   } = props;
 
@@ -47,6 +49,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
         {...field}
         {...restHtmlProps}
         icon={icon}
+        showPassIcon={showPassIcon}
       />
 
       {/* Message feedback */}

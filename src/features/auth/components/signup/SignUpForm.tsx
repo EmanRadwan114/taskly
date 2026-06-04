@@ -2,7 +2,7 @@
 
 import Button from '@/shared/components/ui/Button';
 import FormField from '@/shared/components/ui/FormField';
-import PassValidationItem from './PassValidationItem';
+import PassValidationItem from '../ui/PassValidationItem';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { signupSchema, TSignupInput } from '../../validation/signup.validation';
@@ -18,7 +18,7 @@ const SignUpForm: React.FC = ({}) => {
     formState: { isValid, errors },
   } = useForm<TSignupInput>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange',
+    mode: 'onBlur',
     defaultValues: {
       data: {
         name: '',
@@ -34,13 +34,23 @@ const SignUpForm: React.FC = ({}) => {
 
   // watchers
   const watchedPassword = watch('password');
-  const isPassLengthValid = /^.{8,}$/.test(watchedPassword);
-  const isPassFormateValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(
-    watchedPassword
-  );
-  const hasSpecialChar = /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(
-    watchedPassword
-  );
+  const passValidations = [
+    {
+      id: 1,
+      condition: /^.{8,64}$/.test(watchedPassword),
+      message: 'At least 8 characters',
+    },
+    {
+      id: 2,
+      condition: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(watchedPassword),
+      message: 'One uppercase, lowercase, and digit',
+    },
+    {
+      id: 3,
+      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      message: 'One special character',
+    },
+  ];
 
   // handlers
   const onSubmit: SubmitHandler<TSignupInput> = (data) => {
@@ -48,13 +58,13 @@ const SignUpForm: React.FC = ({}) => {
   };
 
   return (
-    <>
-      <div className="space-y-8px self-start md:text-center">
+    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white">
+      <header className="space-y-8px self-start md:text-center">
         <h1 className="form-headline">Create your workspace</h1>
         <p className="text-slate-md">
           Join the editorial approach to task management.
         </p>
-      </div>
+      </header>
       <form
         className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
         onSubmit={handleSubmit(onSubmit)}
@@ -123,6 +133,7 @@ const SignUpForm: React.FC = ({}) => {
             label="password"
             placeholder="Password"
             type="password"
+            showPassIcon
           />
         </div>
         <div className="flex flex-col gap-6px">
@@ -142,27 +153,22 @@ const SignUpForm: React.FC = ({}) => {
         </div>
 
         {/* password validation */}
-        <div className="hidden md:block space-y-1.75 rounded-8px p-16px bg-slate-lighter md:col-span-2">
-          <PassValidationItem
-            label="At least 8 characters"
-            isValid={isPassLengthValid}
-          />
-          <PassValidationItem
-            label="One uppercase, lowercase, and digit"
-            isValid={isPassFormateValid}
-          />
-          <PassValidationItem
-            label="One special character"
-            isValid={hasSpecialChar}
-          />
-        </div>
+        <ul className="hidden md:block space-y-1.75 rounded-8px p-16px bg-slate-lighter md:col-span-2">
+          {passValidations.map((validation) => (
+            <PassValidationItem
+              key={validation.id}
+              label={validation.message}
+              isValid={validation.condition}
+            />
+          ))}
+        </ul>
 
         {/* submit */}
         <Button
           className="md:col-span-2 py-14px"
           disabled={!isValid || isPending}
         >
-          Create Account
+          {isPending ? 'Submitting...' : 'Create Account'}
         </Button>
       </form>
 
@@ -173,7 +179,7 @@ const SignUpForm: React.FC = ({}) => {
           Log in
         </Link>
       </div>
-    </>
+    </section>
   );
 };
 

@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateNewTokens } from './features/auth/services/auth.services';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-const authRoutes = ['login', 'sign-up', 'forget-password'];
+const authRoutes = ['login', 'sign-up', 'forgot-password', 'reset-password'];
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
   const cookies = request.cookies;
 
   const accessToken = cookies.get('access_token')?.value;
@@ -63,7 +64,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - specific public assets like .svg, .png, .jpg, etc.
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff|woff2)$).*)',
   ],
 };

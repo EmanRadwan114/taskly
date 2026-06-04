@@ -7,14 +7,20 @@ import EyeHide from '@/assets/icons/eye-hide.svg';
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
   icon?: ReactNode;
+  showPassIcon?: boolean;
 }
 
-const Input: React.FC<IProps> = ({ variant = 'default', icon, ...props }) => {
+const Input: React.FC<IProps> = ({
+  variant = 'default',
+  icon,
+  showPassIcon = false,
+  ...props
+}) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const inputVariants = {
     default:
-      'bg-surface-high placeholder:text-accent text-secondary focus-within:outline-primary focus-visible:outline-primary',
+      'bg-surface-high placeholder:text-secondary-light text-secondary focus-within:outline-primary focus-visible:outline-primary',
     error:
       'bg-error-background text-error-dark focus-within:outline-error-dark focus-visible:outline-error-dark',
   };
@@ -24,7 +30,7 @@ const Input: React.FC<IProps> = ({ variant = 'default', icon, ...props }) => {
     >
       <input
         {...props}
-        className={`w-3/4 focus-within:outline-0 focus-visible:outline-0 ps-16px py-14px`}
+        className={`w-3/4 focus-within:outline-0 focus-visible:outline-0 bg-transparent autofill:transition-colors autofill:duration-[5000000s] ps-16px py-14px`}
         type={
           props.type === 'password'
             ? isPasswordShown
@@ -35,16 +41,16 @@ const Input: React.FC<IProps> = ({ variant = 'default', icon, ...props }) => {
       />
 
       {/* password show & hide icon */}
-      {props.type === 'password' && (
+      {props.type === 'password' && showPassIcon && (
         <div
           className="w-1/4 cursor-pointer flex items-center justify-end px-16px py-14px"
           onClick={() => setIsPasswordShown((s) => !s)}
           title={`${isPasswordShown ? 'Hide Password' : 'Show Password'}`}
         >
           {isPasswordShown ? (
-            <EyeShow className="h-full w-5.5 text-secondary-light" />
-          ) : (
             <EyeHide className="h-full w-5 text-secondary-light" />
+          ) : (
+            <EyeShow className="h-full w-5.5 text-secondary-light" />
           )}
         </div>
       )}

@@ -3,28 +3,27 @@ import Logo from '@/shared/components/ui/Logo';
 import Image from 'next/image';
 import authGradientImg from '@/assets/imgs/auth-gradient.png';
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen md:gap-y-16px relative">
-      <header className="py-6.5">
+    <div className={`flex flex-col min-h-screen relative`}>
+      <header className="py-6.5 shrink-0">
         <Container>
           <Logo />
         </Container>
       </header>
-      <main className="w-full flex items-center justify-start sm:justify-center mb-48px md:max-w-5/6 lg:max-w-4/6 md:mx-auto xl:max-w-1/2 h-full">
-        <Container>
-          <div className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form">
-            {children}
-          </div>
+      <main className="w-full flex flex-col items-center justify-center pb-48px md:py-48px md:max-w-5/6 lg:max-w-4/6 md:mx-auto xl:max-w-1/2 flex-1 md:flex-none">
+        <Container className="flex-1 flex flex-col justify-center items-center">
+          {children}
         </Container>
       </main>
+
       <Image
         src={authGradientImg}
-        alt="Gradient Background"
+        alt="blue radial gradient background"
         className="absolute inset-e-0 bottom-0 -z-10 hidden md:block"
         width={300}
         height={300}

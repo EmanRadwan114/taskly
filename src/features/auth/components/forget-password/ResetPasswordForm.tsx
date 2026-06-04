@@ -5,26 +5,35 @@ import FormField from '@/shared/components/ui/FormField';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateAccount } from '../../hooks/signup.hooks';
 import Label from '@/shared/components/ui/Label';
 import PassValidationItem from '../ui/PassValidationItem';
 import {
   resetPasswordSchema,
   TResetPasswordInput,
 } from '../../validation/reset-password.validation';
-import { useState } from 'react';
 import CheckFill from '@/assets/icons/check-fill.svg';
 import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
 import { useMobile } from '@/shared/hooks/useMobile';
+import { useResetPassword } from '../../hooks/reset-password.hooks';
+import ArrowRight from '@/assets/icons/arrow-right.svg';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const ResetPasswordForm: React.FC = ({}) => {
+interface IProps {
+  accessToken: string;
+}
+
+const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
+  const router = useRouter();
+
   const { isMobile } = useMobile();
+
   const {
     handleSubmit,
     control,
     watch,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<TResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'onBlur',
@@ -34,7 +43,11 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleCreateAccount, isPending } = useCreateAccount();
+  const {
+    onHandleResetPassword,
+    isPending,
+    state: resetPassActionState,
+  } = useResetPassword(accessToken);
 
   // watchers
   const watchedPassword = watch('password');
@@ -61,7 +74,7 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
     {
       id: 5,
-      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
       message: 'Special character',
     },
   ];
@@ -83,7 +96,7 @@ const ResetPasswordForm: React.FC = ({}) => {
     },
     {
       id: 4,
-      condition: /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/.test(watchedPassword),
+      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
       message: 'Special character (e.g. !@#$)',
     },
   ];
@@ -92,13 +105,30 @@ const ResetPasswordForm: React.FC = ({}) => {
     ? passValidationsMobile
     : passValidationsDesktop;
 
+  // effects to redirct to login after success reset
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    if (timeout) clearTimeout(timeout);
+
+    if (resetPassActionState?.success) {
+      timeout = setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [resetPassActionState]);
+
   // handlers
   const onSubmit: SubmitHandler<TResetPasswordInput> = (data) => {
-    // onHandleCreateAccount(data);
+    onHandleResetPassword(data);
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white">
+    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white 2xl:max-w-3/4 2xl:mx-auto">
       <header className="space-y-8px self-start text-center md:text-start">
         <h1 className="form-headline">Create a New Password</h1>
         <p className="text-slate-md">
@@ -143,7 +173,7 @@ const ResetPasswordForm: React.FC = ({}) => {
               label="confirm password"
               placeholder="Repeat your password"
               type="password"
-              className={`border border-slate-light/30 ${!errors.password && 'bg-surface-low'}`}
+              className={`border border-slate-light/30 ${!errors.confirm_password && 'bg-surface-low'}`}
               containerClassName="py-3.25"
             />
           </div>
@@ -174,19 +204,27 @@ const ResetPasswordForm: React.FC = ({}) => {
           </div>
 
           {/* submit */}
-          <Button
-            className="md:col-span-2 py-14px"
-            disabled={!isValid || isPending}
-          >
+          <Button className="md:col-span-2 py-14px" disabled={isPending}>
             {isPending ? 'Submitting...' : 'Update Password'}
           </Button>
         </form>
 
+        {/* success msg */}
+        {resetPassActionState?.success && (
+          <div className="bg-success/20 backdrop-blur-md flex justify-center items-center p-16px rounded-4px">
+            <p className="text-success-text font-semibold text-center">
+              Your password has been updated successfully. <br /> You can now
+              log in
+            </p>
+          </div>
+        )}
+
         {/* back to sign in link */}
         <Link
           href="/login"
-          className="text-primary font-semibold flex justify-center"
+          className="text-primary font-semibold flex justify-center items-center gap-6px"
         >
+          <ArrowRight className="size-4 text-primary rotate-180" />
           Back to Log in
         </Link>
       </div>

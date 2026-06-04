@@ -1,5 +1,5 @@
 import { requestHeaders } from '@/shared/utils/utils';
-import { ISignUp } from '../types/signup.types';
+import { ISignUp } from '../types/auth.types';
 import { TLoginInput } from '../validation/login.validation';
 
 // ^------------------------ SignUp -------------------------

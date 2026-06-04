@@ -16,6 +16,7 @@ import Image from 'next/image';
 import gradientImg from '@/assets/imgs/auth-gradient.png';
 import SignupLink from './SignupLink';
 import { useMobile } from '@/shared/hooks/useMobile';
+import { useResetPassRedirect } from '../../hooks/reset-password.hooks';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -24,7 +25,7 @@ const LoginForm: React.FC = ({}) => {
   const {
     handleSubmit,
     control,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<TLoginInput>({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
@@ -36,13 +37,16 @@ const LoginForm: React.FC = ({}) => {
 
   const { onHandleLogin, isPending } = useLogin(rememberMe);
 
+  // redirect to reset-password hook
+  const hook = useResetPassRedirect();
+
   // handlers
   const onSubmit: SubmitHandler<TLoginInput> = (data) => {
     onHandleLogin(data);
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:shadow-form md:bg-white md:max-w-[90%] md:mx-auto flex flex-col flex-1 pt-10 md:p-48px">
+    <section className="w-full space-y-10 md:rounded-8px md:shadow-form md:bg-white md:max-w-[90%] md:mx-auto 2xl:max-w-3/4 flex flex-col flex-1 pt-10 md:p-48px">
       <div className="gap-y-10 flex flex-col flex-1">
         <header className="space-y-8px text-start md:text-center">
           <h1 className="form-headline text-center">Welcome Back</h1>
@@ -133,7 +137,7 @@ const LoginForm: React.FC = ({}) => {
           {/* submit */}
           <Button
             className="md:col-span-2 py-14px gap-x-8px"
-            disabled={!isValid || isPending}
+            disabled={isPending}
           >
             <span className="hidden md:block">
               {isPending ? 'Submitting...' : 'Log In'}

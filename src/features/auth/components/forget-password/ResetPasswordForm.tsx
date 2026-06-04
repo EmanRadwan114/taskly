@@ -20,7 +20,6 @@ import { useMobile } from '@/shared/hooks/useMobile';
 
 const ResetPasswordForm: React.FC = ({}) => {
   const { isMobile } = useMobile();
-
   const {
     handleSubmit,
     control,

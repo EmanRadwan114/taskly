@@ -6,13 +6,15 @@ import Button from './ui/Button';
 import { IUser } from '@/features/auth/types/auth.types';
 import { useAppDispatch, useAppSelector } from '../libs/store/store';
 import { setUser } from '../libs/store/slices/auth.slice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import LogoutBtn from './ui/LogoutBtn';
 
 interface Props {
   toggleSideBar?: () => void;
   user: IUser;
 }
 const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { isMobile } = useMobile(1024);
 
   const dispatch = useAppDispatch();
@@ -21,6 +23,9 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
   useEffect(() => {
     if (user) dispatch(setUser(user));
   }, [user, dispatch]);
+
+  // handlers
+  const toggleSubMenu = () => setIsSubMenuOpen((c) => !c);
 
   // get user initials
   const userInitials =
@@ -34,10 +39,21 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
 
   // avatar
   const avatar = (
-    <div className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10">
-      <span className="uppercase text-white text-[16px] font-bold leading-6">
-        {userInitials}
-      </span>
+    <div className="relative">
+      <div
+        className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10 cursor-pointer"
+        onClick={toggleSubMenu}
+      >
+        <span className="uppercase text-white text-[16px] font-bold leading-6">
+          {userInitials}
+        </span>
+      </div>
+
+      {isSubMenuOpen && (
+        <div className="absolute inset-e-0 -bottom-14 bg-white shadow-primary p-4px rounded-4px w-50 z-9999">
+          <LogoutBtn />
+        </div>
+      )}
     </div>
   );
 
@@ -48,10 +64,10 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
         {/* name */}
         <div className="flex flex-col items-end">
           <h3 className="font-semibold leading-5 text-slate-dark capitalize">
-            Mahmoud Taha
+            {user?.name}
           </h3>
           <span className="text-[10px] font-bold tracking-[1px] leading-5 text-primary uppercase">
-            Project Manager
+            {user?.job_title}
           </span>
         </div>
         {/* avatar */}

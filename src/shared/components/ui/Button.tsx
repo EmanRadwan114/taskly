@@ -15,7 +15,7 @@ const Button: React.FC<IProps> = ({
       'text-white rounded-4px primary-gradient shadow-primary font-semibold disabled:opacity-70',
     secondary:
       'text-primary [&>*]:text-primary font-semibold disabled:text-secondary-light disabled:[&>*]:text-secondary-light ',
-    ghost: 'text-slate-md/60 font-medium',
+    ghost: 'text-slate-md/60 font-medium disabled:opacity-70',
     tertiay:
       'bg-surface-low text-primary disabled:text-secondary-light rounded-4px font-semibold gap-8px',
   };

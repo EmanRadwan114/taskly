@@ -4,6 +4,7 @@ import {
   ResponseCookie,
 } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export const requestHeaders = {
   'Content-Type': 'application/json',
@@ -44,10 +45,9 @@ export const fetchWithAuthServer = async (
   const accessToken = cookieStore.get('access_token');
   const refreshToken = cookieStore.get('refresh_token');
 
-  // check token
-  if (!refreshToken?.value || (!refreshToken?.value && !accessToken?.value)) {
-    console.log('unauthorized');
-    throw new Error('Unauthorized');
+  // 1. If tokens are missing (like after logout)
+  if (!refreshToken?.value) {
+    redirect('/login');
   }
 
   // refresh access token
@@ -63,10 +63,8 @@ export const fetchWithAuthServer = async (
         path: '/',
       } as RequestCookie);
     } catch (error) {
-      // redirect to login if refresh token fails
       cookieStore.delete('refresh_token');
-      console.log('unauthorized');
-      throw new Error('Unauthorized');
+      redirect('/login');
     }
   }
 
@@ -74,16 +72,26 @@ export const fetchWithAuthServer = async (
     const response = await fetch(`${process.env.BASE_URL}/${endpoint}`, {
       headers: {
         ...requestHeaders,
-        Authorization: `Bearer ${accessToken?.value}`,
+        Authorization: `Bearer ${cookieStore.get('access_token')?.value}`, // Get fresh value
       },
       ...options,
     });
 
-    const data = await response.json();
+    // Handle empty responses safely to avoid JSON parse errors
+    if (
+      response.status === 204 ||
+      response.headers.get('content-length') === '0'
+    ) {
+      return null;
+    }
 
+    const data = await response?.json();
     if (!response.ok) throw new Error(data?.msg || 'Failed to fetch data');
     return data;
   } catch (error) {
-    // throw new Error('Failed to fetch data');
+    if (error instanceof Error && error.message.includes('403')) {
+      redirect('/login');
+    }
+    throw new Error('Failed to fetch data');
   }
 };

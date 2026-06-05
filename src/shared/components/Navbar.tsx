@@ -3,17 +3,28 @@
 import { useMobile } from '@/shared/hooks/useMobile';
 import Menu from '@/assets/icons/menu.svg';
 import Button from './ui/Button';
+import { IUser } from '@/features/auth/types/auth.types';
 
 interface Props {
   toggleSideBar?: () => void;
+  user: IUser;
 }
-const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
+const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
   const { isMobile } = useMobile(1024);
+
+  const userInitials =
+    user?.name.split(' ').length > 1
+      ? user?.name
+          .split(' ')
+          .slice(0, 2)
+          .map((w) => w[0])
+          .join('')
+      : user?.name.split('').slice(0, 2).join('');
 
   const avatar = (
     <div className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10">
       <span className="uppercase text-white text-[16px] font-bold leading-6">
-        MT
+        {userInitials}
       </span>
     </div>
   );

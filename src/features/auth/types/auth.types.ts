@@ -11,3 +11,12 @@ export interface IResetPassword {
   password: string;
   accessToken: string;
 }
+
+export interface IUser {
+  email: string;
+  email_verified: boolean;
+  job_title: string;
+  name: string;
+  phone_verified: boolean;
+  sub: string;
+}

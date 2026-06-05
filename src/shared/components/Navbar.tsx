@@ -4,6 +4,9 @@ import { useMobile } from '@/shared/hooks/useMobile';
 import Menu from '@/assets/icons/menu.svg';
 import Button from './ui/Button';
 import { IUser } from '@/features/auth/types/auth.types';
+import { useAppDispatch, useAppSelector } from '../libs/store/store';
+import { setUser } from '../libs/store/slices/auth.slice';
+import { useEffect } from 'react';
 
 interface Props {
   toggleSideBar?: () => void;
@@ -12,6 +15,14 @@ interface Props {
 const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
   const { isMobile } = useMobile(1024);
 
+  const dispatch = useAppDispatch();
+
+  // dispatch user to store
+  useEffect(() => {
+    if (user) dispatch(setUser(user));
+  }, [user, dispatch]);
+
+  // get user initials
   const userInitials =
     user?.name.split(' ').length > 1
       ? user?.name
@@ -21,6 +32,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
           .join('')
       : user?.name.split('').slice(0, 2).join('');
 
+  // avatar
   const avatar = (
     <div className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10">
       <span className="uppercase text-white text-[16px] font-bold leading-6">

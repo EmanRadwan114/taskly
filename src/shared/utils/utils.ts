@@ -82,9 +82,6 @@ export const fetchWithAuthServer = async (
     const data = await response.json();
 
     if (!response.ok) throw new Error(data?.msg || 'Failed to fetch data');
-
-    console.log(data, 'data');
-
     return data;
   } catch (error) {
     // throw new Error('Failed to fetch data');

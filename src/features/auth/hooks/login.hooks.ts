@@ -1,7 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useTransition } from 'react';
 import { toast } from 'react-toastify';
-import { TSignupInput } from '../validation/signup.validation';
 import { userLoginAction } from '../server-actions/login.actions';
 import { TLoginInput } from '../validation/login.validation';
 

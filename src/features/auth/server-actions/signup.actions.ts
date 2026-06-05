@@ -23,7 +23,10 @@ export const createUserAccountAction = async (
     // set token to cookies
     const cookieStore = await cookies();
 
-    cookieStore.set('access_token', response?.access_token, cookieConfig);
+    cookieStore.set('access_token', response?.access_token, {
+      ...cookieConfig,
+      maxAge: response?.expires_in,
+    });
     cookieStore.set('refresh_token', response?.refresh_token, cookieConfig);
 
     return {

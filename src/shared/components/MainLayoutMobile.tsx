@@ -5,18 +5,22 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { IUser } from '@/features/auth/types/auth.types';
 
-const MainLayoutMobile: React.FC = ({}) => {
+interface Props {
+  user: IUser;
+}
+
+const MainLayoutMobile: React.FC<Props> = ({ user }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
   const toggleSideBar = () => {
     setIsSideBarOpen((s) => !s);
-    console.log('hi');
   };
   return (
     <>
-      <Navbar toggleSideBar={toggleSideBar} />
+      <Navbar toggleSideBar={toggleSideBar} user={user} />
       <Sidebar isOpen={isSideBarOpen} />
       <div
         className={`fixed lg:hidden inset-0 transition-all duration-300 ${isSideBarOpen ? 'bg-slate-dark/40 backdrop-blur-xs z-10' : 'bg-none static'}`}
@@ -35,6 +39,7 @@ const MainLayoutMobile: React.FC = ({}) => {
                   <Link
                     href={link.href}
                     className={` flex flex-col items-center justify-center text-center sm:p-6px hover:text-primary-container gap-4px group-hover:text-primary transition-all duration-300 ${isLinkActive ? 'text-primary-container' : 'text-slate-dark/70'} capitalize`}
+                    key={link.id}
                   >
                     <span className={`w-5 transition-transform duration-300`}>
                       <Icon />

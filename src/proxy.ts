@@ -45,6 +45,7 @@ export default async function proxy(request: NextRequest) {
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
         path: '/',
+        maxAge: result?.expires_in,
       } as RequestCookie);
 
       return response;

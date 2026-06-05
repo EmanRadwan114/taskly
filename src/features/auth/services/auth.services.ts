@@ -52,3 +52,17 @@ export const generateNewTokens = async (refreshToken: string) => {
 
   return result;
 };
+
+// ^------------------------ Logout -------------------------
+export const userLogout = async (accessToken: string) => {
+  console.log(accessToken);
+
+  const response = await fetch(`${process.env.BASE_URL}/auth/v1/logout`, {
+    method: 'POST',
+    headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) throw new Error('Failed to logout');
+
+  return true;
+};

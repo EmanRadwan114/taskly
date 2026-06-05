@@ -2,9 +2,13 @@
 
 import { useMobile } from '@/shared/hooks/useMobile';
 import Menu from '@/assets/icons/menu.svg';
+import Button from './ui/Button';
 
-const Navbar: React.FC = ({}) => {
-  const { isMobile } = useMobile();
+interface Props {
+  toggleSideBar?: () => void;
+}
+const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
+  const { isMobile } = useMobile(1024);
 
   const avatar = (
     <div className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10">
@@ -38,7 +42,13 @@ const Navbar: React.FC = ({}) => {
     <div className="flex justify-between items-center">
       {/* menu burger */}
       <div className="flex gap-12px items-center">
-        <Menu className="text-slate-dark w-6.5 cursor-pointer p-1" />
+        <Button
+          className="p-1! cursor-pointer!"
+          variant="ghost"
+          onClick={toggleSideBar}
+        >
+          <Menu className="text-slate-dark w-5" />
+        </Button>
         <h3 className="font-bold text-[20px] leading-7 tracking-[-0.5px] uppercase">
           Taskly
         </h3>

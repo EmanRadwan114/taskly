@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { signupSchema, TSignupInput } from '../../validation/signup.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateAccount } from '../../hooks/signup.hooks';
 import Label from '@/shared/components/ui/Label';
+import { useCreateAccount } from '../../hooks/auth.hooks';
 
 const SignUpForm: React.FC = ({}) => {
   const {

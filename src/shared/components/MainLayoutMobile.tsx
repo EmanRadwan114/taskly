@@ -12,7 +12,7 @@ interface Props {
 }
 
 const MainLayoutMobile: React.FC<Props> = ({ user }) => {
-  const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const pathname = usePathname();
 
   const toggleSideBar = () => {

@@ -1,6 +1,5 @@
 'use client';
 
-import { useMobile } from '@/shared/hooks/useMobile';
 import Menu from '@/assets/icons/menu.svg';
 import Button from './ui/Button';
 import { IUser } from '@/features/auth/types/auth.types';
@@ -15,7 +14,7 @@ interface Props {
 }
 const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const { isMobile } = useMobile(1024);
+  const isMobileLayout = toggleSideBar !== undefined;
 
   const dispatch = useAppDispatch();
 
@@ -99,7 +98,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
 
   return (
     <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-12px px-24px">
-      {isMobile ? mobileNav : desktopNav}
+      {isMobileLayout ? mobileNav : desktopNav}
     </nav>
   );
 };

@@ -14,19 +14,16 @@ import {
 import CheckFill from '@/assets/icons/check-fill.svg';
 import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
-import { useMobile } from '@/shared/hooks/useMobile';
-import { useResetPassword } from '../../hooks/reset-password.hooks';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMobile } from '@/shared/hooks/shared.hooks';
+import { useResetPassword } from '../../hooks/forget-password.hooks';
 
 interface IProps {
   accessToken: string;
 }
 
 const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
-  const router = useRouter();
-
   const { isMobile } = useMobile();
 
   const {

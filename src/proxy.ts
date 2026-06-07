@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateNewTokens } from './features/auth/services/auth.services';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import {
+  ACCESS_TOKEN_KEY,
+  cookieConfig,
+  REFRESH_TOKEN_EXPIRES_AT_KEY,
+  REFRESH_TOKEN_KEY,
+  REFRESH_TOKEN_SINGLE_SESSION,
+} from './shared/utils/variables.utils';
 
 const authRoutes = ['login', 'sign-up', 'forgot-password', 'reset-password'];
 
@@ -13,15 +20,19 @@ export default async function proxy(request: NextRequest) {
 
   const cookies = request.cookies;
 
-  const accessToken = cookies.get('access_token')?.value;
-  const refreshToken = cookies.get('refresh_token')?.value;
+  const accessToken = cookies.get(ACCESS_TOKEN_KEY)?.value;
+  const refreshToken = cookies.get(REFRESH_TOKEN_KEY)?.value;
+  const rememberMeExpire = cookies.get(REFRESH_TOKEN_EXPIRES_AT_KEY)?.value;
 
   const isAuthRoute = authRoutes.some((route) =>
     pathname.startsWith(`/${route}`)
   );
 
-  // exclude auth routes form tokens check
-  if (isAuthRoute)
+  // auth routes
+  if (isAuthRoute && refreshToken)
+    return NextResponse.redirect(new URL('/', request.nextUrl));
+
+  if (isAuthRoute && !refreshToken)
     return NextResponse.next({ request: { headers: requestHeaders } });
 
   // login if both tokens expired
@@ -38,13 +49,19 @@ export default async function proxy(request: NextRequest) {
         request: { headers: requestHeaders },
       });
 
+      if (rememberMeExpire) {
+        response.cookies.set({
+          name: REFRESH_TOKEN_KEY,
+          value: result?.refresh_token,
+          ...cookieConfig,
+          expires: new Date(+rememberMeExpire),
+        } as RequestCookie);
+      }
+
       response.cookies.set({
-        name: 'access_token',
+        name: ACCESS_TOKEN_KEY,
         value: result?.access_token,
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        path: '/',
+        ...cookieConfig,
         maxAge: result?.expires_in,
       } as RequestCookie);
 
@@ -54,7 +71,8 @@ export default async function proxy(request: NextRequest) {
       const errorResponse = NextResponse.redirect(
         new URL('/login', request.nextUrl)
       );
-      errorResponse.cookies.delete('refresh_token');
+      errorResponse.cookies.delete(REFRESH_TOKEN_KEY);
+      errorResponse.cookies.delete(REFRESH_TOKEN_EXPIRES_AT_KEY);
       return errorResponse;
     }
   }

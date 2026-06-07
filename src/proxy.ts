@@ -28,8 +28,11 @@ export default async function proxy(request: NextRequest) {
     pathname.startsWith(`/${route}`)
   );
 
-  // exclude auth routes form tokens check
-  if (isAuthRoute)
+  // auth routes
+  if (isAuthRoute && refreshToken)
+    return NextResponse.redirect(new URL('/', request.nextUrl));
+
+  if (isAuthRoute && !refreshToken)
     return NextResponse.next({ request: { headers: requestHeaders } });
 
   // login if both tokens expired

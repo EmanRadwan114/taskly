@@ -1,12 +1,10 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { forgetPassword } from '../services/forget-password.services';
+import { resetPassword } from '../services/forget-password.services';
 
-export const forgetPasswordAction = async (
-  prevState: any,
-  formData: FormData
-) => {
+// ^ ---------------------------- Forget Password Action ----------------------------
+export const forgetPasswordAction = async (_: unknown, formData: FormData) => {
   const values = {
     email: formData.get('email') as string,
   };
@@ -22,6 +20,32 @@ export const forgetPasswordAction = async (
     return {
       success: false,
       message: 'Something went wrong',
+    };
+  }
+};
+
+// ^ ---------------------------- Reset Password Action ----------------------------
+export const resetPasswordAction = async (
+  accessToken: string,
+  _: unknown,
+  formData: FormData
+) => {
+  const values = {
+    password: formData.get('password') as string,
+    accessToken,
+  };
+
+  try {
+    await resetPassword(values);
+
+    return {
+      success: true,
+      message: 'Password reset successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Something went wrong',
     };
   }
 };

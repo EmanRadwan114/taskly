@@ -9,8 +9,8 @@ import LogoIcon from '@/assets/icons/logo.svg';
 import Button from './ui/Button';
 import LogoutBtn from './ui/LogoutBtn';
 import { useState } from 'react';
-import { useMobile } from '../hooks/useMobile';
 import { asideLinks } from '../data/static-data';
+import { useMobile } from '../hooks/shared.hooks';
 
 interface IProps {
   isOpen?: boolean;

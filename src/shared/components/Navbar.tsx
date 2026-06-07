@@ -1,6 +1,5 @@
 'use client';
 
-import { useMobile } from '@/shared/hooks/useMobile';
 import Menu from '@/assets/icons/menu.svg';
 import Button from './ui/Button';
 import { IUser } from '@/features/auth/types/auth.types';
@@ -8,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../libs/store/store';
 import { setUser } from '../libs/store/slices/auth.slice';
 import { useEffect, useState } from 'react';
 import LogoutBtn from './ui/LogoutBtn';
+import { useMobile } from '../hooks/shared.hooks';
 
 interface Props {
   toggleSideBar?: () => void;

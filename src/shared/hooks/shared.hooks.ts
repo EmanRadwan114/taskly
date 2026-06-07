@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+// ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
   const INITIAL_TIME = 5 * 60; //5mins
 
@@ -36,4 +37,22 @@ export const useTimer = () => {
   const formatedTime = `${String(mins).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return { formatedTime, isRunning, startTimer };
+};
+
+// ^--------------------- Mobile device hook ------------------------
+export const useMobile = (breakPoint: number = 768) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= breakPoint);
+    };
+
+    checkScreenSize();
+
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  return { isMobile };
 };

@@ -7,11 +7,6 @@ export interface ISignUp {
   };
 }
 
-export interface IResetPassword {
-  password: string;
-  accessToken: string;
-}
-
 export interface IUser {
   email: string;
   email_verified: boolean;

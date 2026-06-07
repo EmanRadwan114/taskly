@@ -10,13 +10,13 @@ import Label from '@/shared/components/ui/Label';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 import EmailIcon from '@/assets/icons/email.svg';
 import { loginSchema, TLoginInput } from '../../validation/login.validation';
-import { useLogin } from '../../hooks/login.hooks';
 import LockIcon from '@/assets/icons/lock.svg';
 import Image from 'next/image';
 import gradientImg from '@/assets/imgs/auth-gradient.png';
 import SignupLink from './SignupLink';
-import { useMobile } from '@/shared/hooks/useMobile';
-import { useResetPassRedirect } from '../../hooks/reset-password.hooks';
+import { useMobile } from '@/shared/hooks/shared.hooks';
+import { useResetPassRedirect } from '../../hooks/forget-password.hooks';
+import { useLogin } from '../../hooks/auth.hooks';
 
 const LoginForm: React.FC = ({}) => {
   const [rememberMe, setRememberMe] = useState(false);

@@ -16,7 +16,7 @@ import {
 } from '../../validation/forget-password.validation';
 import { useForgetPassword } from '../../hooks/forget-password.hooks';
 import { useEffect, useState } from 'react';
-import { useTimer } from '../../hooks/useTimer';
+import { useTimer } from '../../../../shared/hooks/shared.hooks';
 
 const ForgetPasswordForm: React.FC = ({}) => {
   const [resendCount, setResendCount] = useState<number>(0);

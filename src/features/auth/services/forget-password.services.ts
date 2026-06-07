@@ -1,6 +1,6 @@
 import { requestHeaders } from '@/shared/utils/utils';
 import { TforgetPasswordInput } from '../validation/forget-password.validation';
-import { IResetPassword } from '../types/auth.types';
+import { IResetPassword } from '../types/forget-password.types';
 
 // ^---------------------- Forget Password ------------------------^
 export const forgetPassword = async ({ email }: TforgetPasswordInput) => {

@@ -1,5 +1,5 @@
 'use client';
-import { useLogout } from '@/features/auth/hooks/logout.hooks';
+import { useLogout } from '@/features/auth/hooks/auth.hooks';
 import Button from './Button';
 import LogoutIcon from '@/assets/icons/logout.svg';
 

@@ -1,10 +1,10 @@
-import { requestHeaders } from '@/shared/utils/utils';
 import { TforgetPasswordInput } from '../validation/forget-password.validation';
 import { IResetPassword } from '../types/forget-password.types';
+import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
 
 // ^---------------------- Forget Password ------------------------^
 export const forgetPassword = async ({ email }: TforgetPasswordInput) => {
-  const response = await fetch(`${process.env.BASE_URL}/auth/v1/recover`, {
+  const response = await fetch(`${BASE_URL}/auth/v1/recover`, {
     method: 'POST',
     headers: requestHeaders,
     body: JSON.stringify({ email }),
@@ -23,7 +23,7 @@ export const resetPassword = async ({
   password,
   accessToken,
 }: IResetPassword) => {
-  const response = await fetch(`${process.env.BASE_URL}/auth/v1/user`, {
+  const response = await fetch(`${BASE_URL}/auth/v1/user`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${accessToken}`, ...requestHeaders },
     body: JSON.stringify({ password }),

@@ -2,9 +2,17 @@
 
 import { cookies } from 'next/headers';
 import { userLogin } from '../services/auth.services';
-import { cookieConfig } from '@/shared/utils/utils';
 import { userLogout } from '../services/auth.services';
 import { createUserAccount } from '../services/auth.services';
+import {
+  ACCESS_TOKEN_KEY,
+  cookieConfig,
+  REFRESH_TOKEN_EXPIRES_AT_KEY,
+  REFRESH_TOKEN_KEY,
+  REFRESH_TOKEN_SINGLE_SESSION,
+  REMEMBER_ME_TOKEN_MONTHLY,
+} from '@/shared/utils/variables.utils';
+import { getExpireDateInMs } from '@/shared/utils/functions.utils';
 
 // ^ ---------------------------- Create User Account Action ----------------------------
 export const createUserAccountAction = async (
@@ -26,11 +34,31 @@ export const createUserAccountAction = async (
     // set token to cookies
     const cookieStore = await cookies();
 
-    cookieStore.set('access_token', response?.access_token, {
+    cookieStore.set(ACCESS_TOKEN_KEY, response?.access_token, {
       ...cookieConfig,
       maxAge: response?.expires_in,
     });
-    cookieStore.set('refresh_token', response?.refresh_token, cookieConfig);
+    cookieStore.set(REFRESH_TOKEN_KEY, response?.refresh_token, {
+      ...cookieConfig,
+      maxAge: REFRESH_TOKEN_SINGLE_SESSION,
+    });
+
+    /*
+    store 12 hr date to update the newly generated refresh token expire date
+    when generating a new access token
+    */
+    let refreshTokenExpireDateCookie = getExpireDateInMs(
+      REFRESH_TOKEN_SINGLE_SESSION
+    );
+
+    cookieStore.set(
+      REFRESH_TOKEN_EXPIRES_AT_KEY,
+      refreshTokenExpireDateCookie,
+      {
+        ...cookieConfig,
+        maxAge: REFRESH_TOKEN_SINGLE_SESSION,
+      }
+    );
 
     return {
       success: true,
@@ -62,19 +90,43 @@ export const userLoginAction = async (
     // set token to cookies
     const cookieStore = await cookies();
 
+    // default value 12 hr
+    let refreshTokenMaxAge: number = REFRESH_TOKEN_SINGLE_SESSION; //12hrs by default
+
+    /*
+    store 12 hr date to update the newly generated refresh token expire date
+    when generating a new access token
+    */
+    //  default value 12 hr
+    let refreshTokenExpireDateCookie = getExpireDateInMs(
+      REFRESH_TOKEN_SINGLE_SESSION
+    );
+
     if (rememberMe) {
-      cookieStore.set('refresh_token', response?.refresh_token, {
-        ...cookieConfig,
-        maxAge: 30 * 24 * 60 * 60, //1 month
-      });
+      refreshTokenMaxAge = REMEMBER_ME_TOKEN_MONTHLY; //1month
+      refreshTokenExpireDateCookie = getExpireDateInMs(
+        REMEMBER_ME_TOKEN_MONTHLY
+      ); //1month
     }
 
-    cookieStore.set('access_token', response?.access_token, {
+    cookieStore.set(ACCESS_TOKEN_KEY, response?.access_token, {
       ...cookieConfig,
       maxAge: response?.expires_in,
     });
 
-    cookieStore.set('refresh_token', response?.refresh_token, cookieConfig);
+    cookieStore.set(REFRESH_TOKEN_KEY, response?.refresh_token, {
+      ...cookieConfig,
+      maxAge: refreshTokenMaxAge,
+    });
+
+    cookieStore.set(
+      REFRESH_TOKEN_EXPIRES_AT_KEY,
+      refreshTokenExpireDateCookie,
+      {
+        ...cookieConfig,
+        maxAge: refreshTokenMaxAge,
+      }
+    );
 
     return {
       success: true,
@@ -101,8 +153,9 @@ export const userLogoutAction = async (_: unknown) => {
     }
 
     // delete tokens
-    cookieStore.delete('access_token');
-    cookieStore.delete('refresh_token');
+    cookieStore.delete(ACCESS_TOKEN_KEY);
+    cookieStore.delete(REFRESH_TOKEN_KEY);
+    cookieStore.delete(REFRESH_TOKEN_EXPIRES_AT_KEY);
 
     return {
       success: true,

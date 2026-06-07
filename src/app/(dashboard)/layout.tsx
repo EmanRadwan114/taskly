@@ -1,7 +1,7 @@
 import MainLayoutMobile from '@/shared/components/MainLayoutMobile';
 import Navbar from '@/shared/components/Navbar';
 import Sidebar from '@/shared/components/Sidebar';
-import { fetchWithAuthServer } from '@/shared/utils/utils';
+import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
 
 export default async function DashboardLayout({
   children,

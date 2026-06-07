@@ -40,7 +40,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
           >
             <Link
               href={link.href}
-              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-12px group-hover:text-primary transition-all duration-300 ${isLinkActive ? 'text-primary' : 'text-slate-dark'} capitalize ${isMobile && isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
+              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-12px group-hover:text-primary transition-all duration-300 capitalize ${!isMobile ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
             >
               <span
                 className={`w-4.5 transition-transform duration-300 ${isCollapsed ? 'group-hover:scale-110 mx-auto' : ''}`}
@@ -65,9 +65,9 @@ const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
     >
       <div className="flex flex-col gap-y-32px h-full">
         {isCollapsed ? (
-          <div className="flex items-center justify-center">
+          <Link href={'/'} className="flex items-center justify-center">
             <LogoIcon className="w-4.5 text-primary-container" />
-          </div>
+          </Link>
         ) : (
           <Logo />
         )}

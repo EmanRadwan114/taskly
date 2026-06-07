@@ -10,21 +10,22 @@ import Button from './ui/Button';
 import LogoutBtn from './ui/LogoutBtn';
 import { useState } from 'react';
 import { asideLinks } from '../data/static-data';
-import { useMobile } from '../hooks/shared.hooks';
 
 interface IProps {
   isOpen?: boolean;
 }
 
-const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
+const Sidebar: React.FC<IProps> = ({ isOpen }) => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const { isMobile } = useMobile(1024);
+  // If isOpen is passed (even as false), we are in the mobile layout.
+  // Otherwise, if isOpen is undefined, we are in the desktop layout.
+  const isMobileLayout = isOpen !== undefined;
 
   // handlers
   const toggleMenuCollapse = () => {
-    if (isMobile) return;
+    if (isMobileLayout) return;
     setIsCollapsed((c) => !c);
   };
 
@@ -40,7 +41,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
           >
             <Link
               href={link.href}
-              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-12px group-hover:text-primary transition-all duration-300 capitalize ${!isMobile ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
+              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-12px group-hover:text-primary transition-all duration-300 capitalize ${!isMobileLayout ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
             >
               <span
                 className={`w-4.5 transition-transform duration-300 ${isCollapsed ? 'group-hover:scale-110 mx-auto' : ''}`}
@@ -108,7 +109,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
   // mobile aside
   const mobileAside = (
     <aside
-      className={`sticky top-0 bottom-0 inset-s-0 p-16px h-screen bg-surface-low transition-all duration-500 z-999 ${isOpen ? 'translate-x-0 w-[256px] visible opacity-100' : '-translate-x-full w-0 invisible opacity-0 text-[0px]'}`}
+      className={`fixed top-0 bottom-0 inset-s-0 p-16px bg-surface-low transition-all duration-500 z-999 ${isOpen ? 'translate-x-0 w-[256px] visible opacity-100' : '-translate-x-full w-0 invisible opacity-0 text-[0px]'}`}
     >
       <div className={`flex flex-col gap-y-32px h-full`}>
         <Logo />
@@ -126,7 +127,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen = false }) => {
     </aside>
   );
 
-  return <>{isMobile ? mobileAside : desktopAside}</>;
+  return <>{isMobileLayout ? mobileAside : desktopAside}</>;
 };
 
 export default Sidebar;

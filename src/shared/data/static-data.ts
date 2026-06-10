@@ -10,7 +10,7 @@ export const asideLinks: {
   href: string;
   icon: string;
 }[] = [
-  { id: 1, label: 'projects', href: '/', icon: ProjectsIcon },
+  { id: 1, label: 'projects', href: '/project', icon: ProjectsIcon },
   {
     id: 2,
     label: 'project epics',

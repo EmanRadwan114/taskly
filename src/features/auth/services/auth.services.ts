@@ -1,6 +1,6 @@
 import { ISignUp } from '../types/auth.types';
-import { TLoginInput } from '../validation/login.validation';
 import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
+import { TLoginInput } from '../validation/auth.validation';
 
 // ^------------------------ SignUp -------------------------
 export const createUserAccount = async (data: ISignUp) => {

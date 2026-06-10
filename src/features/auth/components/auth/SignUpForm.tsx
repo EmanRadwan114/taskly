@@ -5,10 +5,10 @@ import FormField from '@/shared/components/ui/FormField';
 import PassValidationItem from '../ui/PassValidationItem';
 import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { signupSchema, TSignupInput } from '../../validation/signup.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Label from '@/shared/components/ui/Label';
 import { useCreateAccount } from '../../hooks/auth.hooks';
+import { signupSchema, TSignupInput } from '../../validation/auth.validation';
 
 const SignUpForm: React.FC = ({}) => {
   const {

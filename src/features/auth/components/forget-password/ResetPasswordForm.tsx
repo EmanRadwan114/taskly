@@ -7,10 +7,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Label from '@/shared/components/ui/Label';
 import PassValidationItem from '../ui/PassValidationItem';
-import {
-  resetPasswordSchema,
-  TResetPasswordInput,
-} from '../../validation/reset-password.validation';
 import CheckFill from '@/assets/icons/check-fill.svg';
 import Check from '@/assets/icons/check.svg';
 import Circle from '@/assets/icons/circle.svg';
@@ -19,6 +15,10 @@ import { useEffect } from 'react';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import { useResetPassword } from '../../hooks/forget-password.hooks';
 import { passwordRegexCheck } from '@/shared/utils/variables.utils';
+import {
+  resetPasswordSchema,
+  TResetPasswordInput,
+} from '../../validation/forget-password.validation';
 
 interface IProps {
   accessToken: string;

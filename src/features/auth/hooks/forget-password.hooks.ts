@@ -3,10 +3,12 @@ import {
   forgetPasswordAction,
   resetPasswordAction,
 } from '../server-actions/forget-password.actions';
-import { TforgetPasswordInput } from '../validation/forget-password.validation';
+import {
+  TforgetPasswordInput,
+  TResetPasswordInput,
+} from '../validation/forget-password.validation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import { TResetPasswordInput } from '../validation/reset-password.validation';
 
 // ^---------------------- Forget Password Hook ------------------------
 export const useForgetPassword = () => {

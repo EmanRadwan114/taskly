@@ -10,14 +10,20 @@ import {
   TAddProjectInput,
 } from '../validation/project.validation';
 import { useRouter } from 'next/navigation';
+import { useCreateProject } from '../hooks/project.hooks';
+import { useEffect } from 'react';
 
 const AddProjectForm: React.FC = ({}) => {
   const router = useRouter();
+
+  const { onHandleCreateProject, isPending, addProjectState } =
+    useCreateProject();
 
   const {
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm<TAddProjectInput>({
     resolver: zodResolver(addProjectSchema),
@@ -28,13 +34,20 @@ const AddProjectForm: React.FC = ({}) => {
     },
   });
 
+  useEffect(() => {
+    if (addProjectState?.success) {
+      reset({ name: '', description: '' });
+    }
+  }, [addProjectState]);
+
   // watchers
   const descriptionWatcher = watch('description');
 
   // handlers
   const onSubmit = (data: TAddProjectInput) => {
-    console.log(data);
+    onHandleCreateProject(data);
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {/* form fields */}
@@ -82,11 +95,16 @@ const AddProjectForm: React.FC = ({}) => {
             variant="ghost"
             onClick={() => router.back()}
             className="lg:w-fit! font-bold text-slate-md! text-base! order-1 lg:order-0"
+            disabled={isPending}
           >
             Back
           </Button>
-          <Button type="submit" className="lg:w-fit! text-base!">
-            Create Project
+          <Button
+            type="submit"
+            className="lg:w-fit! text-base!"
+            disabled={isPending}
+          >
+            {isPending ? 'Creating Project...' : 'Create Project'}
           </Button>
         </div>
       </div>

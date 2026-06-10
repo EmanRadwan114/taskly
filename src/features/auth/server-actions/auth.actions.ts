@@ -145,7 +145,7 @@ export const userLoginAction = async (
 export const userLogoutAction = async (_: unknown) => {
   // get access token
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get('access_token')?.value;
+  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
   try {
     if (accessToken) {

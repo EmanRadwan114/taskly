@@ -1,10 +1,6 @@
 import PlusIcon from '@/assets/icons/plus.svg';
 import ProjectCard from '@/features/projects/components/ProjectCard';
-import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
-import {
-  fetchWithAuthServer,
-  getCookieValue,
-} from '@/shared/utils/functions.utils';
+import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
 import { IProject } from '@/features/projects/types/project.types';
 import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
@@ -13,7 +9,6 @@ import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
 
 export default async function ProjectPage() {
-  const accessToken = await getCookieValue(ACCESS_TOKEN_KEY);
   const projects = await fetchWithAuthServer('rest/v1/rpc/get_projects');
 
   const displayCreateProjectCard = projects?.length % 3 !== 0;

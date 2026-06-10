@@ -4,63 +4,80 @@ import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
 
 // ^------------------------ SignUp -------------------------
 export const createUserAccount = async (data: ISignUp) => {
-  const response = await fetch(`${BASE_URL}/auth/v1/signup`, {
-    method: 'POST',
-    headers: requestHeaders,
-    body: JSON.stringify(data),
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/v1/signup`, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: JSON.stringify(data),
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) throw new Error(result?.msg || 'Failed to create account');
+    if (!response.ok)
+      throw new Error(result?.msg || 'Failed to create account');
 
-  return result;
+    return result;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };
 
 // ^------------------------ Login -------------------------
 export const userLogin = async (data: TLoginInput) => {
-  const response = await fetch(
-    `${BASE_URL}/auth/v1/token?grant_type=password`,
-    {
-      method: 'POST',
-      headers: requestHeaders,
-      body: JSON.stringify(data),
-    }
-  );
+  try {
+    const response = await fetch(
+      `${BASE_URL}/auth/v1/token?grant_type=password`,
+      {
+        method: 'POST',
+        headers: requestHeaders,
+        body: JSON.stringify(data),
+      }
+    );
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) throw new Error(result?.msg || 'Failed to login');
+    if (!response.ok) throw new Error(result?.msg || 'Failed to login');
 
-  return result;
+    return result;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };
 
 // ^------------------------ Refresh Token -------------------------
 export const generateNewTokens = async (refreshToken: string) => {
-  const response = await fetch(
-    `${BASE_URL}/auth/v1/token?grant_type=refresh_token`,
-    {
-      method: 'POST',
-      headers: requestHeaders,
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    }
-  );
+  try {
+    const response = await fetch(
+      `${BASE_URL}/auth/v1/token?grant_type=refresh_token`,
+      {
+        method: 'POST',
+        headers: requestHeaders,
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      }
+    );
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) throw new Error(result?.msg || 'Failed to refresh token');
+    if (!response.ok) throw new Error(result?.msg || 'Failed to refresh token');
 
-  return result;
+    return result;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };
 
 // ^------------------------ Logout -------------------------
 export const userLogout = async (accessToken: string) => {
-  const response = await fetch(`${BASE_URL}/auth/v1/logout`, {
-    method: 'POST',
-    headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/v1/logout`, {
+      method: 'POST',
+      headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
+    });
 
-  if (!response.ok) throw new Error('Failed to logout');
+    if (!response.ok) throw new Error('Failed to logout');
 
-  return true;
+    return true;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };

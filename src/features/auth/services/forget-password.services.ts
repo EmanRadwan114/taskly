@@ -4,18 +4,22 @@ import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
 
 // ^---------------------- Forget Password ------------------------^
 export const forgetPassword = async ({ email }: TforgetPasswordInput) => {
-  const response = await fetch(`${BASE_URL}/auth/v1/recover`, {
-    method: 'POST',
-    headers: requestHeaders,
-    body: JSON.stringify({ email }),
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/v1/recover`, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: JSON.stringify({ email }),
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok)
-    throw new Error(result?.msg || 'Failed to recover password');
+    if (!response.ok)
+      throw new Error(result?.msg || 'Failed to recover password');
 
-  return result;
+    return result;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };
 
 // ^---------------------- Reset Password ------------------------^
@@ -23,15 +27,20 @@ export const resetPassword = async ({
   password,
   accessToken,
 }: IResetPassword) => {
-  const response = await fetch(`${BASE_URL}/auth/v1/user`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${accessToken}`, ...requestHeaders },
-    body: JSON.stringify({ password }),
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/v1/user`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${accessToken}`, ...requestHeaders },
+      body: JSON.stringify({ password }),
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) throw new Error(result?.msg || 'Failed to reset password');
+    if (!response.ok)
+      throw new Error(result?.msg || 'Failed to reset password');
 
-  return result;
+    return result;
+  } catch (error) {
+    throw new Error('Failed to login');
+  }
 };

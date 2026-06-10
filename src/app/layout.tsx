@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ToastContainer } from 'react-toastify';
 import StoreProvider from '@/shared/libs/store/StoreProvider';
+import GlobalNetworkGuard from '@/shared/components/GlobalNetworkGuard';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,6 +25,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <StoreProvider>
           <ToastContainer />
+          <GlobalNetworkGuard />
+
           {children}
         </StoreProvider>
       </body>

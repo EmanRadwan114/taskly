@@ -24,7 +24,7 @@ export default async function ProjectPage({
         </Button>
       </div>
       <section className="lg:bg-white rounded-t-8px lg:max-w-4/5 lg:mx-auto lg:shadow-primary px-6 lg:p-0">
-        <div className="pt-32px pb-48px lg:pt-10 lg:px-32px">
+        <div className="pb-48px lg:pb-10 lg:p-32px">
           {/* form */}
           {isAddForm ? <AddProjectForm /> : null}
         </div>

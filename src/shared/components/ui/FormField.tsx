@@ -7,10 +7,14 @@ import {
   useController,
   UseControllerProps,
 } from 'react-hook-form';
+import TextArea from './TextArea';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'defaultValue' | 'name'>,
+    Omit<
+      InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+      'defaultValue' | 'name'
+    >,
     Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
   label: string;
   variant?: 'default' | 'error';
@@ -18,6 +22,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   containerClassName?: string;
   icon?: ReactNode;
   showPassIcon?: boolean;
+  isTextArea?: boolean;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -35,6 +40,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     disabled,
     icon,
     showPassIcon = false,
+    isTextArea = false,
     ...restHtmlProps
   } = props;
 
@@ -42,15 +48,25 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <div className={`flex flex-col gap-6px ${containerClassName}`}>
-      <Input
-        id={label}
-        variant={activeVariant}
-        disabled={disabled}
-        {...field}
-        {...restHtmlProps}
-        icon={icon}
-        showPassIcon={showPassIcon}
-      />
+      {isTextArea ? (
+        <TextArea
+          id={label}
+          variant={activeVariant}
+          disabled={disabled}
+          {...field}
+          {...restHtmlProps}
+        />
+      ) : (
+        <Input
+          id={label}
+          variant={activeVariant}
+          disabled={disabled}
+          {...field}
+          {...restHtmlProps}
+          icon={icon}
+          showPassIcon={showPassIcon}
+        />
+      )}
 
       {/* Message feedback */}
       {fieldState.error ? (

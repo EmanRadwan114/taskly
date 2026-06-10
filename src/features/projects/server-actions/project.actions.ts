@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers';
 import { createProject } from '../services/project.services';
 import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
+import { revalidatePath } from 'next/cache';
 
 // ^ ------------------------- Create Project Action ------------------------- //
 export const createProjectAction = async (_: unknown, formData: FormData) => {
@@ -18,6 +19,7 @@ export const createProjectAction = async (_: unknown, formData: FormData) => {
   try {
     if (accessToken) {
       await createProject({ data: values, accessToken });
+      revalidatePath('/project');
     }
 
     return {

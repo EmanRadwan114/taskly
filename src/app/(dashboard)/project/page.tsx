@@ -2,8 +2,15 @@ import Button from '@/shared/components/ui/Button';
 import Link from 'next/link';
 import PlusIcon from '@/assets/icons/plus.svg';
 import ProjectCard from '@/features/projects/components/ProjectCard';
+import { fetchProjects } from '@/features/projects/services/project.services';
+import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
+import { getCookieValue } from '@/shared/utils/functions.utils';
+import { IProject } from '@/features/projects/types/project.types';
 
 export default async function ProjectPage() {
+  const accessToken = await getCookieValue(ACCESS_TOKEN_KEY);
+  const projects = await fetchProjects(accessToken as string);
+
   return (
     <section className="flex flex-col gap-10">
       {/* section header */}
@@ -27,16 +34,8 @@ export default async function ProjectPage() {
 
       {/* project list */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-24px">
-        {Array.from({ length: 6 }).map((_, idx) => (
-          <ProjectCard
-            project={{
-              name: 'Skyline Residence Phase II',
-              description:
-                'Structural review and aesthetic curation for the high-rise residential complex in the downtown district.',
-              createdAt: '12 oct 2026',
-            }}
-            key={idx}
-          />
+        {projects?.map((project: IProject) => (
+          <ProjectCard project={project} key={project.id} />
         ))}
       </section>
     </section>

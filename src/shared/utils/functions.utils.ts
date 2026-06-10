@@ -11,6 +11,7 @@ import {
   requestHeaders,
 } from './variables.utils';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import { toast } from 'react-toastify';
 
 //^ ------------------------ fetch for server components -------------------------
 export const fetchWithAuthServer = async (
@@ -86,4 +87,12 @@ export const fetchWithAuthServer = async (
 // ^ ------------------------ Get expire date in milliseconds ------------------------
 export const getExpireDateInMs = (seconds: number) => {
   return (new Date().getTime() + seconds * 1000).toString();
+};
+
+// handle network error
+export const handleNetworkError = () => {
+  if (typeof window !== 'undefined' && !navigator.onLine) {
+    toast.error('Network Error');
+    return;
+  }
 };

@@ -18,6 +18,7 @@ import ArrowRight from '@/assets/icons/arrow-right.svg';
 import { useEffect } from 'react';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import { useResetPassword } from '../../hooks/forget-password.hooks';
+import { passwordRegexCheck } from '@/shared/utils/variables.utils';
 
 interface IProps {
   accessToken: string;
@@ -51,49 +52,49 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
   const passValidationsDesktop = [
     {
       id: 1,
-      condition: /^.{8,64}$/.test(watchedPassword),
+      condition: passwordRegexCheck.length.test(watchedPassword),
       message: '8-64 characters',
     },
     {
       id: 2,
-      condition: /^(?=.*[A-Z]).+$/.test(watchedPassword),
+      condition: passwordRegexCheck.uppercase.test(watchedPassword),
       message: 'Uppercase letter',
     },
     {
       id: 3,
-      condition: /^(?=.*[a-z]).+$/.test(watchedPassword),
+      condition: passwordRegexCheck.lowercase.test(watchedPassword),
       message: 'Lowercase letter',
     },
     {
       id: 4,
-      condition: /^(?=.*\d).+$/.test(watchedPassword),
+      condition: passwordRegexCheck.digit.test(watchedPassword),
       message: 'One digit',
     },
     {
       id: 5,
-      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
+      condition: passwordRegexCheck['special-character'].test(watchedPassword),
       message: 'Special character',
     },
   ];
   const passValidationsMobile = [
     {
       id: 1,
-      condition: /^.{8,64}$/.test(watchedPassword),
+      condition: passwordRegexCheck.length.test(watchedPassword),
       message: '8-64 characters',
     },
     {
       id: 2,
-      condition: /^(?=.*[A-Z])(?=.*[a-z]).+$/.test(watchedPassword),
+      condition: passwordRegexCheck['upper-lower-case'].test(watchedPassword),
       message: 'Uppercase & Lowercase',
     },
     {
       id: 3,
-      condition: /^(?=.*\d).+$/.test(watchedPassword),
+      condition: passwordRegexCheck.digit.test(watchedPassword),
       message: 'At least one digit',
     },
     {
       id: 4,
-      condition: /^(?=.*[!@#$%^&*]).+$/.test(watchedPassword),
+      condition: passwordRegexCheck['special-character'].test(watchedPassword),
       message: 'Special character (e.g. !@#$)',
     },
   ];

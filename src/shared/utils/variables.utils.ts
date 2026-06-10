@@ -7,6 +7,18 @@ export const ACCESS_TOKEN_KEY = 'access_token';
 export const REFRESH_TOKEN_KEY = 'refresh_token';
 export const REFRESH_TOKEN_EXPIRES_AT_KEY = 'refresh_token_expires_at';
 
+export const passwordRegex =
+  /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])\S+$/;
+
+export const passwordRegexCheck = {
+  length: /^.{8,64}$/,
+  uppercase: /^(?=.*[A-Z]).+$/,
+  lowercase: /^(?=.*[a-z]).+$/,
+  digit: /^(?=.*\d).+$/,
+  'special-character': /^(?=.*[!@#$%^&*]).+$/,
+  'upper-lower-case': /^(?=.*[A-Z])(?=.*[a-z]).+$/,
+};
+
 export const requestHeaders = {
   'Content-Type': 'application/json',
   apikey: `${process.env.API_KEY}`,

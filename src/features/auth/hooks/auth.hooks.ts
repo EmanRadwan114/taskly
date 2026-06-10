@@ -1,13 +1,12 @@
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useTransition } from 'react';
-import { TLoginInput } from '../validation/login.validation';
 import { toast } from 'react-toastify';
-import { TSignupInput } from '../validation/signup.validation';
 import {
   createUserAccountAction,
   userLoginAction,
   userLogoutAction,
 } from '../server-actions/auth.actions';
+import { TLoginInput, TSignupInput } from '../validation/auth.validation';
 
 // ^---------------------- Create Account Hook ------------------------
 export const useCreateAccount = () => {
@@ -62,7 +61,7 @@ export const useLogin = (rememberMe: boolean) => {
   useEffect(() => {
     if (state?.success) {
       toast.success(state.message);
-      router.push('/');
+      router.push('/project');
     } else {
       toast.error(state?.message);
     }

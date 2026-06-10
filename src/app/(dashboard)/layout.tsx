@@ -1,6 +1,7 @@
 import MainLayoutMobile from '@/shared/components/MainLayoutMobile';
 import Navbar from '@/shared/components/Navbar';
 import Sidebar from '@/shared/components/Sidebar';
+import BreadCrumb from '@/shared/components/ui/BreadCrumb';
 import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
 
 export default async function DashboardLayout({
@@ -21,7 +22,10 @@ export default async function DashboardLayout({
           <header>
             <Navbar user={user} />
           </header>
-          <main>{children}</main>
+          <main className="p-32px flex flex-col gap-y-16px">
+            <BreadCrumb />
+            {children}
+          </main>
         </div>
       </div>
 

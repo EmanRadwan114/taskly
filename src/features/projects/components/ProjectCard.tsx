@@ -1,5 +1,6 @@
 import React from 'react';
 import { IProject } from '../types/project.types';
+import Link from 'next/link';
 
 interface IProps {
   project: IProject;
@@ -16,7 +17,10 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
   );
 
   return (
-    <div className="rounded-8px p-24px bg-white flex flex-col gap-y-14px h-full">
+    <Link
+      href={'/'}
+      className="w-full h-full rounded-8px p-24px bg-white flex flex-col gap-y-14px"
+    >
       <h2 className="text-title-md text-slate-dark capitalize">
         {project?.name}
       </h2>
@@ -29,7 +33,7 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
           {projectFormatedDate}
         </span>
       </div>
-    </div>
+    </Link>
   );
 };
 

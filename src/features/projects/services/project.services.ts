@@ -26,23 +26,3 @@ export const createProject = async ({
     );
   }
 };
-
-// ^------------------------ fetch all projects -------------------------
-export const fetchProjects = async (accessToken: string) => {
-  try {
-    const response = await fetch(`${BASE_URL}/rest/v1/rpc/get_projects`, {
-      headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch projects');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : 'Failed to fetch projects'
-    );
-  }
-};

@@ -1,6 +1,7 @@
-import { passwordValidationSchema } from '@/shared/validation/password.validation';
 import { z } from 'zod';
+import { passwordValidationSchema } from '@/shared/validation/password.validation';
 
+// ^ ------------------ signup schema ------------------
 export const signupSchema = z
   .object({
     data: z.object({
@@ -34,3 +35,21 @@ export const signupSchema = z
   });
 
 export type TSignupInput = z.infer<typeof signupSchema>;
+
+// ^ ------------------ login schema ------------------
+export const loginSchema = z.object({
+  email: z.email({
+    error: (issue) =>
+      issue.input === undefined
+        ? 'Email is required'
+        : 'Please Provide a valid email',
+  }),
+  password: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined ? 'Password is required' : 'Not a string',
+    })
+    .min(1, { error: 'Password is required' }),
+});
+
+export type TLoginInput = z.infer<typeof loginSchema>;

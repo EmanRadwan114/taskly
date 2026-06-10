@@ -31,7 +31,7 @@ export default async function DashboardLayout({
 
       <div className="flex flex-col lg:hidden">
         <MainLayoutMobile user={user} />
-        <main className="pt-8 pb-12">{children}</main>
+        <main className="pt-8 pb-12 px-24px mb-24">{children}</main>
       </div>
     </>
   );

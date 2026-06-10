@@ -15,7 +15,7 @@ export default async function ProjectPage({
 
   return (
     <section>
-      <div className="justify-between items-center hidden lg:flex mb-10">
+      <div className="justify-between items-center hidden lg:flex">
         <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
           {isAddForm ? 'add new project' : isEditForm ? 'edit project' : ''}
         </h1>

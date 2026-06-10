@@ -22,7 +22,7 @@ export default async function DashboardLayout({
           <header>
             <Navbar user={user} />
           </header>
-          <main className="p-32px flex flex-col gap-y-16px">
+          <main className="p-32px flex flex-col">
             <BreadCrumb />
             {children}
           </main>
@@ -31,7 +31,7 @@ export default async function DashboardLayout({
 
       <div className="flex flex-col lg:hidden">
         <MainLayoutMobile user={user} />
-        <main className="pt-8 pb-12">{children}</main>
+        <main className="pt-8 pb-12 px-24px mb-16">{children}</main>
       </div>
     </>
   );

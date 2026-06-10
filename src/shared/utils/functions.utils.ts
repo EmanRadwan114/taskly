@@ -7,7 +7,6 @@ import {
   cookieConfig,
   REFRESH_TOKEN_EXPIRES_AT_KEY,
   REFRESH_TOKEN_KEY,
-  REFRESH_TOKEN_SINGLE_SESSION,
   requestHeaders,
 } from './variables.utils';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
@@ -89,10 +88,17 @@ export const getExpireDateInMs = (seconds: number) => {
   return (new Date().getTime() + seconds * 1000).toString();
 };
 
-// handle network error
+// ^ ------------------------ Handle Network Error ------------------------
 export const handleNetworkError = () => {
   if (typeof window !== 'undefined' && !navigator.onLine) {
     toast.error('Network Error');
     return;
   }
+};
+
+// ^ ------------------------ Get cookie value ------------------------
+export const getCookieValue = async (cookieName: string) => {
+  const cookie = await cookies();
+  const cookieValue = cookie.get(cookieName)?.value;
+  return cookieValue ?? '';
 };

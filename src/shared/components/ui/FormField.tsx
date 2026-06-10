@@ -8,6 +8,7 @@ import {
   UseControllerProps,
 } from 'react-hook-form';
 import TextArea from './TextArea';
+import AlertIcon from '@/assets/icons/alert.svg';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
@@ -70,7 +71,10 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
       {/* Message feedback */}
       {fieldState.error ? (
-        <p className="text-error text-label">{fieldState.error.message}</p>
+        <div className="text-error flex gap-1">
+          <AlertIcon className="size-3.25" />
+          <p className="text-label">{fieldState.error.message}</p>
+        </div>
       ) : (
         fieldMsg && <p className="text-slate-light text-label">{fieldMsg}</p>
       )}

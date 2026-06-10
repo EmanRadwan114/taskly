@@ -1,83 +1,93 @@
-"use client";
+'use client';
 
-import InitializeIcon from '@/assets/icons/initialize.svg';
 import Button from '@/shared/components/ui/Button';
 import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import {
+  addProjectSchema,
+  TAddProjectInput,
+} from '../validation/project.validation';
+import { useRouter } from 'next/navigation';
 
 const AddProjectForm: React.FC = ({}) => {
-    const {
-      handleSubmit,
-      control,
-      formState: { errors },
-    } = useForm<>({
-      resolver: zodResolver(),
-      mode: 'onBlur',
-      defaultValues: {
-        name: '',
-        description: '',
-      },
-    });
-  return (
-    <form>
-      {/* header */}
-      <header className="flex items-center gap-16px">
-        <div className="items-center justify-center bg-primary-container/10 p-12px rounded-4px hidden lg:flex">
-          <InitializeIcon className="w-5.5 text-primary-container" />
-        </div>
-        <div>
-          <h2 className="font-semibold text-[24px] leading-8 text-slate-dark capitalize">
-            initialize new project
-          </h2>
-          <p className="text-slate-md">
-            Define the scope and foundational details of your project.
-          </p>
-        </div>
-      </header>
+  const router = useRouter();
 
+  const {
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<TAddProjectInput>({
+    resolver: zodResolver(addProjectSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      name: '',
+      description: '',
+    },
+  });
+
+  // watchers
+  const descriptionWatcher = watch('description');
+
+  // handlers
+  const onSubmit = (data: TAddProjectInput) => {
+    console.log(data);
+  };
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
       {/* form fields */}
-      <div>
+      <div className="flex flex-col gap-32px">
         {/* name */}
         <div className="flex flex-col gap-6px md:col-span-2">
           <Label
-            htmlFor="email address"
+            htmlFor="name"
             activeVariant={errors.name ? 'error' : 'default'}
           >
-            email address
-          <span className='text-error-dark'> *</span>
+            project title
+            <span className="text-error"> *</span>
           </Label>
           <FormField
-            // control={control}
-            name="email"
-            label="email address"
-            placeholder="yourname@company.com"
+            control={control}
+            name="name"
+            label="name"
+            placeholder="Enter project title"
           />
         </div>
         {/* description */}
         <div className="flex flex-col gap-6px md:col-span-2">
           <Label
             htmlFor="description"
-            className='flex justify-between items-center'
+            className="flex! justify-between! items-center"
             activeVariant={errors.description ? 'error' : 'default'}
           >
             description
-            <span className='text-slate-md/60'>Optional</span>
+            <span className="text-slate-md/60 text-capitalize!">Optional</span>
           </Label>
           <FormField
-            // control={control}
+            control={control}
             name="description"
             label="description"
-            placeholder="Enter project description"
+            placeholder={`Provide a high-level overview of the project's architectural objectives and key milestones...`}
             isTextArea
           />
-
-          {/* actions */}
-          <div className='flex justify-end items-center gap-16px'>
-            <Button variant='ghost'>Back</Button>
-            <Button type='submit'>Create Project</Button>
-          </div>
+          <span className="text-label block text-end font-medium text-slate-md">
+            {descriptionWatcher?.length || 0}/500 characters
+          </span>
+        </div>
+        {/* actions */}
+        <div className="flex flex-col lg:flex-row justify-between items-end gap-16px">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="lg:w-fit! font-bold text-slate-md! text-base! order-1 lg:order-0"
+          >
+            Back
+          </Button>
+          <Button type="submit" className="lg:w-fit! text-base!">
+            Create Project
+          </Button>
         </div>
       </div>
     </form>

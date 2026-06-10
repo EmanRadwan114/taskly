@@ -7,22 +7,22 @@ import { usePathname } from 'next/navigation';
 
 const BreadCrumb: React.FC = () => {
   const pathname = usePathname();
-  console.log(pathname);
 
   const segments = pathname
     .split('/')
     .filter((item) => item !== '')
     .slice(1);
-  console.log(segments);
 
   return (
-    <header className="flex gap-8px">
-      <Link
-        href={'/project'}
-        className={`text-secondary/60 text-[12px] uppercase font-bold tracking-[1.2px]`}
-      >
-        Projects
-      </Link>
+    <header className={`flex gap-8px ${segments.length !== 0 && 'mb-16px'}`}>
+      {segments.length !== 0 && (
+        <Link
+          href={'/project'}
+          className={`text-secondary/60 text-[12px] uppercase font-bold tracking-[1.2px]`}
+        >
+          Projects
+        </Link>
+      )}
       {segments.map((segment, index) => {
         const isLastSegment = index === segments.length - 1;
 

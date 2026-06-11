@@ -22,10 +22,7 @@ export default async function DashboardLayout({
           <header>
             <Navbar user={user} />
           </header>
-          <main className="p-32px flex flex-col">
-            <BreadCrumb />
-            {children}
-          </main>
+          <main className="p-32px flex flex-col">{children}</main>
         </div>
       </div>
 

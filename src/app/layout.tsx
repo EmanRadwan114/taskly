@@ -4,6 +4,7 @@ import './globals.css';
 import { ToastContainer } from 'react-toastify';
 import StoreProvider from '@/shared/libs/store/StoreProvider';
 import GlobalNetworkGuard from '@/shared/components/GlobalNetworkGuard';
+import GlobalLayout from '@/shared/components/GlobalLayout';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({
         <StoreProvider>
           <ToastContainer />
           <GlobalNetworkGuard />
+          <GlobalLayout />
 
           {children}
         </StoreProvider>

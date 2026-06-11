@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import Button from './Button';
@@ -10,6 +10,15 @@ import { setCurrentPage } from '@/shared/libs/store/slices/project.slice';
 const Pagination: React.FC = () => {
   const { currentPage, totalPages } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  }, [currentPage]);
 
   // handlers
   const handlePagination = (pageNum: number) => {

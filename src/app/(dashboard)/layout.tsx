@@ -10,7 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const result = await fetchWithAuthServer('auth/v1/user');
-  const user = result?.user_metadata;
+  const user = result?.data?.user_metadata;
 
   return (
     <>

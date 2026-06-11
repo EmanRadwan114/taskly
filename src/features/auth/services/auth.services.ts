@@ -18,7 +18,8 @@ export const createUserAccount = async (data: ISignUp) => {
 
     return result;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg = error instanceof Error ? error.message : 'Failed to Sign Up';
+    throw new Error(errMsg);
   }
 };
 
@@ -40,7 +41,8 @@ export const userLogin = async (data: TLoginInput) => {
 
     return result;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg = error instanceof Error ? error.message : 'Failed to login';
+    throw new Error(errMsg);
   }
 };
 
@@ -62,7 +64,8 @@ export const generateNewTokens = async (refreshToken: string) => {
 
     return result;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg = error instanceof Error ? error.message : 'Failed to refresh';
+    throw new Error(errMsg);
   }
 };
 
@@ -78,6 +81,7 @@ export const userLogout = async (accessToken: string) => {
 
     return true;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg = error instanceof Error ? error.message : 'Failed to logout';
+    throw new Error(errMsg);
   }
 };

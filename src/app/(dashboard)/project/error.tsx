@@ -3,6 +3,8 @@ import Button from '@/shared/components/ui/Button';
 import ErrorIcon from '@/assets/icons/error-icon.svg';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import { resetProjects } from '@/shared/libs/store/slices/project.slice';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 export default function Error({
   error,
@@ -17,6 +19,12 @@ export default function Error({
     dispatch(resetProjects());
     reset();
   };
+
+  useEffect(() => {
+    if (error.message) {
+      toast.error(error.message);
+    }
+  }, []);
 
   return (
     <section className="lg:min-h-[80vh] flex items-center justify-center sm:max-w-1/2 xl:max-w-[40%] sm:mx-auto">

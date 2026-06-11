@@ -21,8 +21,8 @@ export const createProject = async ({
       throw new Error(result?.message || 'Failed to create project');
     }
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : 'Failed to create project'
-    );
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to create project';
+    throw new Error(errMsg);
   }
 };

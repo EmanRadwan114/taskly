@@ -4,7 +4,7 @@ import { asideLinks } from '../data/static-data';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { IUser } from '@/features/auth/types/auth.types';
 
 interface Props {
@@ -14,6 +14,10 @@ interface Props {
 const MainLayoutMobile: React.FC<Props> = ({ user }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const pathname = usePathname();
+  const { projectId } = useParams();
+
+  // displayed sidebar links
+  const displayedSidebarLinks = projectId ? asideLinks : asideLinks.slice(0, 1);
 
   const toggleSideBar = () => {
     setIsSideBarOpen((s) => !s);
@@ -31,8 +35,10 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
       {!isSideBarOpen && (
         <section className="fixed w-full bottom-0 z-5 bg-surface-low px-6.5 h-16">
           <div className="h-full flex flex-col justify-center">
-            <div className="flex justify-between items-end gap-4px">
-              {asideLinks.map((link) => {
+            <div
+              className={`flex ${projectId ? 'justify-between' : 'justify-center'} items-end gap-4px`}
+            >
+              {displayedSidebarLinks.map((link) => {
                 const isLinkActive = pathname?.includes(link.href);
                 const Icon = link.icon;
                 return (

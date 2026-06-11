@@ -2,7 +2,7 @@
 
 import Logo from './ui/Logo';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import LogoIcon from '@/assets/icons/logo.svg';
@@ -16,12 +16,15 @@ interface IProps {
 }
 
 const Sidebar: React.FC<IProps> = ({ isOpen }) => {
-  const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
+  const { projectId } = useParams();
 
   // If isOpen is passed (even as false), we are in the mobile layout.
-  // Otherwise, if isOpen is undefined, we are in the desktop layout.
   const isMobileLayout = isOpen !== undefined;
+
+  // displayed sidebar links
+  const displayedSidebarLinks = projectId ? asideLinks : asideLinks.slice(0, 1);
 
   // handlers
   const toggleMenuCollapse = () => {
@@ -31,7 +34,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen }) => {
 
   const asideNavLinks = (
     <ul className="flex flex-col gap-4px">
-      {asideLinks.map((link) => {
+      {displayedSidebarLinks.map((link) => {
         const isLinkActive = pathname?.includes(link.href);
         const Icon = link.icon;
         return (

@@ -52,7 +52,7 @@ export const useHandlePagination = () => {
   const [hasMore, setHasMore] = useState(true);
   const observerTarget = useRef(null);
 
-  const { isMobile } = useMobile(1024);
+  const { isMobile } = useMobile(768);
 
   const dispatch = useAppDispatch();
 

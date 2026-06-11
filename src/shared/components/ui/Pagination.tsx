@@ -16,11 +16,11 @@ const Pagination: React.FC = () => {
     dispatch(setCurrentPage(pageNum));
   };
 
-  const baseStyle =
-    'text-secondary! rounded-2px! size-32px! border border-slate-light p-0! font-bold! text-[12px]!';
-
   const isActiveStyle = (pageNum: number) =>
     pageNum === currentPage ? 'bg-primary! text-white!' : '';
+
+  const baseStyle =
+    'text-secondary! rounded-2px! size-32px! border border-slate-light p-0! font-bold! text-[12px]!';
 
   return (
     <div className="flex gap-8px">

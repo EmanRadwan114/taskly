@@ -5,7 +5,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 export const fetchPaginatedProjects = createAsyncThunk(
   'projects/fetchPaginated',
   async (
-    { limit, offset }: { limit: number; offset: number },
+    {
+      limit,
+      offset,
+      append,
+    }: { limit: number; offset: number; append?: boolean },
     { rejectWithValue }
   ) => {
     try {
@@ -47,6 +51,14 @@ const projectSlice = createSlice({
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
+    resetProjects: (state) => {
+      state.currentPage = 1;
+      state.totalCount = 0;
+      state.totalPages = undefined;
+      state.loading = 'pending';
+      state.projects = [];
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -57,7 +69,19 @@ const projectSlice = createSlice({
         state.loading = 'success';
         state.totalCount = action.payload?.response?.meta?.totalCount;
         state.totalPages = action.payload?.response?.meta?.totalPages;
-        state.projects = action.payload?.response?.data || [];
+        const newProjects = action.payload?.response?.data || [];
+
+        if (action.meta.arg.append) {
+          const existingIds = new Set(
+            state.projects.map((p: IProject) => p.id)
+          );
+          const filteredNew = newProjects.filter(
+            (p: IProject) => !existingIds.has(p.id)
+          );
+          state.projects = [...state.projects, ...filteredNew];
+        } else {
+          state.projects = newProjects;
+        }
       })
       .addCase(fetchPaginatedProjects.rejected, (state, action) => {
         state.loading = 'rejected';
@@ -69,5 +93,5 @@ const projectSlice = createSlice({
   },
 });
 
-export const { setCurrentPage } = projectSlice.actions;
+export const { setCurrentPage, resetProjects } = projectSlice.actions;
 export default projectSlice.reducer;

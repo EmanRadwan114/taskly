@@ -1,7 +1,7 @@
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 //^ ------------------------ PAGINATION DEFAULT VALUE ------------------------
-export const LIMIT = 10;
+export const LIMIT = 12;
 
 //^ ------------------------ TIME ------------------------
 export const REFRESH_TOKEN_SINGLE_SESSION = 60 * 60 * 12; //12hrs

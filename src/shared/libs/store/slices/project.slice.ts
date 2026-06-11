@@ -2,6 +2,7 @@ import { IProject } from '@/features/projects/types/project.types';
 import { LIMIT } from '@/shared/utils/variables.utils';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// ^ -------------- fetch all projects (paginated) ----------------
 export const fetchPaginatedProjects = createAsyncThunk(
   'projects/fetchPaginated',
   async (
@@ -14,7 +15,7 @@ export const fetchPaginatedProjects = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        `api/fetch-data?limit=${limit}&offset=${offset}`
+        `/api/fetch-projects?limit=${limit}&offset=${offset}`
       );
 
       return await response.json();
@@ -61,6 +62,7 @@ const projectSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // fetch projects
     builder
       .addCase(fetchPaginatedProjects.pending, (state) => {
         state.loading = 'pending';

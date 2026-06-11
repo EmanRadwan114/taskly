@@ -3,10 +3,12 @@ import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import InitializeIcon from '@/assets/icons/initialize.svg';
 import AddProjectForm from '@/features/projects/components/AddProjectForm';
 import Tip from '@/features/projects/components/Tip';
+import BreadCrumb from '@/shared/components/ui/BreadCrumb';
 
 export default function Page() {
   return (
     <section>
+      <BreadCrumb />
       <div className="justify-between items-center hidden lg:flex mb-10">
         <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
           add new project

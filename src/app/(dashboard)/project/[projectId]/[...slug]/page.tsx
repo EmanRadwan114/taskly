@@ -3,15 +3,18 @@ import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import Button from '@/shared/components/ui/Button';
 import Tip from '@/features/projects/components/Tip';
 import EditProjectForm from '@/features/projects/components/EditProjectForm';
+import BreadCrumb from '@/shared/components/ui/BreadCrumb';
+import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import { IProject } from '@/features/projects/types/project.types';
 
 export default async function ProjectPage({
   params,
 }: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string[]; projectId: string }>;
 }) {
   const { slug } = await params;
+
   const isEditForm = slug.includes('edit');
-  console.log(slug);
 
   return (
     <section>

@@ -3,10 +3,16 @@
 import Link from 'next/link';
 import React from 'react';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
+import { IProject } from '@/features/projects/types/project.types';
 
-const BreadCrumb: React.FC = () => {
+interface IProps {
+  projectItem?: IProject;
+}
+
+const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
   const pathname = usePathname();
+  const { projectId } = useParams();
 
   const segments = pathname
     .split('/')
@@ -27,7 +33,10 @@ const BreadCrumb: React.FC = () => {
         const isLastSegment = index === segments.length - 1;
 
         const href = `/project/${segments.slice(0, index + 1).join('/')}`;
-        let label = segment.replace(/-/g, ' ');
+        let label =
+          segment === projectId && projectItem?.name
+            ? projectItem?.name
+            : segment.replace(/-/g, ' ');
         label = label.includes('add') ? 'add new project' : label;
 
         return (

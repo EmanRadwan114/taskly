@@ -41,7 +41,7 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
               className={`flex ${projectId ? 'justify-between gap-4px' : 'justify-center gap-48px'} items-end `}
             >
               {displayedSidebarLinks.map((link) => {
-                const isLinkActive = pathname?.includes(link.href);
+                const isLinkActive = pathname === link.href;
                 const Icon = link.icon;
                 return (
                   <Link

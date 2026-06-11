@@ -1,6 +1,6 @@
-import ProjectSkeletonCard from '@/features/projects/components/ProjectSkeletonCard';
+import ProjectSkeletonCard from './ProjectSkeletonCard';
 
-export default function Loading() {
+const LoadingProjects: React.FC = ({}) => {
   return (
     <section className="flex flex-col gap-16px">
       {/* header */}
@@ -22,4 +22,6 @@ export default function Loading() {
       </section>
     </section>
   );
-}
+};
+
+export default LoadingProjects;

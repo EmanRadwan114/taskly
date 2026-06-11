@@ -2,26 +2,32 @@
 
 import Logo from './ui/Logo';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import LogoIcon from '@/assets/icons/logo.svg';
 import Button from './ui/Button';
 import LogoutBtn from './ui/LogoutBtn';
 import { useState } from 'react';
-import { asideLinks } from '../data/static-data';
+import { getAsideLinks } from '../data/sidebar-links';
 
 interface IProps {
   isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
 }
 
-const Sidebar: React.FC<IProps> = ({ isOpen }) => {
-  const pathname = usePathname();
+const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
+  const { projectId } = useParams();
 
   // If isOpen is passed (even as false), we are in the mobile layout.
-  // Otherwise, if isOpen is undefined, we are in the desktop layout.
   const isMobileLayout = isOpen !== undefined;
+
+  // displayed sidebar links
+  const displayedSidebarLinks = projectId
+    ? getAsideLinks(projectId as string)
+    : getAsideLinks().filter((n) => !n.protected);
 
   // handlers
   const toggleMenuCollapse = () => {
@@ -31,13 +37,16 @@ const Sidebar: React.FC<IProps> = ({ isOpen }) => {
 
   const asideNavLinks = (
     <ul className="flex flex-col gap-4px">
-      {asideLinks.map((link) => {
-        const isLinkActive = pathname?.includes(link.href);
+      {displayedSidebarLinks.map((link) => {
+        const isLinkActive = pathname === link.href;
         const Icon = link.icon;
         return (
           <li
             key={link.id}
             className={`rounded-4px group ${isLinkActive ? 'bg-white' : ''} ${isCollapsed ? 'size-48px flex items-center justify-center' : 'py-10px px-12px'}`}
+            onClick={() => {
+              setIsOpen?.(false);
+            }}
           >
             <Link
               href={link.href}

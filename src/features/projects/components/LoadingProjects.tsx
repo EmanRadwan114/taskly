@@ -16,7 +16,7 @@ const LoadingProjects: React.FC = ({}) => {
       </header>
       {/* skeleton */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-24px pb-10 lg:pb-20">
-        {Array.from({ length: 9 })?.map((_, idx) => (
+        {Array.from({ length: 12 })?.map((_, idx) => (
           <ProjectSkeletonCard key={idx} />
         ))}
       </section>

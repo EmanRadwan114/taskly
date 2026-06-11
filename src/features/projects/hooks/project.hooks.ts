@@ -1,7 +1,20 @@
-import { useActionState, useEffect, useTransition } from 'react';
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { createProjectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TAddProjectInput } from '../validation/project.validation';
+import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
+import {
+  fetchPaginatedProjects,
+  resetProjects,
+  setCurrentPage,
+} from '@/shared/libs/store/slices/project.slice';
+import { useMobile } from '@/shared/hooks/shared.hooks';
 
 // ^ ---------------------------- Create Project Hook ------------------------- //
 export const useCreateProject = () => {
@@ -32,4 +45,79 @@ export const useCreateProject = () => {
   };
 
   return { onHandleCreateProject, isPending, addProjectState: state };
+};
+
+//
+export const useHandlePagination = () => {
+  const [hasMore, setHasMore] = useState(true);
+  const observerTarget = useRef(null);
+
+  const { isMobile } = useMobile(1024);
+
+  const dispatch = useAppDispatch();
+
+  const {
+    projects,
+    limit,
+    currentPage,
+    loading,
+    totalPages,
+    totalCount,
+    error,
+  } = useAppSelector((state) => state.project);
+
+  const offset = (currentPage - 1) * limit;
+
+  // reset on unmount
+  useEffect(() => {
+    return () => {
+      dispatch(resetProjects());
+    };
+  }, [dispatch]);
+
+  // fetch paginated data
+  useEffect(() => {
+    dispatch(fetchPaginatedProjects({ limit, offset, append: isMobile }));
+  }, [currentPage, isMobile, limit, offset, dispatch]);
+
+  // handle hasMore state
+  useEffect(() => {
+    if (
+      (projects?.length === 0 && loading === 'success') ||
+      (totalPages !== undefined && currentPage >= totalPages)
+    ) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+  }, [projects, currentPage, loading, totalPages]);
+
+  // observer for infinite scroll on mobile
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && hasMore && loading === 'success') {
+          dispatch(setCurrentPage(currentPage + 1));
+        }
+      },
+      { threshold: 0, root: null, rootMargin: '0px' }
+    );
+    // watching target element
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMore, loading, currentPage, dispatch]);
+
+  return {
+    projects,
+    totalCount,
+    loading,
+    error,
+    isMobile,
+    hasMore,
+    observerTarget,
+  };
 };

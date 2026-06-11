@@ -1,13 +1,22 @@
+'use client';
+
 import React from 'react';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import Button from './Button';
+import { IMetaData } from '@/shared/types/shared.types';
 
-interface IProps {}
+interface IProps {
+  metaData: IMetaData | undefined;
+}
 
-const Pagination: React.FC<IProps> = ({}) => {
+const Pagination: React.FC<IProps> = ({ metaData }) => {
   const baseStyle =
     'text-secondary! rounded-2px! size-32px! border border-slate-light p-0! font-bold! text-[12px]!';
+
+  // handlers
+  const handlePagination = () => {};
+
   return (
     <div className="flex gap-8px">
       {/* prev */}

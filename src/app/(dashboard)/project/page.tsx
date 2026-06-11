@@ -7,13 +7,20 @@ import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import AddProjectCard from '@/features/projects/components/AddProjectCard';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
+import { LIMIT } from '@/shared/utils/variables.utils';
 
 export default async function ProjectPage() {
-  const projects = await fetchWithAuthServer('rest/v1/rpc/get_projects');
+  const OFFSET = 0;
+
+  const result = await fetchWithAuthServer(
+    `rest/v1/rpc/get_projects?limit=${LIMIT}&offset=${OFFSET}`,
+    true
+  );
+  const projects = result?.data;
 
   const displayCreateProjectCard = projects?.length % 3 !== 0;
 
-  if (projects.length === 0) return <EmptyProjects />;
+  if (projects?.length === 0) return <EmptyProjects />;
 
   return (
     <section className="flex flex-col gap-10">
@@ -33,7 +40,7 @@ export default async function ProjectPage() {
         <p className="font-medium text-secondary text-[12px]">
           Showing 5 of 24 active projects
         </p>
-        <Pagination />
+        <Pagination metaData={result?.meta} />
       </footer>
 
       {/* mobile add project btn */}

@@ -5,16 +5,19 @@ import {
   ACCESS_TOKEN_KEY,
   BASE_URL,
   cookieConfig,
+  LIMIT,
   REFRESH_TOKEN_EXPIRES_AT_KEY,
   REFRESH_TOKEN_KEY,
   requestHeaders,
 } from './variables.utils';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { toast } from 'react-toastify';
+import { IMetaData } from '../types/shared.types';
 
 //^ ------------------------ fetch for server components -------------------------
 export const fetchWithAuthServer = async (
   endpoint: string,
+  pagination?: boolean,
   options?: RequestInit
 ) => {
   const cookieStore = await cookies();
@@ -59,7 +62,9 @@ export const fetchWithAuthServer = async (
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
       headers: {
         ...requestHeaders,
-        Authorization: `Bearer ${cookieStore.get(ACCESS_TOKEN_KEY)?.value}`, // Get fresh value
+        Authorization: `Bearer ${cookieStore.get(ACCESS_TOKEN_KEY)?.value}`,
+        Prefer: pagination ? 'count=exact' : 'none',
+        prefer: pagination ? 'count=exact' : 'none',
       },
       ...options,
     });
@@ -74,7 +79,20 @@ export const fetchWithAuthServer = async (
 
     const data = await response?.json();
     if (!response.ok) throw new Error(data?.msg || 'Failed to fetch data');
-    return data;
+
+    //^ return pagination metadata
+    const result: IMetaData = { totalCount: 0, totalPages: 0 };
+
+    const contentRange = response.headers.get('content-range');
+
+    if (pagination && contentRange) {
+      const totalCount = contentRange?.split('/')[1];
+
+      result.totalCount = Number(totalCount);
+      result.totalPages = Math.ceil(Number(totalCount) / LIMIT);
+    }
+
+    return { data, meta: result };
   } catch (error) {
     if (error instanceof Error && error.message.includes('403')) {
       redirect('/login');

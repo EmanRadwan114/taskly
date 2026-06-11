@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { getAsideLinks } from '../data/static-data';
+import { getAsideLinks } from '../data/sidebar-links';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { useState } from 'react';

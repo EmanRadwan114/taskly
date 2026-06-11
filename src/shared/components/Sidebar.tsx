@@ -9,11 +9,11 @@ import LogoIcon from '@/assets/icons/logo.svg';
 import Button from './ui/Button';
 import LogoutBtn from './ui/LogoutBtn';
 import { useState } from 'react';
-import { getAsideLinks } from '../data/static-data';
+import { getAsideLinks } from '../data/sidebar-links';
 
 interface IProps {
   isOpen?: boolean;
-  setIsOpen: (open: boolean) => void;
+  setIsOpen?: (open: boolean) => void;
 }
 
 const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
@@ -45,8 +45,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
             key={link.id}
             className={`rounded-4px group ${isLinkActive ? 'bg-white' : ''} ${isCollapsed ? 'size-48px flex items-center justify-center' : 'py-10px px-12px'}`}
             onClick={() => {
-              setIsOpen(false);
-              ``;
+              setIsOpen?.(false);
             }}
           >
             <Link

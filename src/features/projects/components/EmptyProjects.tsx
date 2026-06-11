@@ -13,7 +13,7 @@ const EmptyProjects: React.FC = ({}) => {
           alt="Empty projects"
         />
         <div className="flex flex-col justify-center items-center gap-16px">
-          <h1 className="font-semibold text-slate-dark text-[36px] tracking-[-0.9px]">
+          <h1 className="font-semibold text-slate-dark text-[36px] tracking-[-0.9px] text-center">
             No Projects
           </h1>
           <p className="text-center leading-6 tracking-[0.6px]">

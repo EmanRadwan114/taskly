@@ -17,11 +17,9 @@ export default function GlobalNetworkGuard() {
       }
     };
 
-    window.addEventListener('click', verifyNetworkBeforeExecution, true);
     window.addEventListener('submit', verifyNetworkBeforeExecution, true);
 
     return () => {
-      window.removeEventListener('click', verifyNetworkBeforeExecution, true);
       window.removeEventListener('submit', verifyNetworkBeforeExecution, true);
     };
   }, []);

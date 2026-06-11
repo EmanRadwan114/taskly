@@ -18,7 +18,9 @@ export const forgetPassword = async ({ email }: TforgetPasswordInput) => {
 
     return result;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to recover password';
+    throw new Error(errMsg);
   }
 };
 
@@ -41,6 +43,8 @@ export const resetPassword = async ({
 
     return result;
   } catch (error) {
-    throw new Error('Failed to login');
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to reset password';
+    throw new Error(errMsg);
   }
 };

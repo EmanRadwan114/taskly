@@ -1,7 +1,7 @@
 import z from 'zod';
 
 // ^ ------------------ add project schema ------------------
-export const addProjectSchema = z.object({
+export const projectSchema = z.object({
   name: z
     .string({
       error: (issue) =>
@@ -17,4 +17,4 @@ export const addProjectSchema = z.object({
     .optional(),
 });
 
-export type TAddProjectInput = z.infer<typeof addProjectSchema>;
+export type TProjectInput = z.infer<typeof projectSchema>;

@@ -5,19 +5,24 @@ import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-  addProjectSchema,
-  TAddProjectInput,
-} from '../validation/project.validation';
 import { useRouter } from 'next/navigation';
-import { useCreateProject } from '../hooks/project.hooks';
+import { useSubmitProject } from '../hooks/project.hooks';
 import { useEffect } from 'react';
+import { IProject } from '../types/project.types';
+import { projectSchema, TProjectInput } from '../validation/project.validation';
 
-const AddProjectForm: React.FC = ({}) => {
+interface IProps {
+  projectItem?: IProject | undefined;
+}
+
+const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
   const router = useRouter();
 
-  const { onHandleCreateProject, isPending, addProjectState } =
-    useCreateProject();
+  const isEditMode = !!projectItem?.id;
+
+  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject(
+    isEditMode ? projectItem?.id : undefined
+  );
 
   const {
     handleSubmit,
@@ -25,27 +30,27 @@ const AddProjectForm: React.FC = ({}) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<TAddProjectInput>({
-    resolver: zodResolver(addProjectSchema),
+  } = useForm<TProjectInput>({
+    resolver: zodResolver(projectSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: '',
-      description: '',
+      name: isEditMode ? projectItem?.name : '',
+      description: isEditMode ? projectItem?.description : '',
     },
   });
 
   useEffect(() => {
-    if (addProjectState?.success) {
+    if (projectState?.success && !isEditMode) {
       reset({ name: '', description: '' });
     }
-  }, [addProjectState]);
+  }, [projectState, isEditMode, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');
 
   // handlers
-  const onSubmit = (data: TAddProjectInput) => {
-    onHandleCreateProject(data);
+  const onSubmit = (data: TProjectInput) => {
+    onHandleSubmitProject(data);
   };
 
   return (
@@ -93,18 +98,27 @@ const AddProjectForm: React.FC = ({}) => {
         <div className="flex flex-col lg:flex-row justify-between items-end gap-16px">
           <Button
             variant="ghost"
-            onClick={() => router.back()}
+            type="button"
+            onClick={() =>
+              isEditMode ? router.back() : router.push('/project')
+            }
             className="lg:w-fit! font-bold text-slate-md! text-base! order-1 lg:order-0"
             disabled={isPending}
           >
-            Back
+            {isEditMode ? 'Cancel' : 'Back'}
           </Button>
           <Button
             type="submit"
             className="lg:w-fit! text-base!"
             disabled={isPending}
           >
-            {isPending ? 'Creating Project...' : 'Create Project'}
+            {isPending
+              ? isEditMode
+                ? 'Saving Changes...'
+                : 'Creating Project...'
+              : isEditMode
+                ? 'Save Changes'
+                : 'Create Project'}
           </Button>
         </div>
       </div>
@@ -112,4 +126,4 @@ const AddProjectForm: React.FC = ({}) => {
   );
 };
 
-export default AddProjectForm;
+export default ProjectForm;

@@ -1,32 +1,40 @@
-import InitializeIcon from '@/assets/icons/initialize.svg';
-import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
-import Button from '@/shared/components/ui/Button';
 import Tip from '@/features/projects/components/Tip';
-import EditProjectForm from '@/features/projects/components/EditProjectForm';
-import BreadCrumb from '@/shared/components/ui/BreadCrumb';
-import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import InitializeIcon from '@/assets/icons/initialize.svg';
+import Button from '@/shared/components/ui/Button';
+import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { IProject } from '@/features/projects/types/project.types';
+import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import ProjectForm from '@/features/projects/components/ProjectForm';
 
-export default async function ProjectPage({
+export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string[]; projectId: string }>;
+  params: Promise<{ projectId: string }>;
 }) {
-  const { slug } = await params;
+  const { projectId } = await params;
 
-  const isEditForm = slug.includes('edit');
+  let projectItem: IProject | undefined;
+
+  if (projectId) {
+    const response = await fetchWithAuthServer(
+      `rest/v1/projects?id=eq.${projectId}`
+    );
+    projectItem = response?.data?.[0] as IProject;
+  }
 
   return (
-    <section>
-      <div className="justify-between items-center hidden lg:flex mb-10">
+    <>
+      {/* page header */}
+      <header className="justify-between items-center hidden lg:flex mb-10">
         <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
-          {isEditForm ? 'edit project' : ''}
+          edit project
         </h1>
         <Button className="w-fit! gap-8px!">
           <InviteMemeberIcon className="text-white w-4.5" />
           Invite member
         </Button>
-      </div>
+      </header>
+      {/* form section */}
       <section className="lg:bg-white rounded-t-8px lg:max-w-4/5 xl:max-w-3/4 2xl:max-w-1/2 lg:mx-auto lg:shadow-primary px-6 lg:p-0 mb-10">
         <div className="pb-48px lg:pb-10 lg:p-32px">
           {/* form header */}
@@ -36,7 +44,7 @@ export default async function ProjectPage({
             </div>
             <div>
               <h2 className="font-semibold text-[24px] leading-8 text-slate-dark capitalize">
-                initialize new project
+                edit project
               </h2>
               <p className="text-slate-md">
                 Define the scope and foundational details of your project.
@@ -44,11 +52,11 @@ export default async function ProjectPage({
             </div>
           </header>
           {/* form */}
-          {isEditForm ? <EditProjectForm /> : null}
+          <ProjectForm projectItem={projectItem} />
         </div>
         {/* pro tip */}
         <Tip />
       </section>
-    </section>
+    </>
   );
 }

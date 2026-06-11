@@ -5,9 +5,8 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { createProjectAction } from '../server-actions/project.actions';
+import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
-import { TAddProjectInput } from '../validation/project.validation';
 import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
 import {
   fetchPaginatedProjects,
@@ -15,13 +14,13 @@ import {
   setCurrentPage,
 } from '@/shared/libs/store/slices/project.slice';
 import { useMobile } from '@/shared/hooks/shared.hooks';
+import { TProjectInput } from '../validation/project.validation';
 
 // ^ ---------------------------- Create Project Hook ------------------------- //
-export const useCreateProject = () => {
-  const [state, formAction, isPending] = useActionState(
-    createProjectAction,
-    null
-  );
+export const useSubmitProject = (projectId?: string) => {
+  const action = projectAction.bind(null, projectId);
+
+  const [state, formAction, isPending] = useActionState(action, null);
   const [_, startTransition] = useTransition();
 
   // effects
@@ -34,9 +33,9 @@ export const useCreateProject = () => {
   }, [state]);
 
   // handlers
-  const onHandleCreateProject = (data: TAddProjectInput) => {
+  const onHandleSubmitProject = (data: TProjectInput) => {
     const formData = new FormData();
-    formData.append('name', data.name);
+    if (data.name) formData.append('name', data.name);
     if (data.description) formData.append('description', data.description);
 
     startTransition(() => {
@@ -44,10 +43,10 @@ export const useCreateProject = () => {
     });
   };
 
-  return { onHandleCreateProject, isPending, addProjectState: state };
+  return { onHandleSubmitProject, isPending, projectState: state };
 };
 
-//
+// ^ ------------------------ Use Handle Pagination Hook ------------------------- //
 export const useHandlePagination = () => {
   const [hasMore, setHasMore] = useState(true);
   const observerTarget = useRef(null);

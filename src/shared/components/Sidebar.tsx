@@ -9,13 +9,14 @@ import LogoIcon from '@/assets/icons/logo.svg';
 import Button from './ui/Button';
 import LogoutBtn from './ui/LogoutBtn';
 import { useState } from 'react';
-import { asideLinks } from '../data/static-data';
+import { getAsideLinks } from '../data/static-data';
 
 interface IProps {
   isOpen?: boolean;
+  setIsOpen: (open: boolean) => void;
 }
 
-const Sidebar: React.FC<IProps> = ({ isOpen }) => {
+const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const { projectId } = useParams();
@@ -24,7 +25,9 @@ const Sidebar: React.FC<IProps> = ({ isOpen }) => {
   const isMobileLayout = isOpen !== undefined;
 
   // displayed sidebar links
-  const displayedSidebarLinks = projectId ? asideLinks : asideLinks.slice(0, 1);
+  const displayedSidebarLinks = projectId
+    ? getAsideLinks(projectId as string)
+    : getAsideLinks().filter((n) => !n.protected);
 
   // handlers
   const toggleMenuCollapse = () => {
@@ -35,12 +38,16 @@ const Sidebar: React.FC<IProps> = ({ isOpen }) => {
   const asideNavLinks = (
     <ul className="flex flex-col gap-4px">
       {displayedSidebarLinks.map((link) => {
-        const isLinkActive = pathname?.includes(link.href);
+        const isLinkActive = pathname === link.href;
         const Icon = link.icon;
         return (
           <li
             key={link.id}
             className={`rounded-4px group ${isLinkActive ? 'bg-white' : ''} ${isCollapsed ? 'size-48px flex items-center justify-center' : 'py-10px px-12px'}`}
+            onClick={() => {
+              setIsOpen(false);
+              ``;
+            }}
           >
             <Link
               href={link.href}

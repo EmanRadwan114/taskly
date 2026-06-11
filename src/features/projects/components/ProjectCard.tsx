@@ -18,7 +18,7 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
 
   return (
     <Link
-      href={`/project/${project?.id}`}
+      href={`/project/${project?.id}/epics`}
       className="w-full h-full rounded-8px p-24px bg-white flex flex-col gap-y-14px"
     >
       <h2 className="text-title-md text-slate-dark capitalize">

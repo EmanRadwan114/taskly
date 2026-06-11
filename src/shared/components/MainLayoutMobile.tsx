@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { asideLinks } from '../data/static-data';
+import { getAsideLinks } from '../data/static-data';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
@@ -17,7 +17,9 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
   const { projectId } = useParams();
 
   // displayed sidebar links
-  const displayedSidebarLinks = projectId ? asideLinks : asideLinks.slice(0, 1);
+  const displayedSidebarLinks = projectId
+    ? getAsideLinks(projectId as string)
+    : getAsideLinks().filter((n) => !n.protected);
 
   const toggleSideBar = () => {
     setIsSideBarOpen((s) => !s);
@@ -25,7 +27,7 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
   return (
     <>
       <Navbar toggleSideBar={toggleSideBar} user={user} />
-      <Sidebar isOpen={isSideBarOpen} />
+      <Sidebar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <div
         className={`fixed lg:hidden inset-0 transition-all duration-300 ${isSideBarOpen ? 'bg-slate-dark/40 backdrop-blur-xs z-10' : 'bg-none static'}`}
         onClick={toggleSideBar}
@@ -36,7 +38,7 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
         <section className="fixed w-full bottom-0 z-5 bg-surface-low px-6.5 h-16">
           <div className="h-full flex flex-col justify-center">
             <div
-              className={`flex ${projectId ? 'justify-between' : 'justify-center'} items-end gap-4px`}
+              className={`flex ${projectId ? 'justify-between gap-4px' : 'justify-center gap-48px'} items-end `}
             >
               {displayedSidebarLinks.map((link) => {
                 const isLinkActive = pathname?.includes(link.href);

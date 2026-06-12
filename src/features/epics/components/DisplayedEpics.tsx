@@ -45,13 +45,21 @@ const DisplayedEpics: React.FC = ({}) => {
         <div className="lg:flex lg:gap-32px lg:items-start">
           {/* search */}
           <Search placeholder="search epic..." />
-          {/* new epic */}
+          {/* new epic btn on desktop*/}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
             className="w-fit! gap-8px! hidden lg:flex"
           >
             <PlusIcon className="text-white w-2.75" />
             new epic
+          </LinkButton>
+
+          {/* new epic btn on mobile */}
+          <LinkButton
+            href={`/project/${projectId}/epics/new`}
+            btnClassName="lg:hidden fixed bottom-20 inset-e-24px z-99999 rounded-12px! size-14! shadow-primary!"
+          >
+            <PlusIcon className="text-white size-3.5" />
           </LinkButton>
         </div>
       </header>

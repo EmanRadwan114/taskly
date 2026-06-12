@@ -8,6 +8,8 @@ import EpicItem from './EpicItem';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { fetchPaginatedEpics } from '@/shared/libs/store/slices/epics.slice';
+import LoadingEpics from './LoadingEpics';
+import EmptyEpics from './EmptyEpics';
 
 const DisplayedEpics: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -27,9 +29,11 @@ const DisplayedEpics: React.FC = ({}) => {
     }
   }, [dispatch, projectId]);
 
-  if (loading === 'pending') return 'loading';
+  if (loading === 'pending') return <LoadingEpics />;
 
   if (loading === 'rejected') throw new Error(error!);
+
+  if (epics?.length === 0) return <EmptyEpics />;
 
   return (
     <section>

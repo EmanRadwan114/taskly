@@ -48,6 +48,7 @@
   --rounded-2px: 0.125rem; /*2px*/
   --rounded-4px: 0.25rem; /*4px*/
   --rounded-8px: 0.5rem; /*8px*/
+  --rounded-8px: 0.75rem; /*12px*/
 
   /* spacing */
   --app-space-2px: 0.125rem; /*2px*/
@@ -113,6 +114,7 @@
   --radius-2px: var(--rounded-2px); /*0.125rem = 2px*/
   --radius-4px: var(--rounded-4px); /*0.25rem = 4px*/
   --radius-8px: var(--rounded-8px); /*0.5rem = 8px*/
+  --radius-12px: var(--rounded-12px); /*0.75rem = 12px*/
 
   /* spacing */
   --spacing-2px: var(--app-space-2px); /*0.125rem = 2px*/

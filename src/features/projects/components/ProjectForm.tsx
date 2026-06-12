@@ -100,7 +100,7 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
             variant="ghost"
             type="button"
             onClick={() =>
-              isEditMode ? router.back() : router.push('/project')
+              !isEditMode ? router.back() : router.push('/project')
             }
             className="lg:w-fit! font-bold text-slate-md! text-base! order-1 lg:order-0"
             disabled={isPending}

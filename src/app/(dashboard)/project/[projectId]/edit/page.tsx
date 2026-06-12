@@ -26,7 +26,7 @@ export default async function Page({
     <>
       {/* page header */}
       <header className="justify-between items-center hidden lg:flex mb-10">
-        <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
+        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
           edit project
         </h1>
         <Button className="w-fit! gap-8px!">

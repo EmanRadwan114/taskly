@@ -9,11 +9,14 @@ import {
 } from 'react-hook-form';
 import TextArea from './TextArea';
 import AlertIcon from '@/assets/icons/alert.svg';
+import Select from './Select';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
     Omit<
-      InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+      InputHTMLAttributes<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
       'defaultValue' | 'name'
     >,
     Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
@@ -24,6 +27,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   icon?: ReactNode;
   showPassIcon?: boolean;
   isTextArea?: boolean;
+  isSelect?: boolean;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -42,6 +46,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     icon,
     showPassIcon = false,
     isTextArea = false,
+    isSelect = false,
     ...restHtmlProps
   } = props;
 
@@ -57,6 +62,16 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           {...field}
           {...restHtmlProps}
         />
+      ) : isSelect ? (
+        <Select
+          id={label}
+          variant={activeVariant}
+          disabled={disabled}
+          {...field}
+          {...restHtmlProps}
+        >
+          {props.children}
+        </Select>
       ) : (
         <Input
           id={label}
@@ -71,8 +86,8 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
       {/* Message feedback */}
       {fieldState.error ? (
-        <div className="text-error flex gap-1">
-          <AlertIcon className="size-3.25" />
+        <div className="text-error flex gap-1 items-center">
+          <AlertIcon className="size-3" />
           <p className="text-label">{fieldState.error.message}</p>
         </div>
       ) : (

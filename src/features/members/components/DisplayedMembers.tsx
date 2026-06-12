@@ -76,7 +76,7 @@ const DisplayedMembers: React.FC = ({}) => {
     <section>
       {/* page header */}
       <header className="justify-between items-center flex mb-5 lg:mb-10">
-        <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
+        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
           project members
         </h1>
         <Button className="w-fit! gap-8px! hidden lg:flex">

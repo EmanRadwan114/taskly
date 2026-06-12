@@ -37,7 +37,14 @@ const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
           segment === projectId && projectItem?.name
             ? projectItem?.name
             : segment.replace(/-/g, ' ');
-        label = label.includes('add') ? 'add new project' : label;
+
+        if (label.includes('add')) {
+          label = 'add new project';
+        }
+
+        if (label.includes('new')) {
+          label = 'new epic';
+        }
 
         return (
           <div className="flex font-bold gap-8px" key={label}>

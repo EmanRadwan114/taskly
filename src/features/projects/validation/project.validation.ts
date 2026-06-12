@@ -1,3 +1,4 @@
+import { projectDescriptionSchema } from '@/shared/validation/project-description.validation';
 import z from 'zod';
 
 // ^ ------------------ add project schema ------------------
@@ -11,10 +12,7 @@ export const projectSchema = z.object({
     })
     .min(3, 'Project title must be at least 3 characters')
     .max(100, 'Project title must be at most 100 characters'),
-  description: z
-    .string()
-    .max(500, 'Project description must be at most 500 characters')
-    .optional(),
+  description: projectDescriptionSchema,
 });
 
 export type TProjectInput = z.infer<typeof projectSchema>;

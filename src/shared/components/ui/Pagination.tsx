@@ -43,7 +43,7 @@ const Pagination: React.FC = () => {
         <ChevronLeftIcon className="w-4px" />
       </Button>
       {/* number list */}
-      {Array.from({ length: totalPages! }).map((_, index) => (
+      {Array.from({ length: totalPages! || 2 }).map((_, index) => (
         <Button
           key={index}
           variant="ghost"

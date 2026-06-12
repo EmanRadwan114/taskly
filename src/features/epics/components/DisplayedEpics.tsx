@@ -10,11 +10,16 @@ import { useEffect } from 'react';
 import { fetchPaginatedEpics } from '@/shared/libs/store/slices/epics.slice';
 import LoadingEpics from './LoadingEpics';
 import EmptyEpics from './EmptyEpics';
+import { useMobile } from '@/shared/hooks/shared.hooks';
+import Pagination from '@/shared/components/ui/Pagination';
 
 const DisplayedEpics: React.FC = ({}) => {
   const { projectId } = useParams();
+  const { isMobile } = useMobile(768);
 
-  const { epics, loading, error } = useAppSelector((state) => state.epics);
+  const { epics, loading, error, totalPages, totalCount } = useAppSelector(
+    (state) => state.epics
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -64,11 +69,21 @@ const DisplayedEpics: React.FC = ({}) => {
         </div>
       </header>
       {/* epic items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-24px">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-24px mb-10">
         {epics?.map((epic) => (
           <EpicItem key={epic?.id} epicItem={epic} />
         ))}
       </div>
+
+      {/* pagination with footer on desktop */}
+      {!isMobile && (
+        <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
+          <p className="font-medium text-secondary text-[12px]">
+            Showing {epics?.length} of {totalCount} active projects
+          </p>
+          {totalPages && totalPages > 1 && <Pagination />}
+        </footer>
+      )}
     </section>
   );
 };

@@ -20,6 +20,7 @@ const DisplayedProjects: React.FC = ({}) => {
     projects,
     totalCount,
     observerTarget,
+    totalPages,
   } = useHandlePagination();
 
   // guard clauses
@@ -55,7 +56,7 @@ const DisplayedProjects: React.FC = ({}) => {
           <p className="font-medium text-secondary text-[12px]">
             Showing {projects?.length} of {totalCount} active projects
           </p>
-          <Pagination />
+          {totalPages && totalPages > 1 && <Pagination />}
         </footer>
       )}
 

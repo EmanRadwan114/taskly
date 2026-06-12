@@ -118,5 +118,6 @@ export const useHandlePagination = () => {
     isMobile,
     hasMore,
     observerTarget,
+    totalPages,
   };
 };

@@ -36,7 +36,9 @@ const EpicForm: React.FC = () => {
     },
   });
 
-  const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic();
+  const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic(
+    projectId as string
+  );
 
   //   fetch members
   useEffect(() => {
@@ -57,7 +59,7 @@ const EpicForm: React.FC = () => {
   // handlers
   const onSubmit = (data: TEpicsInput) => {
     if (!projectId) return;
-    onHandleSubmitEpic({ ...data, project_id: projectId as string });
+    onHandleSubmitEpic(data);
   };
   return (
     <form
@@ -144,7 +146,7 @@ const EpicForm: React.FC = () => {
           </Label>
           <FormField
             control={control}
-            type="datetime-local"
+            type="date"
             name="deadline"
             label="deadline"
           />

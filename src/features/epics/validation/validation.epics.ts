@@ -15,7 +15,7 @@ export const epicsSchema = z.object({
     .string()
     .refine(
       (val) => {
-        if (!val) return false;
+        if (!val) return true;
         const selectedDate = new Date(val).getTime();
         return selectedDate > new Date().getTime();
       },

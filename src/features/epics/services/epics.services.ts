@@ -5,15 +5,17 @@ import { TEpicsInput } from '../validation/validation.epics';
 export const createEpic = async ({
   data,
   accessToken,
+  projectId,
 }: {
-  data: TEpicsInput & { project_id: string };
+  data: TEpicsInput;
   accessToken: string;
+  projectId: string;
 }) => {
   try {
     const response = await fetch(`${BASE_URL}/rest/v1/epics`, {
       method: 'POST',
       headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, project_id: projectId }),
     });
 
     if (response.status !== 201) {

@@ -17,10 +17,12 @@ export const epicsSchema = z.object({
       (val) => {
         if (!val) return true;
         const selectedDate = new Date(val).getTime();
-        return selectedDate > new Date().getTime();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return selectedDate >= today.getTime();
       },
       {
-        message: 'Deadline must be in the future',
+        message: 'Deadline must be today or in the future',
       }
     )
     .optional(),

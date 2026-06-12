@@ -12,7 +12,7 @@ import {
   REFRESH_TOKEN_SINGLE_SESSION,
   REMEMBER_ME_TOKEN_MONTHLY,
 } from '@/shared/utils/variables.utils';
-import { getExpireDateInMs } from '@/shared/utils/functions.utils';
+import { getExpireDateInMs } from '@/shared/utils/functions.server.utils';
 
 // ^ ---------------------------- Create User Account Action ----------------------------
 export const createUserAccountAction = async (

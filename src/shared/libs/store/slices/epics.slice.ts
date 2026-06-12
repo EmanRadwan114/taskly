@@ -1,21 +1,27 @@
-import { IProject } from '@/features/projects/types/project.types';
+import { IEpics } from '@/features/epics/types/epics.types';
 import { LIMIT } from '@/shared/utils/variables.utils';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// ^ -------------- fetch all projects (paginated) ----------------
-export const fetchPaginatedProjects = createAsyncThunk(
-  'projects/fetchPaginated',
+// ^ -------------- fetch all epics (paginated) ----------------
+export const fetchPaginatedEpics = createAsyncThunk(
+  'epics/fetchPaginated',
   async (
     {
       limit,
       offset,
+      projectId,
       append,
-    }: { limit: number; offset: number; append?: boolean },
+    }: {
+      limit: number;
+      offset: number;
+      projectId: string;
+      append?: boolean;
+    },
     { rejectWithValue }
   ) => {
     try {
       const response = await fetch(
-        `/api/fetch-projects?limit=${limit}&offset=${offset}`
+        `/api/fetch-epics?limit=${limit}&offset=${offset}&project_id=${projectId}`
       );
 
       return await response.json();
@@ -33,12 +39,12 @@ interface IInitialState {
   limit: number;
   loading: 'pending' | 'success' | 'rejected';
   error: string | null;
-  projects: IProject[];
   totalPages: number | undefined;
+  epics: IEpics[];
 }
 
-const projectSlice = createSlice({
-  name: 'project',
+const epicsSlice = createSlice({
+  name: 'epics',
   initialState: <IInitialState>{
     currentPage: 1,
     totalCount: 0,
@@ -46,51 +52,49 @@ const projectSlice = createSlice({
     totalPages: undefined,
     loading: 'pending',
     error: null,
-    projects: [],
+    epics: [],
   },
   reducers: {
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
-    resetProjects: (state) => {
+    resetEpics: (state) => {
       state.currentPage = 1;
       state.totalCount = 0;
       state.totalPages = undefined;
       state.loading = 'pending';
-      state.projects = [];
+      state.epics = [];
       state.error = null;
     },
   },
   extraReducers: (builder) => {
-    // fetch projects
+    // fetch epics
     builder
-      .addCase(fetchPaginatedProjects.pending, (state) => {
+      .addCase(fetchPaginatedEpics.pending, (state) => {
         state.loading = 'pending';
       })
-      .addCase(fetchPaginatedProjects.fulfilled, (state, action) => {
+      .addCase(fetchPaginatedEpics.fulfilled, (state, action) => {
         state.loading = 'success';
         state.totalCount = action.payload?.response?.meta?.totalCount;
         state.totalPages = action.payload?.response?.meta?.totalPages;
-        const newProjects = action.payload?.response?.data || [];
+        const newEpics = action.payload?.response?.data || [];
 
         if (action.meta.arg.append) {
-          const existingIds = new Set(
-            state.projects.map((p: IProject) => p.id)
+          const existingIds = new Set(state.epics.map((e: IEpics) => e.id));
+          const filteredNew = newEpics.filter(
+            (e: IEpics) => !existingIds.has(e.id)
           );
-          const filteredNew = newProjects.filter(
-            (p: IProject) => !existingIds.has(p.id)
-          );
-          state.projects = [...state.projects, ...filteredNew];
+          state.epics = [...state.epics, ...filteredNew];
         } else {
-          state.projects = newProjects;
+          state.epics = newEpics;
         }
       })
-      .addCase(fetchPaginatedProjects.rejected, (state, action) => {
+      .addCase(fetchPaginatedEpics.rejected, (state, action) => {
         state.loading = 'rejected';
-        state.error = 'Failed to fetch projects';
+        state.error = 'Failed to fetch epics';
       });
   },
 });
 
-export const { setCurrentPage, resetProjects } = projectSlice.actions;
-export default projectSlice.reducer;
+export const { setCurrentPage, resetEpics } = epicsSlice.actions;
+export default epicsSlice.reducer;

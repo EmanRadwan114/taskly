@@ -129,7 +129,7 @@ const EpicForm: React.FC = () => {
           >
             <option value="">Select a member...</option>
             {projectMembers?.map((member) => (
-              <option key={member?.member_id} value={member.member_id}>
+              <option key={member?.user_id} value={member?.user_id}>
                 {member?.metadata?.name}
               </option>
             ))}

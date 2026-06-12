@@ -17,17 +17,21 @@
   --background: #f9f9ff;
   --secondary-background: #f0f1f5;
   --border: #f1f3ff;
+  --border-dark: #004e32;
   --accent: #6b7280;
 
   /* Slate Neutrals */
   --slate-dark: #041b3c;
   --slate-md: #4f5f7b;
+  --slate-high: #dae2ff;
   --slate-light: #c3c6d6;
   --slate-lighter: #e8edff;
 
   /* semantic colors */
   --success: #82f9be;
+  --success-dark: #65dca4;
   --success-text: #005235;
+  --green-dark: #002113;
   --error: #ba1a1a;
   --error-dark: #93000a;
   --error-background: #ffdad6;
@@ -44,6 +48,7 @@
   --rounded-2px: 0.125rem; /*2px*/
   --rounded-4px: 0.25rem; /*4px*/
   --rounded-8px: 0.5rem; /*8px*/
+  --rounded-12px: 0.75rem; /*12px*/
 
   /* spacing */
   --app-space-2px: 0.125rem; /*2px*/
@@ -78,17 +83,21 @@
   --color-background: var(--background);
   --color-secondary-background: var(--secondary-background);
   --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
   --color-accent: var(--accent);
 
   /* Slate Neutrals */
   --color-slate-dark: var(--slate-dark);
+  --color-slate-high: var(--slate-high);
   --color-slate-md: var(--slate-md);
   --color-slate-light: var(--slate-light);
   --color-slate-lighter: var(--slate-lighter);
 
   /* Semantic Colors */
   --color-success: var(--success);
+  --color-success-dark: var(--success-dark);
   --color-success-text: var(--success-text);
+  --color-green-dark: var(--green-dark);
   --color-error: var(--error);
   --color-error-dark: var(--error-dark);
   --color-error-background: var(--error-background);
@@ -105,6 +114,7 @@
   --radius-2px: var(--rounded-2px); /*0.125rem = 2px*/
   --radius-4px: var(--rounded-4px); /*0.25rem = 4px*/
   --radius-8px: var(--rounded-8px); /*0.5rem = 8px*/
+  --radius-12px: var(--rounded-12px); /*0.75rem = 12px*/
 
   /* spacing */
   --spacing-2px: var(--app-space-2px); /*0.125rem = 2px*/

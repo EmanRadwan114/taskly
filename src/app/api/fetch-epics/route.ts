@@ -6,8 +6,9 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const limit = url.searchParams.get('limit');
     const offset = url.searchParams.get('offset');
+    const projectId = url.searchParams.get('project_id');
 
-    const endpointUrl = `rest/v1/rpc/get_projects?limit=${limit}&offset=${offset}`;
+    const endpointUrl = `/rest/v1/project_epics?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`;
 
     const isPaginated = true;
 

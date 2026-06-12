@@ -32,7 +32,10 @@ const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
       {segments.map((segment, index) => {
         const isLastSegment = index === segments.length - 1;
 
-        const href = `/project/${segments.slice(0, index + 1).join('/')}`;
+        const href =
+          segment === projectId
+            ? `/project/${projectId}/edit`
+            : `/project/${segments.slice(0, index + 1).join('/')}`;
         let label =
           segment === projectId && projectItem?.name
             ? projectItem?.name

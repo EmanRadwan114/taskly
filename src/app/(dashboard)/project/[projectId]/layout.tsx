@@ -1,6 +1,6 @@
 import { IProject } from '@/features/projects/types/project.types';
 import BreadCrumb from '@/shared/components/ui/BreadCrumb';
-import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 
 export default async function ProjectLayout({
   children,

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppDispatch } from '../libs/store/store';
+import { toast } from 'react-toastify';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -55,4 +57,30 @@ export const useMobile = (breakPoint: number = 768) => {
   }, []);
 
   return { isMobile };
+};
+
+// ^ --- Error Handler Hooks ----
+export const useHandleError = ({
+  handlerFn,
+  reset,
+  error,
+}: {
+  handlerFn: () => void;
+  reset: () => void;
+  error: Error;
+}) => {
+  const dispatch = useAppDispatch();
+
+  const handleRetry = () => {
+    dispatch(handlerFn);
+    reset();
+  };
+
+  useEffect(() => {
+    if (error.message) {
+      toast.error(error.message);
+    }
+  }, []);
+
+  return { handleRetry };
 };

@@ -1,7 +1,15 @@
-import { sharedProjectEpicSchema } from '@/shared/validation/shared-project-epics.validation';
+import { projectDescriptionSchema } from '@/shared/validation/project-description.validation';
 import z from 'zod';
 
-export const epicsSchema = sharedProjectEpicSchema.extend({
+export const epicsSchema = z.object({
+  title: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined ? 'Epic title is required' : 'Not a string',
+    })
+    .min(3, 'Epic title must be at least 3 characters')
+    .max(100, 'Epic title must be at most 100 characters'),
+  description: projectDescriptionSchema,
   assignee_id: z.string().optional(),
   deadline: z
     .string()

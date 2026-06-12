@@ -6,14 +6,18 @@ import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSubmitProject } from '@/features/projects/hooks/project.hooks';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
+import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
+import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
+import { useCreateEpic } from '../hooks/epics.hooks';
 
 const EpicForm: React.FC = () => {
   const router = useRouter();
+  const { projectId } = useParams();
 
-  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject();
+  const projectMembers = useAppSelector((state) => state.members.members);
+  const dispatch = useAppDispatch();
 
   const {
     handleSubmit,
@@ -25,42 +29,56 @@ const EpicForm: React.FC = () => {
     resolver: zodResolver(epicsSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: '',
+      title: '',
       description: '',
       assignee_id: '',
+      deadline: '',
     },
   });
 
+  const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic();
+
+  //   fetch members
   useEffect(() => {
-    if (projectState?.success) {
-      reset({ name: '', description: '' });
+    if (projectMembers.length === 0 && projectId) {
+      dispatch(fetchMembers(projectId as string));
     }
-  }, [projectState, reset]);
+  }, [projectId]);
+
+  useEffect(() => {
+    if (epicState?.success) {
+      reset({ title: '', description: '', assignee_id: '', deadline: '' });
+    }
+  }, [epicState, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');
 
   // handlers
   const onSubmit = (data: TEpicsInput) => {
-    onHandleSubmitProject(data);
+    if (!projectId) return;
+    onHandleSubmitEpic({ ...data, project_id: projectId as string });
   };
   return (
-    <form className="lg:bg-white rounded-8px lg:shadow-primary lg:px-32px lg:py-10 flex flex-col gap-32px">
+    <form
+      className="lg:bg-white rounded-8px lg:shadow-primary lg:px-32px lg:py-10 flex flex-col gap-32px"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {/* name */}
       <div className="flex flex-col lg:flex-row gap-6px">
         <Label
-          htmlFor="name"
-          activeVariant={errors.name ? 'error' : 'default'}
+          htmlFor="title"
+          activeVariant={errors.title ? 'error' : 'default'}
           className="lg:w-1/6"
         >
-          project title
+          title
           <span className="text-error"> *</span>
         </Label>
         <FormField
           control={control}
-          name="name"
-          label="name"
-          placeholder="Enter project title"
+          name="title"
+          label="title"
+          placeholder="Enter title"
           containerClassName="flex-1"
           fieldMsg="Minimum 3 characters required"
         />
@@ -96,7 +114,7 @@ const EpicForm: React.FC = () => {
           <Label
             htmlFor="assignee_id"
             className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
-            activeVariant={errors.description ? 'error' : 'default'}
+            activeVariant={errors.assignee_id ? 'error' : 'default'}
           >
             assignee
           </Label>
@@ -108,6 +126,11 @@ const EpicForm: React.FC = () => {
             isSelect
           >
             <option value="">Select a member...</option>
+            {projectMembers?.map((member) => (
+              <option key={member?.member_id} value={member.member_id}>
+                {member?.metadata?.name}
+              </option>
+            ))}
           </FormField>
         </div>
         {/* deadline */}
@@ -115,7 +138,7 @@ const EpicForm: React.FC = () => {
           <Label
             htmlFor="deadline"
             className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
-            activeVariant={errors.description ? 'error' : 'default'}
+            activeVariant={errors.deadline ? 'error' : 'default'}
           >
             deadline
           </Label>

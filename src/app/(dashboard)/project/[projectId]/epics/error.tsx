@@ -3,8 +3,8 @@ import Button from '@/shared/components/ui/Button';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { resetMembers } from '@/shared/libs/store/slices/members.slice';
 import ErrorIcon from '@/assets/icons/error-icon.svg';
+import { resetEpics } from '@/shared/libs/store/slices/epics.slice';
 
 export default function Error({
   error,
@@ -16,7 +16,7 @@ export default function Error({
   const dispatch = useAppDispatch();
 
   const handleRetry = () => {
-    dispatch(resetMembers());
+    dispatch(resetEpics());
     reset();
   };
 

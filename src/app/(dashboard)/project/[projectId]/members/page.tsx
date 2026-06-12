@@ -1,3 +1,5 @@
+import DisplayedMembers from '@/features/members/components/DisplayedMembers';
+
 export default function Page() {
-  return <div>Page</div>;
+  return <DisplayedMembers />;
 }

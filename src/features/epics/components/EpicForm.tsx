@@ -1,27 +1,19 @@
 'use client';
 
-import {
-  projectSchema,
-  TProjectInput,
-} from '@/features/projects/validation/project.validation';
 import Button from '@/shared/components/ui/Button';
 import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { IProject } from './../../projects/types/project.types';
 import { useSubmitProject } from '@/features/projects/hooks/project.hooks';
 import { useRouter } from 'next/navigation';
+import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
 
-const EpicForm: React.FC<{ projectItem?: IProject }> = ({ projectItem }) => {
+const EpicForm: React.FC = () => {
   const router = useRouter();
 
-  const isEditMode = !!projectItem?.id;
-
-  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject(
-    isEditMode ? projectItem?.id : undefined
-  );
+  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject();
 
   const {
     handleSubmit,
@@ -29,26 +21,27 @@ const EpicForm: React.FC<{ projectItem?: IProject }> = ({ projectItem }) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<TProjectInput>({
-    resolver: zodResolver(projectSchema),
+  } = useForm<TEpicsInput>({
+    resolver: zodResolver(epicsSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: isEditMode ? projectItem?.name : '',
-      description: isEditMode ? projectItem?.description : '',
+      name: '',
+      description: '',
+      assignee_id: '',
     },
   });
 
   useEffect(() => {
-    if (projectState?.success && !isEditMode) {
+    if (projectState?.success) {
       reset({ name: '', description: '' });
     }
-  }, [projectState, isEditMode, reset]);
+  }, [projectState, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');
 
   // handlers
-  const onSubmit = (data: TProjectInput) => {
+  const onSubmit = (data: TEpicsInput) => {
     onHandleSubmitProject(data);
   };
   return (
@@ -101,19 +94,18 @@ const EpicForm: React.FC<{ projectItem?: IProject }> = ({ projectItem }) => {
         {/* assignees */}
         <div className="flex flex-col gap-6px flex-1">
           <Label
-            htmlFor="assignees"
+            htmlFor="assignee_id"
             className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
             activeVariant={errors.description ? 'error' : 'default'}
           >
-            assignees
+            assignee
           </Label>
           <FormField
             control={control}
-            name="assignees"
-            label="assignees"
+            name="assignee_id"
+            label="assignee_id"
             containerClassName="flex-1"
             isSelect
-            className="pe-2.5"
           >
             <option value="">Select a member...</option>
           </FormField>
@@ -129,10 +121,9 @@ const EpicForm: React.FC<{ projectItem?: IProject }> = ({ projectItem }) => {
           </Label>
           <FormField
             control={control}
-            type="date"
+            type="datetime-local"
             name="deadline"
             label="deadline"
-            placeholder={`Select a members...`}
           />
         </div>
       </div>

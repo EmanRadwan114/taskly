@@ -34,11 +34,11 @@ const DisplayedEpics: React.FC = ({}) => {
   return (
     <section>
       {/* page header */}
-      <header className="justify-between items-center flex mb-5 lg:mb-10">
-        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
+      <header className="lg:justify-between lg:items-center flex gap-16px flex-col lg:flex-row mb-5 lg:mb-10">
+        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
           project epics
         </h1>
-        <div className="flex gap-32px items-start">
+        <div className="lg:flex lg:gap-32px lg:items-start">
           {/* search */}
           <Search placeholder="search epic..." />
           {/* new epic */}
@@ -52,7 +52,7 @@ const DisplayedEpics: React.FC = ({}) => {
         </div>
       </header>
       {/* epic items */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-24px">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-24px">
         {epics?.map((epic) => (
           <EpicItem key={epic?.id} epicItem={epic} />
         ))}

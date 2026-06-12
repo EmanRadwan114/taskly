@@ -23,6 +23,7 @@
   /* Slate Neutrals */
   --slate-dark: #041b3c;
   --slate-md: #4f5f7b;
+  --slate-high: #dae2ff;
   --slate-light: #c3c6d6;
   --slate-lighter: #e8edff;
 
@@ -86,6 +87,7 @@
 
   /* Slate Neutrals */
   --color-slate-dark: var(--slate-dark);
+  --color-slate-high: var(--slate-high);
   --color-slate-md: var(--slate-md);
   --color-slate-light: var(--slate-light);
   --color-slate-lighter: var(--slate-lighter);

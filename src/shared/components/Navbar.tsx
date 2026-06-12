@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../libs/store/store';
 import { setUser } from '../libs/store/slices/auth.slice';
 import { useEffect, useState } from 'react';
 import LogoutBtn from './ui/LogoutBtn';
-import { getNameInitials } from '../utils/functions.utils';
+import { getNameInitials } from '../utils/functions.client.utils';
 
 interface Props {
   toggleSideBar?: () => void;

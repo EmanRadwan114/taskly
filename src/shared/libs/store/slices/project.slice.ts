@@ -87,8 +87,7 @@ const projectSlice = createSlice({
       })
       .addCase(fetchPaginatedProjects.rejected, (state, action) => {
         state.loading = 'rejected';
-        state.error =
-          'Failed to fetch projects';
+        state.error = 'Failed to fetch projects';
       });
   },
 });

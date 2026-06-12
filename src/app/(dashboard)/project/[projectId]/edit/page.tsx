@@ -3,7 +3,7 @@ import InitializeIcon from '@/assets/icons/initialize.svg';
 import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { IProject } from '@/features/projects/types/project.types';
-import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 import ProjectForm from '@/features/projects/components/ProjectForm';
 
 export default async function Page({

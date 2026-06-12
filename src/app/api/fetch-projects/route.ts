@@ -1,4 +1,4 @@
-import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
+import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {

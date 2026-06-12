@@ -1,11 +1,36 @@
 'use client';
+
 import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
-import { useAppSelector } from '@/shared/libs/store/store';
+import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
+import EpicItem from './EpicItem';
+import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { fetchPaginatedEpics } from '@/shared/libs/store/slices/epics.slice';
 
 const DisplayedEpics: React.FC = ({}) => {
-  // const {} = useAppSelector(state=>state.)
+  const { projectId } = useParams();
+
+  const { epics, loading, error } = useAppSelector((state) => state.epics);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(
+        fetchPaginatedEpics({
+          limit: 10,
+          offset: 0,
+          projectId: projectId as string,
+        })
+      );
+    }
+  }, [dispatch, projectId]);
+
+  if (loading === 'pending') return 'loading';
+
+  if (loading === 'rejected') throw new Error(error!);
+
   return (
     <section>
       {/* page header */}
@@ -18,7 +43,7 @@ const DisplayedEpics: React.FC = ({}) => {
           <Search placeholder="search epic..." />
           {/* new epic */}
           <LinkButton
-            href="/epics/new"
+            href={`/project/${projectId}/epics/new`}
             className="w-fit! gap-8px! hidden lg:flex"
           >
             <PlusIcon className="text-white w-2.75" />
@@ -27,7 +52,11 @@ const DisplayedEpics: React.FC = ({}) => {
         </div>
       </header>
       {/* epic items */}
-      <div>{epics}</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-24px">
+        {epics?.map((epic) => (
+          <EpicItem key={epic?.id} epicItem={epic} />
+        ))}
+      </div>
     </section>
   );
 };

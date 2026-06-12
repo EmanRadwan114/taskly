@@ -1,5 +1,4 @@
 import { IEpics } from '@/features/epics/types/epics.types';
-import { IProject } from '@/features/projects/types/project.types';
 import { LIMIT } from '@/shared/utils/variables.utils';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -22,7 +21,7 @@ export const fetchPaginatedEpics = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        `/api/fetch-epics?limit=${limit}&offset=${offset}&projectId=${projectId}`
+        `/api/fetch-epics?limit=${limit}&offset=${offset}&project_id=${projectId}`
       );
 
       return await response.json();
@@ -44,8 +43,8 @@ interface IInitialState {
   epics: IEpics[];
 }
 
-const projectSlice = createSlice({
-  name: 'project',
+const epicsSlice = createSlice({
+  name: 'epics',
   initialState: <IInitialState>{
     currentPage: 1,
     totalCount: 0,
@@ -97,5 +96,5 @@ const projectSlice = createSlice({
   },
 });
 
-export const { setCurrentPage, resetEpics } = projectSlice.actions;
-export default projectSlice.reducer;
+export const { setCurrentPage, resetEpics } = epicsSlice.actions;
+export default epicsSlice.reducer;

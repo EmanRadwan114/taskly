@@ -6,7 +6,7 @@ import Badge from '@/shared/components/ui/Badge';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import { useMobile } from '@/shared/hooks/shared.hooks';
-import { getNameInitials } from '@/shared/utils/functions.utils';
+import { getNameInitials } from '@/shared/utils/functions.client.utils';
 
 interface IProps {
   member: IMember;

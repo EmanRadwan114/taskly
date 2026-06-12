@@ -120,14 +120,3 @@ export const getCookieValue = async (cookieName: string) => {
   const cookieValue = cookie.get(cookieName)?.value;
   return cookieValue ?? '';
 };
-
-// ^ ------------------------ get user name initials ------------------------
-export const getNameInitials = (name: string) => {
-  return name.split(' ').length > 1
-    ? name
-        .split(' ')
-        .slice(0, 2)
-        .map((w) => w[0])
-        .join('')
-    : name.split('').slice(0, 2).join('');
-};

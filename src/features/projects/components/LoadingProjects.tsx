@@ -15,7 +15,7 @@ const LoadingProjects: React.FC = ({}) => {
         <div className="w-52 h-10 rounded-4px bg-slate-lighter animate-pulse hidden lg:block"></div>
       </header>
       {/* skeleton */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-24px pb-10 lg:pb-20">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-24px pb-10 lg:pb-20">
         {Array.from({ length: 12 })?.map((_, idx) => (
           <ProjectSkeletonCard key={idx} />
         ))}

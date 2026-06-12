@@ -10,7 +10,9 @@
   --primary-container: #0052cc;
   --secondary: #434654;
   --secondary-light: #737685;
+  --surface-dark: #cdddff;
   --surface-high: #d7e2ff;
+  --surface-md: #e0e8ff;
   --surface-low: #f1f3ff;
   --background: #f9f9ff;
   --secondary-background: #f0f1f5;
@@ -69,7 +71,9 @@
   --color-primary-container: var(--primary-container);
   --color-secondary: var(--secondary);
   --color-secondary-light: var(--secondary-light);
+  --color-surface-dark: var(--surface-dark);
   --color-surface-high: var(--surface-high);
+  --color-surface-md: var(--surface-md);
   --color-surface-low: var(--surface-low);
   --color-background: var(--background);
   --color-secondary-background: var(--secondary-background);

@@ -17,6 +17,7 @@
   --background: #f9f9ff;
   --secondary-background: #f0f1f5;
   --border: #f1f3ff;
+  --border-dark: #004e32;
   --accent: #6b7280;
 
   /* Slate Neutrals */
@@ -27,7 +28,9 @@
 
   /* semantic colors */
   --success: #82f9be;
+  --success-dark: #65dca4;
   --success-text: #005235;
+  --green-dark: #002113;
   --error: #ba1a1a;
   --error-dark: #93000a;
   --error-background: #ffdad6;
@@ -78,6 +81,7 @@
   --color-background: var(--background);
   --color-secondary-background: var(--secondary-background);
   --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
   --color-accent: var(--accent);
 
   /* Slate Neutrals */
@@ -88,7 +92,9 @@
 
   /* Semantic Colors */
   --color-success: var(--success);
+  --color-success-dark: var(--success-dark);
   --color-success-text: var(--success-text);
+  --color-green-dark: var(--green-dark);
   --color-error: var(--error);
   --color-error-dark: var(--error-dark);
   --color-error-background: var(--error-background);

@@ -6,6 +6,7 @@ import Badge from '@/shared/components/ui/Badge';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import { useMobile } from '@/shared/hooks/shared.hooks';
+import { getNameInitials } from '@/shared/utils/functions.utils';
 
 interface IProps {
   member: IMember;
@@ -15,14 +16,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
   const [avatarBg, _] = useState(Math.round(Math.random() * 255));
   const { isMobile } = useMobile(768);
 
-  const memberInitials =
-    member?.metadata.name.split(' ').length > 1
-      ? member?.metadata.name
-          .split(' ')
-          .slice(0, 2)
-          .map((w) => w[0])
-          .join('')
-      : member?.metadata.name.split('').slice(0, 2).join('');
+  const memberInitials = getNameInitials(member?.metadata.name);
 
   const roleStyle = {
     viewer: 'bg-slate-lighter text-secondary',

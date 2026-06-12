@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../libs/store/store';
 import { setUser } from '../libs/store/slices/auth.slice';
 import { useEffect, useState } from 'react';
 import LogoutBtn from './ui/LogoutBtn';
+import { getNameInitials } from '../utils/functions.utils';
 
 interface Props {
   toggleSideBar?: () => void;
@@ -27,14 +28,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
   const toggleSubMenu = () => setIsSubMenuOpen((c) => !c);
 
   // get user initials
-  const userInitials =
-    user?.name.split(' ').length > 1
-      ? user?.name
-          .split(' ')
-          .slice(0, 2)
-          .map((w) => w[0])
-          .join('')
-      : user?.name.split('').slice(0, 2).join('');
+  const userInitials = getNameInitials(user?.name);
 
   // avatar
   const avatar = (

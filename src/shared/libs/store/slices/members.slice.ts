@@ -32,7 +32,13 @@ const membersSlice = createSlice({
     error: null,
     members: [],
   },
-  reducers: {},
+  reducers: {
+    resetMembers: (state) => {
+      state.loading = 'pending';
+      state.members = [];
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     // fetch projects
     builder
@@ -45,12 +51,11 @@ const membersSlice = createSlice({
       })
       .addCase(fetchMembers.rejected, (state, action) => {
         state.loading = 'rejected';
-        state.error =
-          (action.payload as string) ||
-          action.error.message ||
-          'Failed to fetch members';
+        state.error = 'Failed to fetch members';
       });
   },
 });
+
+export const { resetMembers } = membersSlice.actions;
 
 export default membersSlice.reducer;

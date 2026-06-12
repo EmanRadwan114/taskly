@@ -1,7 +1,6 @@
 import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
 import { NextResponse } from 'next/server';
 
-// endpoint to fetch projects & project by id
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);

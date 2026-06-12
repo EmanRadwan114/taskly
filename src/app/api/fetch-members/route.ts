@@ -1,7 +1,6 @@
 import { fetchWithAuthServer } from '@/shared/utils/functions.utils';
 import { NextResponse } from 'next/server';
 
-// endpoint to fetch projects & project by id
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -9,9 +8,7 @@ export async function GET(request: Request) {
 
     const endpointUrl = `rest/v1/get_project_members?project_id=eq.${projectId}`;
 
-    const isPaginated = false;
-
-    const response = await fetchWithAuthServer(endpointUrl, isPaginated);
+    const response = await fetchWithAuthServer(endpointUrl);
 
     return NextResponse.json({ response });
   } catch (error) {

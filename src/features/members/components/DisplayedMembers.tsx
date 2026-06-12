@@ -5,12 +5,16 @@ import MemberItem from './MemberItem';
 import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
-import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
+import {
+  fetchMembers,
+  resetMembers,
+} from '@/shared/libs/store/slices/members.slice';
 import { useParams } from 'next/navigation';
 import { useMobile } from '@/shared/hooks/shared.hooks';
+import LoadingMembers from './LoadingMembers';
 
 const DisplayedMembers: React.FC = ({}) => {
-  const { members, loading } = useAppSelector((state) => state.members);
+  const { members, loading, error } = useAppSelector((state) => state.members);
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
   const { isMobile } = useMobile();
@@ -19,15 +23,19 @@ const DisplayedMembers: React.FC = ({}) => {
     if (projectId) {
       dispatch(fetchMembers(projectId as string));
     }
-  }, []);
 
-  //   if (loading === 'pending') {
-  //     return <Loader size="lg" />;
-  //   }
+    return () => {
+      dispatch(resetMembers());
+    };
+  }, [dispatch]);
 
-  //   if (loading === 'rejected') {
-  //     return <ErrorMessage />;
-  //   }
+  if (loading === 'pending') {
+    return <LoadingMembers />;
+  }
+
+  if (loading === 'rejected') {
+    if (loading === 'rejected') throw new Error(error!);
+  }
 
   // desktop members view
   const desktopMembersView = (

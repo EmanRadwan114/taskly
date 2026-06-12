@@ -38,7 +38,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
         className={`flex items-center justify-center rounded-lg size-48px`}
         style={{ backgroundColor: `#${avatarBg}` }}
       >
-        <span className="text-surface-low font-bold uppercase">
+        <span className="text-surface-md font-bold uppercase">
           {memberInitials}
         </span>
       </div>

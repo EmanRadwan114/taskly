@@ -7,33 +7,42 @@ import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
-import LoadingProjects from './LoadingProjects';
-import ProjectSkeletonCard from './ProjectSkeletonCard';
-import { useHandlePagination } from '../hooks/project.hooks';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useHandleMobilePagination } from '@/shared/hooks/shared.hooks';
 
-const DisplayedProjects: React.FC = ({}) => {
-  const {
-    hasMore,
-    error,
-    isMobile,
-    loading,
-    projects,
-    totalCount,
-    observerTarget,
-    totalPages,
-  } = useHandlePagination();
+interface IProps {
+  projects: IProject[];
+  paginationMetaData?: IMetaFetchedData | undefined;
+}
 
-  // guard clauses
-  if (loading === 'rejected') throw new Error(error!);
+const DisplayedProjects: React.FC<IProps> = ({projects, paginationMetaData}) => {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
 
-  // desktop & initial request on mob
-  if (
-    (loading === 'pending' && isMobile && projects?.length === 0) ||
-    (loading === 'pending' && !isMobile)
-  )
-    return <LoadingProjects />;
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
 
-  if (projects?.length === 0 && loading === 'success') return <EmptyProjects />;
+const {isMobile, hasMore, observerTarget} = useHandleMobilePagination({
+  list: projects,
+  currentPage,
+  paginationMetaData,
+  setCurrentPage
+})
+  // handlers
+  const handleCurrentPage = (page: number) => {
+    setCurrentPage(page)
+
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', page.toString())
+
+    router.push(`${pathname}?${newSearchParams.toString()}`)
+  };
+
+  // conditional rendering
+  if (projects?.length === 0) return <EmptyProjects />;
+
 
   return (
     <section className="flex flex-col gap-10">
@@ -46,17 +55,18 @@ const DisplayedProjects: React.FC = ({}) => {
           <ProjectCard project={project} key={project.id} />
         ))}
 
-        {/* loading on mobile */}
-        {isMobile && loading === 'pending' && <ProjectSkeletonCard />}
       </section>
 
-      {/* pagination with footer on desktop */}
+      {/* pagination footer on desktop */}
       {!isMobile && (
         <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
           <p className="font-medium text-secondary text-[12px]">
-            Showing {projects?.length} of {totalCount} active projects
+            Showing {projects?.length} of {paginationMetaData?.totalCount} active projects
           </p>
-          {totalPages && totalPages > 1 && <Pagination />}
+
+          {/* pagination component */}
+          {paginationMetaData?.totalPages && paginationMetaData?.totalPages > 1 && 
+          <Pagination currentPage={currentPage} handleCurrentPage={handleCurrentPage} totalPages={paginationMetaData?.totalPages} />}
         </footer>
       )}
 

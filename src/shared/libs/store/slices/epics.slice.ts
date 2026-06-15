@@ -1,5 +1,5 @@
 import { IEpics } from '@/features/epics/types/epics.types';
-import { LIMIT } from '@/shared/utils/variables.utils';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // ^ -------------- fetch all epics (paginated) ----------------
@@ -48,7 +48,7 @@ const epicsSlice = createSlice({
   initialState: <IInitialState>{
     currentPage: 1,
     totalCount: 0,
-    limit: LIMIT,
+    limit: FETCH_LIMIT,
     totalPages: undefined,
     loading: 'pending',
     error: null,

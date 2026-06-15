@@ -4,12 +4,14 @@ import React, { useEffect } from 'react';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import Button from './Button';
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import { setCurrentPage } from '@/shared/libs/store/slices/project.slice';
 
-const Pagination: React.FC = () => {
-  const { currentPage, totalPages } = useAppSelector((state) => state.project);
-  const dispatch = useAppDispatch();
+interface IProps {
+  currentPage: number;
+  totalPages: number;
+  handleCurrentPage: (page: number) => void;
+}
+
+const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPage}) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -19,11 +21,6 @@ const Pagination: React.FC = () => {
       });
     }
   }, [currentPage]);
-
-  // handlers
-  const handlePagination = (pageNum: number) => {
-    dispatch(setCurrentPage(pageNum));
-  };
 
   const isActiveStyle = (pageNum: number) =>
     pageNum === currentPage ? 'bg-primary! text-white!' : '';
@@ -37,7 +34,7 @@ const Pagination: React.FC = () => {
       <Button
         variant="ghost"
         className={`${baseStyle}`}
-        onClick={() => handlePagination(currentPage - 1)}
+        onClick={() => handleCurrentPage(currentPage - 1)}
         disabled={currentPage === 1}
       >
         <ChevronLeftIcon className="w-4px" />
@@ -48,7 +45,7 @@ const Pagination: React.FC = () => {
           key={index}
           variant="ghost"
           className={`${baseStyle} ${isActiveStyle(index + 1)}`}
-          onClick={() => handlePagination(index + 1)}
+          onClick={() =>  handleCurrentPage(index + 1)}
         >
           {index + 1}
         </Button>
@@ -58,7 +55,7 @@ const Pagination: React.FC = () => {
       <Button
         variant="ghost"
         className={`${baseStyle}`}
-        onClick={() => handlePagination(currentPage + 1)}
+        onClick={() => handleCurrentPage(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
         <ChevronRightIcon className="w-4px" />

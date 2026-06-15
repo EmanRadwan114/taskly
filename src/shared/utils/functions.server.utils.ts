@@ -5,7 +5,7 @@ import {
   ACCESS_TOKEN_KEY,
   BASE_URL,
   cookieConfig,
-  LIMIT,
+  FETCH_LIMIT,
   REFRESH_TOKEN_EXPIRES_AT_KEY,
   REFRESH_TOKEN_KEY,
   requestHeaders,
@@ -90,7 +90,7 @@ export const fetchWithAuthServer = async (
       const totalCount = contentRange?.split('/')[1];
 
       result.totalCount = Number(totalCount);
-      result.totalPages = Math.ceil(Number(totalCount) / LIMIT);
+      result.totalPages = Math.ceil(Number(totalCount) / FETCH_LIMIT);
     }
 
     return { data, meta: result };

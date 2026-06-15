@@ -8,17 +8,41 @@ import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
-import { useMobile } from '@/shared/hooks/shared.hooks';
+import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useHandleMobilePagination } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   projects: IProject[];
-  meta?: IMetaFetchedData;
+  paginationMetaData?: IMetaFetchedData | undefined;
 }
 
-const DisplayedProjects: React.FC<IProps> = ({projects, meta}) => {
-  const {isMobile} = useMobile();
+const DisplayedProjects: React.FC<IProps> = ({projects, paginationMetaData}) => {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
 
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
+
+const {isMobile, hasMore, observerTarget} = useHandleMobilePagination({
+  list: projects,
+  currentPage,
+  paginationMetaData,
+  setCurrentPage
+})
+  // handlers
+  const handleCurrentPage = (page: number) => {
+    setCurrentPage(page)
+
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', page.toString())
+
+    router.push(`${pathname}?${newSearchParams.toString()}`)
+  };
+
+  // conditional rendering
   if (projects?.length === 0) return <EmptyProjects />;
+
 
   return (
     <section className="flex flex-col gap-10">
@@ -31,22 +55,23 @@ const DisplayedProjects: React.FC<IProps> = ({projects, meta}) => {
           <ProjectCard project={project} key={project.id} />
         ))}
 
-        {/* loading on mobile */}
-        {/* {isMobile && loading === 'pending' && <ProjectSkeletonCard />} */}
       </section>
 
-      {/* pagination with footer on desktop */}
+      {/* pagination footer on desktop */}
       {!isMobile && (
         <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
           <p className="font-medium text-secondary text-[12px]">
-            Showing {projects?.length} of {meta?.totalCount} active projects
+            Showing {projects?.length} of {paginationMetaData?.totalCount} active projects
           </p>
-          {meta?.totalPages && meta?.totalPages > 1 && <Pagination />}
+
+          {/* pagination component */}
+          {paginationMetaData?.totalPages && paginationMetaData?.totalPages > 1 && 
+          <Pagination currentPage={currentPage} handleCurrentPage={handleCurrentPage} totalPages={paginationMetaData?.totalPages} />}
         </footer>
       )}
 
       {/* loadmore on mobile */}
-      {/* {isMobile && hasMore && <div ref={observerTarget} className=""></div>} */}
+      {isMobile && hasMore && <div ref={observerTarget} className=""></div>}
 
       {/* mobile add project btn */}
       <LinkButton

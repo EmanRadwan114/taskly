@@ -1,8 +1,8 @@
 'use client';
 
-import { resetProjects } from '@/shared/libs/store/slices/project.slice';
 import ErrorHandler from '@/shared/components/ui/ErrorHandler';
-import { useHandleError } from '@/shared/hooks/shared.hooks';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 export default function Error({
   error,
@@ -11,15 +11,16 @@ export default function Error({
   error: Error;
   reset: () => void;
 }) {
-  const { handleRetry } = useHandleError({
-    handlerFn: resetProjects,
-    reset,
-    error,
-  });
+
+  useEffect(() => {
+    if (error.message) {
+      toast.error(error.message);
+    }
+  }, []);
 
   return (
     <ErrorHandler
-      handleRetry={handleRetry}
+      handleRetry={reset}
       description={`We're having trouble retrieving your projects right now. Please try
             again in a moment.`}
     />

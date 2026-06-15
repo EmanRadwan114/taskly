@@ -45,8 +45,15 @@ export default async function proxy(request: NextRequest) {
     try {
       const result = await generateNewTokens(refreshToken);
 
+      request.cookies.set(ACCESS_TOKEN_KEY, result?.access_token);
+      request.cookies.set(REFRESH_TOKEN_KEY, result?.refresh_token);
+
+      // Rebuild headers to pick up the updated cookies + x-pathname
+      const updatedHeaders = new Headers(request.headers);
+      updatedHeaders.set('x-pathname', pathname);
+
       const response = NextResponse.next({
-        request: { headers: requestHeaders },
+        request: { headers: updatedHeaders },
       });
 
       if (rememberMeExpire) {

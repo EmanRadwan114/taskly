@@ -7,33 +7,18 @@ import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
-import LoadingProjects from './LoadingProjects';
-import ProjectSkeletonCard from './ProjectSkeletonCard';
-import { useHandlePagination } from '../hooks/project.hooks';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { useMobile } from '@/shared/hooks/shared.hooks';
 
-const DisplayedProjects: React.FC = ({}) => {
-  const {
-    hasMore,
-    error,
-    isMobile,
-    loading,
-    projects,
-    totalCount,
-    observerTarget,
-    totalPages,
-  } = useHandlePagination();
+interface IProps {
+  projects: IProject[];
+  meta?: IMetaFetchedData;
+}
 
-  // guard clauses
-  if (loading === 'rejected') throw new Error(error!);
+const DisplayedProjects: React.FC<IProps> = ({projects, meta}) => {
+  const {isMobile} = useMobile();
 
-  // desktop & initial request on mob
-  if (
-    (loading === 'pending' && isMobile && projects?.length === 0) ||
-    (loading === 'pending' && !isMobile)
-  )
-    return <LoadingProjects />;
-
-  if (projects?.length === 0 && loading === 'success') return <EmptyProjects />;
+  if (projects?.length === 0) return <EmptyProjects />;
 
   return (
     <section className="flex flex-col gap-10">
@@ -47,21 +32,21 @@ const DisplayedProjects: React.FC = ({}) => {
         ))}
 
         {/* loading on mobile */}
-        {isMobile && loading === 'pending' && <ProjectSkeletonCard />}
+        {/* {isMobile && loading === 'pending' && <ProjectSkeletonCard />} */}
       </section>
 
       {/* pagination with footer on desktop */}
       {!isMobile && (
         <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
           <p className="font-medium text-secondary text-[12px]">
-            Showing {projects?.length} of {totalCount} active projects
+            Showing {projects?.length} of {meta?.totalCount} active projects
           </p>
-          {totalPages && totalPages > 1 && <Pagination />}
+          {meta?.totalPages && meta?.totalPages > 1 && <Pagination />}
         </footer>
       )}
 
       {/* loadmore on mobile */}
-      {isMobile && hasMore && <div ref={observerTarget} className=""></div>}
+      {/* {isMobile && hasMore && <div ref={observerTarget} className=""></div>} */}
 
       {/* mobile add project btn */}
       <LinkButton

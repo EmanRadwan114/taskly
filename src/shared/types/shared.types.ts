@@ -1,4 +1,4 @@
-export interface IMetaData {
+export interface IMetaFetchedData {
   totalCount: number;
   totalPages: number;
 }

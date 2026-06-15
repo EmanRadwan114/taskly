@@ -2,14 +2,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import authReducer from './slices/auth.slice';
 import membersReducer from './slices/members.slice';
-import epicsReducer from './slices/epics.slice';
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       auth: authReducer,
       members: membersReducer,
-      epics: epicsReducer,
     },
   });
 };

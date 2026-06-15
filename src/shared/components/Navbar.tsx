@@ -2,33 +2,64 @@
 
 import Menu from '@/assets/icons/menu.svg';
 import Button from './ui/Button';
-import { IUser } from '@/features/auth/types/auth.types';
 import { useAppDispatch, useAppSelector } from '../libs/store/store';
-import { setUser } from '../libs/store/slices/auth.slice';
 import { useEffect, useState } from 'react';
 import LogoutBtn from './ui/LogoutBtn';
 import { getNameInitials } from '../utils/functions.client.utils';
+import { fetchUserData } from '../libs/store/slices/auth.slice';
 
 interface Props {
   toggleSideBar?: () => void;
-  user: IUser;
 }
-const Navbar: React.FC<Props> = ({ toggleSideBar, user }) => {
+const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const isMobileLayout = toggleSideBar !== undefined;
+
+  const user = useAppSelector((state) => state.auth.user);
 
   const dispatch = useAppDispatch();
 
   // dispatch user to store
   useEffect(() => {
-    if (user) dispatch(setUser(user));
-  }, [user, dispatch]);
+    dispatch(fetchUserData());
+  }, [dispatch]);
 
   // handlers
   const toggleSubMenu = () => setIsSubMenuOpen((c) => !c);
 
   // get user initials
-  const userInitials = getNameInitials(user?.name);
+  const userInitials = getNameInitials(user?.name || '');
+
+  // conditional rendering => user loading
+  if (!user) {
+    return (
+      <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-12px px-24px">
+        {/* loading desktop */}
+        <div className="hidden lg:flex justify-end gap-4">
+          {/* user info loading on desktop*/}
+          <div className="hidden lg:flex flex-col items-end gap-1">
+            {/* name loading */}
+            <div className="bg-slate-light animate-pulse rounded-sm shadow-primary flex items-center justify-center w-20 h-5"></div>
+            {/* job title loading */}
+            <div className="bg-slate-light animate-pulse rounded-sm shadow-primary flex items-center justify-center w-24 h-4"></div>
+          </div>
+          {/* avatar loading */}
+          <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-10"></div>
+        </div>
+        {/* loading mobile */}
+        <div className="lg:hidden flex justify-between items-center">
+          <div className="flex items-center gap-12px">
+            {/* burger menu on mobile only */}
+            <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-6"></div>
+            {/* title on mobile only */}
+            <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center w-20 h-5"></div>
+          </div>
+          {/* avatar loading */}
+          <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-10"></div>
+        </div>
+      </nav>
+    );
+  }
 
   // avatar
   const avatar = (

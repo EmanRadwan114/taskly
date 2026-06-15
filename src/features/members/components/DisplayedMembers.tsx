@@ -7,27 +7,23 @@ import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
 import {
   fetchMembers,
-  resetMembers,
 } from '@/shared/libs/store/slices/members.slice';
 import { useParams } from 'next/navigation';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import LoadingMembers from './LoadingMembers';
 
 const DisplayedMembers: React.FC = ({}) => {
-  const { members, loading, error } = useAppSelector((state) => state.members);
-  const dispatch = useAppDispatch();
   const { projectId } = useParams();
-  const { isMobile } = useMobile();
+  const dispatch = useAppDispatch();
+
+  const { members, loading, error, isFetched } = useAppSelector((state) => state.members);
+  const { isMobile } = useMobile(768);
 
   useEffect(() => {
-    if (projectId) {
+    if (projectId && !isFetched) {
       dispatch(fetchMembers(projectId as string));
     }
-
-    return () => {
-      dispatch(resetMembers());
-    };
-  }, [dispatch]);
+  }, [dispatch, isFetched]);
 
   if (loading === 'pending') {
     return <LoadingMembers />;

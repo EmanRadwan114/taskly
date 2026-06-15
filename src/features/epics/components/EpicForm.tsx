@@ -16,7 +16,7 @@ const EpicForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams();
 
-  const projectMembers = useAppSelector((state) => state.members.members);
+  const {members:projectMembers, isFetched} = useAppSelector((state) => state.members);
   const dispatch = useAppDispatch();
 
   const {
@@ -42,10 +42,10 @@ const EpicForm: React.FC = () => {
 
   //   fetch members
   useEffect(() => {
-    if (projectMembers.length === 0 && projectId) {
+    if (!isFetched && projectId) {
       dispatch(fetchMembers(projectId as string));
     }
-  }, [projectId]);
+  }, [projectId, isFetched]);
 
   useEffect(() => {
     if (epicState?.success) {

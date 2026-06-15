@@ -5,13 +5,8 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
 import { useParams, usePathname } from 'next/navigation';
-import { IUser } from '@/features/auth/types/auth.types';
 
-interface Props {
-  user: IUser;
-}
-
-const MainLayoutMobile: React.FC<Props> = ({ user }) => {
+const MainLayoutMobile: React.FC = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const pathname = usePathname();
   const { projectId } = useParams();
@@ -26,7 +21,7 @@ const MainLayoutMobile: React.FC<Props> = ({ user }) => {
   };
   return (
     <>
-      <Navbar toggleSideBar={toggleSideBar} user={user} />
+      <Navbar toggleSideBar={toggleSideBar} />
       <Sidebar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <div
         className={`fixed lg:hidden inset-0 transition-all duration-300 ${isSideBarOpen ? 'bg-slate-dark/40 backdrop-blur-xs z-10' : 'bg-none static'}`}

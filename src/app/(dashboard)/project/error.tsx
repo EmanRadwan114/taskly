@@ -1,8 +1,7 @@
 'use client';
 
 import ErrorHandler from '@/shared/components/ui/ErrorHandler';
-import { useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { useHandleError } from '@/shared/hooks/shared.hooks';
 
 export default function Error({
   error,
@@ -12,11 +11,10 @@ export default function Error({
   reset: () => void;
 }) {
 
-  useEffect(() => {
-    if (error.message) {
-      toast.error(error.message);
-    }
-  }, []);
+  useHandleError({
+    error,
+  });
+
 
   return (
     <ErrorHandler

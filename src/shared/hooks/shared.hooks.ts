@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useAppDispatch } from '../libs/store/store';
+import {  useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { IMetaFetchedData, IUseHandleMobilePagination } from '../types/shared.types';
+import {  IUseHandleMobilePagination } from '../types/shared.types';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -107,16 +106,14 @@ export const useHandleMobilePagination = ({list, currentPage, paginationMetaData
 
 // ^ ------------------------ Use Handle Error Hook -------------------------
 export const useHandleError = ({
-  reset,
   error,
 }: {
-  reset: () => void;
   error: Error;
 }) => {
+
   useEffect(() => {
     if (error.message) {
       toast.error(error.message);
     }
-  }, []);
-
+  }, [error]);
 };

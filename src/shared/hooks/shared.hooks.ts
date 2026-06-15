@@ -1,6 +1,7 @@
 import {  useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import {  IUseHandleMobilePagination } from '../types/shared.types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -60,9 +61,15 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ Use Handle Pagination Hook -------------------------
-export const useHandleMobilePagination = ({list, currentPage, paginationMetaData, setCurrentPage}: IUseHandleMobilePagination) => {
+export const useHandleMobilePagination = ({list, paginationMetaData}: IUseHandleMobilePagination) => {
   const [hasMore, setHasMore] = useState(true);
+  const pathname = usePathname()
+  const router = useRouter()
   const observerTarget = useRef(null);
+
+    const searchParams = useSearchParams()
+
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
 
   const { isMobile } = useMobile(768);
 
@@ -97,10 +104,23 @@ export const useHandleMobilePagination = ({list, currentPage, paginationMetaData
     return () => observer.disconnect();
   }, [hasMore, currentPage, setCurrentPage]);
 
+// handle current page
+  const handleCurrentPage = (page: number) => {
+    setCurrentPage(page)
+
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', page.toString())
+
+    router.push(`${pathname}?${newSearchParams.toString()}`)
+  };
+
+
   return {
     isMobile,
     hasMore,
     observerTarget,
+    handleCurrentPage,
+    currentPage
   };
 };
 

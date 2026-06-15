@@ -18,28 +18,11 @@ interface IProps {
 }
 
 const DisplayedProjects: React.FC<IProps> = ({projects, paginationMetaData}) => {
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const router = useRouter()
-
-  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
-
-const {isMobile, hasMore, observerTarget} = useHandleMobilePagination({
+const {isMobile, hasMore, observerTarget, handleCurrentPage, currentPage} = useHandleMobilePagination({
   list: projects,
-  currentPage,
   paginationMetaData,
-  setCurrentPage
 })
-  // handlers
-  const handleCurrentPage = (page: number) => {
-    setCurrentPage(page)
-
-    const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('page', page.toString())
-
-    router.push(`${pathname}?${newSearchParams.toString()}`)
-  };
-
+  
   // conditional rendering
   if (projects?.length === 0) return <EmptyProjects />;
 

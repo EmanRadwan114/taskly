@@ -3,40 +3,24 @@
 import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
 import EpicItem from './EpicItem';
 import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
-import { fetchPaginatedEpics } from '@/shared/libs/store/slices/epics.slice';
-import LoadingEpics from './LoadingEpics';
 import EmptyEpics from './EmptyEpics';
-import { useMobile } from '@/shared/hooks/shared.hooks';
+import { useHandleMobilePagination } from '@/shared/hooks/shared.hooks';
 import Pagination from '@/shared/components/ui/Pagination';
+import { IEpics } from '../types/epics.types';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
 
-const DisplayedEpics: React.FC = ({}) => {
+interface IProps {
+  epics: IEpics[];
+  paginationMetaData: IMetaFetchedData | undefined;
+}
+
+const DisplayedEpics: React.FC<IProps> = ({epics, paginationMetaData}) => {
   const { projectId } = useParams();
-  const { isMobile } = useMobile(768);
 
-  const { epics, loading, error, totalPages, totalCount } = useAppSelector(
-    (state) => state.epics
-  );
-  const dispatch = useAppDispatch();
+  const { currentPage, handleCurrentPage, hasMore, isMobile, observerTarget } = useHandleMobilePagination({list:epics, paginationMetaData})
 
-  useEffect(() => {
-    if (projectId) {
-      dispatch(
-        fetchPaginatedEpics({
-          limit: 10,
-          offset: 0,
-          projectId: projectId as string,
-        })
-      );
-    }
-  }, [dispatch, projectId]);
-
-  if (loading === 'pending') return <LoadingEpics />;
-
-  if (loading === 'rejected') throw new Error(error!);
 
   if (epics?.length === 0) return <EmptyEpics />;
 
@@ -79,11 +63,14 @@ const DisplayedEpics: React.FC = ({}) => {
       {!isMobile && (
         <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
           <p className="font-medium text-secondary text-[12px]">
-            Showing {epics?.length} of {totalCount} active projects
+            Showing {epics?.length} of {paginationMetaData?.totalCount} active epics
           </p>
-          {totalPages && totalPages > 1 && <Pagination />}
+          {paginationMetaData?.totalPages && paginationMetaData?.totalPages > 1 && <Pagination currentPage={currentPage} handleCurrentPage={handleCurrentPage} totalPages={paginationMetaData?.totalPages} />}
         </footer>
       )}
+
+      {/* mobile load more */}
+      {isMobile && hasMore && <div ref={observerTarget} className=""></div>}
     </section>
   );
 };

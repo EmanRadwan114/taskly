@@ -5,7 +5,7 @@ import PlusIcon from '@/assets/icons/plus.svg';
 const ProjectsHeader: React.FC = ({}) => {
   return (
     <header className="flex justify-between items-end">
-      <div className="flex flex-col gap-4px">
+      <div className="flex flex-col gap-1">
         <h1 className="font-semibold  text-[30px] text-slate-dark capitalize">
           Projects
         </h1>

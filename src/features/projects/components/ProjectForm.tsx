@@ -56,9 +56,9 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {/* form fields */}
-      <div className="flex flex-col gap-32px">
+      <div className="flex flex-col gap-9">
         {/* name */}
-        <div className="flex flex-col gap-6px md:col-span-2">
+        <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="name"
             activeVariant={errors.name ? 'error' : 'default'}
@@ -74,7 +74,7 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
           />
         </div>
         {/* description */}
-        <div className="flex flex-col gap-6px md:col-span-2">
+        <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="description"
             className="flex! justify-between! items-center"
@@ -95,7 +95,7 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
           </span>
         </div>
         {/* actions */}
-        <div className="flex flex-col lg:flex-row justify-between items-end gap-16px">
+        <div className="flex flex-col lg:flex-row justify-between items-end gap-4">
           <Button
             variant="ghost"
             type="button"

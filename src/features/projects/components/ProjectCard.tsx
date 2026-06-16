@@ -18,17 +18,17 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
   );
 
   return (
-    <div className="flex flex-col gap-y-14px rounded-8px p-24px bg-white">
+    <div className="flex flex-col gap-y-3.5 rounded-lg p-6 bg-white">
       <Link
         href={`/project/${project?.id}/epics`}
-        className="w-full flex flex-col gap-y-14px"
+        className="w-full flex flex-col gap-y-3.5"
       >
         <h2 className="text-title-md text-slate-dark capitalize">
           {project?.name}
         </h2>
-        <p className="mb-24px">{project?.description}</p>
+        <p className="mb-6">{project?.description}</p>
         <div className="flex justify-between items-end mt-auto">
-          <span className="font-bold text-label text-secondary-light uppercase tracking-[-0.55px]">
+          <span className="font-bold text-label text-secondary-light uppercase letter-spacing-sm">
             Created At
           </span>
           <span className="font-medium text-secondary">
@@ -36,10 +36,10 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
           </span>
         </div>
       </Link>
-      <div className="flex gap-8px justify-end">
+      <div className="flex gap-2 justify-end">
         <Link
           href={`/project/${project?.id}/edit`}
-          className="flex justify-end p-2px"
+          className="flex justify-end p-0.5"
         >
           <EditIcon className="w-5 text-primary" />
         </Link>

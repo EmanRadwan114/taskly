@@ -23,6 +23,7 @@ interface IInitialState {
   loading: 'pending' | 'success' | 'rejected';
   error: string | null;
   members: IMember[];
+  isFetched:boolean;
 }
 
 const membersSlice = createSlice({
@@ -31,14 +32,9 @@ const membersSlice = createSlice({
     loading: 'pending',
     error: null,
     members: [],
+    isFetched:false
   },
-  reducers: {
-    resetMembers: (state) => {
-      state.loading = 'pending';
-      state.members = [];
-      state.error = null;
-    },
-  },
+  reducers: {  },
   extraReducers: (builder) => {
     // fetch projects
     builder
@@ -47,6 +43,7 @@ const membersSlice = createSlice({
       })
       .addCase(fetchMembers.fulfilled, (state, action) => {
         state.loading = 'success';
+        state.isFetched = true;
         state.members = action.payload?.response?.data;
       })
       .addCase(fetchMembers.rejected, (state, action) => {
@@ -55,7 +52,5 @@ const membersSlice = createSlice({
       });
   },
 });
-
-export const { resetMembers } = membersSlice.actions;
 
 export default membersSlice.reducer;

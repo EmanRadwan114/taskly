@@ -2,8 +2,8 @@ import TipIcon from '@/assets/icons/tip.svg';
 
 const Tip: React.FC = ({}) => {
   return (
-    <div className="p-6 text-slate-md bg-surface-low items-center rounded-b-8px">
-      <p className="text-[12px] flex flex-col gap-8px lg:block">
+    <div className="p-6 text-slate-md bg-surface-low items-center rounded-b-lg">
+      <p className="text-body-sm flex flex-col gap-2 lg:block">
         <span className="font-bold">
           <TipIcon className="w-3 hidden lg:inline-block me-1.5" />
           Pro Tip:{' '}

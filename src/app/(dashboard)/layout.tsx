@@ -1,17 +1,12 @@
 import MainLayoutMobile from '@/shared/components/MainLayoutMobile';
 import Navbar from '@/shared/components/Navbar';
 import Sidebar from '@/shared/components/Sidebar';
-import BreadCrumb from '@/shared/components/ui/BreadCrumb';
-import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const result = await fetchWithAuthServer('auth/v1/user');
-  const user = result?.data?.user_metadata;
-
   return (
     <>
       <div className="min-h-screen hidden lg:flex">
@@ -20,15 +15,15 @@ export default async function DashboardLayout({
         </div>
         <div className="lg:flex-1">
           <header>
-            <Navbar user={user} />
+            <Navbar />
           </header>
-          <main className="p-32px flex flex-col">{children}</main>
+          <main className="p-9 flex flex-col">{children}</main>
         </div>
       </div>
 
       <div className="flex flex-col lg:hidden">
-        <MainLayoutMobile user={user} />
-        <main className="pt-8 pb-12 px-24px mb-16">{children}</main>
+        <MainLayoutMobile />
+        <main className="pt-8 pb-12 px-6 mb-16">{children}</main>
       </div>
     </>
   );

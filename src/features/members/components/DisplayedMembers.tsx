@@ -5,29 +5,25 @@ import MemberItem from './MemberItem';
 import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
-import {
-  fetchMembers,
-  resetMembers,
-} from '@/shared/libs/store/slices/members.slice';
+import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams } from 'next/navigation';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import LoadingMembers from './LoadingMembers';
 
 const DisplayedMembers: React.FC = ({}) => {
-  const { members, loading, error } = useAppSelector((state) => state.members);
-  const dispatch = useAppDispatch();
   const { projectId } = useParams();
-  const { isMobile } = useMobile();
+  const dispatch = useAppDispatch();
+
+  const { members, loading, error, isFetched } = useAppSelector(
+    (state) => state.members
+  );
+  const { isMobile } = useMobile(768);
 
   useEffect(() => {
-    if (projectId) {
+    if (projectId && !isFetched) {
       dispatch(fetchMembers(projectId as string));
     }
-
-    return () => {
-      dispatch(resetMembers());
-    };
-  }, [dispatch]);
+  }, [dispatch, isFetched]);
 
   if (loading === 'pending') {
     return <LoadingMembers />;
@@ -65,7 +61,7 @@ const DisplayedMembers: React.FC = ({}) => {
 
   // mobile members view
   const mobileMembersView = (
-    <div className="flex md:hidden flex-col gap-12px">
+    <div className="flex md:hidden flex-col gap-3">
       {members.map((member) => (
         <MemberItem key={member?.member_id} member={member} />
       ))}
@@ -76,10 +72,10 @@ const DisplayedMembers: React.FC = ({}) => {
     <section>
       {/* page header */}
       <header className="justify-between items-center flex mb-5 lg:mb-10">
-        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
+        <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 text-center lg:text-start w-full">
           project members
         </h1>
-        <Button className="w-fit! gap-8px! hidden lg:flex">
+        <Button className="w-fit! gap-2! hidden lg:flex">
           <InviteMemeberIcon className="text-white w-4.5" />
           Invite member
         </Button>

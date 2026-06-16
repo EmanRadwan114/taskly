@@ -16,28 +16,28 @@ interface IProps {
   paginationMetaData: IMetaFetchedData | undefined;
 }
 
-const DisplayedEpics: React.FC<IProps> = ({epics, paginationMetaData}) => {
+const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
   const { projectId } = useParams();
 
-  const { currentPage, handleCurrentPage, hasMore, isMobile, observerTarget } = useHandleMobilePagination({list:epics, paginationMetaData})
-
+  const { currentPage, handleCurrentPage, hasMore, isMobile, observerTarget } =
+    useHandleMobilePagination({ list: epics, paginationMetaData });
 
   if (epics?.length === 0) return <EmptyEpics />;
 
   return (
     <section>
       {/* page header */}
-      <header className="lg:justify-between lg:items-center flex gap-16px flex-col lg:flex-row mb-5 lg:mb-10">
-        <h1 className="font-semibold text-slate-dark text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
+      <header className="lg:justify-between lg:items-center flex gap-4 flex-col lg:flex-row mb-5 lg:mb-10">
+        <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 w-full">
           project epics
         </h1>
-        <div className="lg:flex lg:gap-32px lg:items-start">
+        <div className="lg:flex lg:gap-9 lg:items-start">
           {/* search */}
           <Search placeholder="search epic..." />
           {/* new epic btn on desktop*/}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
-            className="w-fit! gap-8px! hidden lg:flex"
+            className="w-fit! gap-2! hidden lg:flex"
           >
             <PlusIcon className="text-white w-2.75" />
             new epic
@@ -46,14 +46,14 @@ const DisplayedEpics: React.FC<IProps> = ({epics, paginationMetaData}) => {
           {/* new epic btn on mobile */}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
-            btnClassName="lg:hidden fixed bottom-20 inset-e-24px z-99999 rounded-12px! size-14! shadow-primary!"
+            btnClassName="lg:hidden fixed bottom-20 inset-e-6 z-99999 rounded-3! size-14! shadow-primary!"
           >
             <PlusIcon className="text-white size-3.5" />
           </LinkButton>
         </div>
       </header>
       {/* epic items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-24px mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
         {epics?.map((epic) => (
           <EpicItem key={epic?.id} epicItem={epic} />
         ))}
@@ -61,11 +61,19 @@ const DisplayedEpics: React.FC<IProps> = ({epics, paginationMetaData}) => {
 
       {/* pagination with footer on desktop */}
       {!isMobile && (
-        <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
-          <p className="font-medium text-secondary text-[12px]">
-            Showing {epics?.length} of {paginationMetaData?.totalCount} active epics
+        <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+          <p className="font-medium text-secondary text-body-sm">
+            Showing {epics?.length} of {paginationMetaData?.totalCount} active
+            epics
           </p>
-          {paginationMetaData?.totalPages && paginationMetaData?.totalPages > 1 && <Pagination currentPage={currentPage} handleCurrentPage={handleCurrentPage} totalPages={paginationMetaData?.totalPages} />}
+          {paginationMetaData?.totalPages &&
+            paginationMetaData?.totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                handleCurrentPage={handleCurrentPage}
+                totalPages={paginationMetaData?.totalPages}
+              />
+            )}
         </footer>
       )}
 

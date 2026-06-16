@@ -37,31 +37,18 @@
   --error-background: #ffdad6;
   --warning: #ffb300;
 
-  /* font-size */
-  --heading-1: 3.5rem; /*56px*/
-  --heading-2: 2rem; /*32px*/
-  --heading-3: 1.125rem; /*18px*/
+  /* font-size 1rem = 14px*/
+  --heading-1: 4rem; /*56px*/
+  --heading-2: 2.571rem; /*36px*/
+  --heading-3: 2rem; /*28px*/
+  --heading-4: 1.714rem; /*24px*/
+  --heading-5: 1.428rem; /*20px*/
+  --heading-6: 1.285rem; /*18px*/
+  --body-lg: 1.143rem; /*16px*/
   --body: 1rem; /*14px*/
-  --label: 0.6875rem; /*11px*/
-
-  /* border radius */
-  --rounded-2px: 0.125rem; /*2px*/
-  --rounded-4px: 0.25rem; /*4px*/
-  --rounded-8px: 0.5rem; /*8px*/
-  --rounded-12px: 0.75rem; /*12px*/
-
-  /* spacing */
-  --app-space-2px: 0.125rem; /*2px*/
-  --app-space-4px: 0.25rem; /*4px*/
-  --app-space-6px: 0.375rem; /*6px*/
-  --app-space-8px: 0.5rem; /*8px*/
-  --app-space-10px: 0.625rem; /*10px*/
-  --app-space-12px: 0.75rem; /*12px*/
-  --app-space-14px: 0.875rem; /*14px*/
-  --app-space-16px: 1rem; /*16px*/
-  --app-space-24px: 1.5rem; /*24px*/
-  --app-space-32px: 2rem; /*32px*/
-  --app-space-48px: 3rem; /*48px*/
+  --body-sm: 0.857rem; /*12px*/
+  --body-xs: 0.714rem; /*10px*/
+  --label: 0.785rem; /*11px*/
 
   /* shadow */
   --app-shadow: 0 1px 2px 0px #0000000d;
@@ -107,27 +94,13 @@
   --text-heading-1: var(--heading-1);
   --text-heading-2: var(--heading-2);
   --text-heading-3: var(--heading-3);
+  --text-heading-4: var(--heading-4);
+  --text-heading-5: var(--heading-5);
+  --text-heading-6: var(--heading-6);
   --text-body: var(--body);
+  --text-body-sm: var(--body-sm);
+  --text-body-xs: var(--body-xs);
   --text-label: var(--label);
-
-  /* border-radius */
-  --radius-2px: var(--rounded-2px); /*0.125rem = 2px*/
-  --radius-4px: var(--rounded-4px); /*0.25rem = 4px*/
-  --radius-8px: var(--rounded-8px); /*0.5rem = 8px*/
-  --radius-12px: var(--rounded-12px); /*0.75rem = 12px*/
-
-  /* spacing */
-  --spacing-2px: var(--app-space-2px); /*0.125rem = 2px*/
-  --spacing-4px: var(--app-space-4px); /*0.25rem = 4px*/
-  --spacing-6px: var(--app-space-6px); /*0.375rem = 6px*/
-  --spacing-8px: var(--app-space-8px); /*0.5rem = 8px*/
-  --spacing-10px: var(--app-space-10px); /*0.625rem = 10px*/
-  --spacing-12px: var(--app-space-12px); /*0.75rem = 12px*/
-  --spacing-14px: var(--app-space-14px); /*0.875rem = 14px*/
-  --spacing-16px: var(--app-space-16px); /*1rem = 16px*/
-  --spacing-24px: var(--app-space-24px); /*1.5rem = 24px*/
-  --spacing-32px: var(--app-space-32px); /*2rem = 32px*/
-  --spacing-48px: var(--app-space-48px); /*3rem = 48px*/
 
   /* shadow */
   --shadow-primary: var(--app-shadow);
@@ -145,7 +118,7 @@
 }
 
 @utility text-title-md {
-  @apply text-heading-3 font-medium leading-6.75 tracking-normal;
+  @apply text-heading-6 font-medium leading-6.75 tracking-normal;
 }
 
 @utility text-body-md {
@@ -162,21 +135,44 @@
 }
 
 @utility form-headline {
-  @apply text-[28px] md:text-3xl leading-9 tracking-[-0.75px] text-slate-dark font-semibold;
+  @apply text-heading-3 md:text-3xl leading-9 tracking-[-0.75px] text-slate-dark font-semibold;
+}
+
+@utility letter-spacing-xs {
+  @apply tracking-[-0.9px];
+}
+
+@utility letter-spacing-sm {
+  @apply tracking-[-0.55px];
+}
+
+@utility letter-spacing-md {
+  @apply tracking-[0.6px];
+}
+
+@utility letter-spacing-lg {
+  @apply tracking-[1px];
+}
+
+@utility letter-spacing-xl {
+  @apply tracking-[1.2px];
 }
 
 /*^----------------------------- base style ----------------------------- */
+:root {
+  font-size: 14px;
+}
 body {
   background: var(--background);
   color: var(--foreground);
-  font-size: 14px;
+  font-size: 1rem;
 }
 
 input[type='checkbox'] {
   /* Custom Check mark using SVG */
   -webkit-appearance: none;
   appearance: none;
-  @apply border border-slate-light bg-surface-low size-3.5 rounded-2px;
+  @apply border border-slate-light bg-surface-low size-3.5 rounded-xs;
 }
 
 input[type='checkbox']:checked {

@@ -20,9 +20,7 @@ const PassValidationItem: React.FC<IProps> = ({
   textClassNames,
 }) => {
   return (
-    <li
-      className={`flex items-center gap-x-8px list-none ${containerClassName}`}
-    >
+    <li className={`flex items-center gap-x-2 list-none ${containerClassName}`}>
       {isValid ? validIcon : invalidIcon}
       <span className={`text-label text-secondary ${textClassNames}`}>
         {label}

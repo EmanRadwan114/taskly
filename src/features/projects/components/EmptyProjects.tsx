@@ -12,11 +12,11 @@ const EmptyProjects: React.FC = ({}) => {
           height={250}
           alt="Empty projects"
         />
-        <div className="flex flex-col justify-center items-center gap-16px">
-          <h1 className="font-semibold text-slate-dark text-[36px] tracking-[-0.9px] text-center">
+        <div className="flex flex-col justify-center items-center gap-4">
+          <h1 className="font-semibold text-slate-dark text-heading-2 letter-spacing-xs text-center">
             No Projects
           </h1>
-          <p className="text-center leading-6 tracking-[0.6px]">
+          <p className="text-center leading-6 letter-spacing-md">
             You don’t have any projects yet. Start by defining your first
             architectural workspace to begin tracking tasks and epics.
           </p>

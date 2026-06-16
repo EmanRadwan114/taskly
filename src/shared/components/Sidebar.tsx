@@ -36,21 +36,21 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   };
 
   const asideNavLinks = (
-    <ul className="flex flex-col gap-4px">
+    <ul className="flex flex-col gap-1">
       {displayedSidebarLinks.map((link) => {
         const isLinkActive = pathname === link.href;
         const Icon = link.icon;
         return (
           <li
             key={link.id}
-            className={`rounded-4px group ${isLinkActive ? 'bg-white' : ''} ${isCollapsed ? 'size-48px flex items-center justify-center' : 'py-10px px-12px'}`}
+            className={`rounded-sm group ${isLinkActive ? 'bg-white' : ''} ${isCollapsed ? 'size-12 flex items-center justify-center' : 'py-2.5 px-3'}`}
             onClick={() => {
               setIsOpen?.(false);
             }}
           >
             <Link
               href={link.href}
-              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-12px group-hover:text-primary transition-all duration-300 capitalize ${!isMobileLayout ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
+              className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-3 group-hover:text-primary transition-all duration-300 capitalize ${!isMobileLayout ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
             >
               <span
                 className={`w-4.5 transition-transform duration-300 ${isCollapsed ? 'group-hover:scale-110 mx-auto' : ''}`}
@@ -71,9 +71,9 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   // desktop aside
   const desktopAside = (
     <aside
-      className={`sticky top-0 bottom-0 p-16px h-screen bg-surface-low transition-all duration-300 z-999 ${isCollapsed ? 'w-fit' : 'w-[256px]'}`}
+      className={`sticky top-0 bottom-0 p-4 h-screen bg-surface-low transition-all duration-300 z-999 ${isCollapsed ? 'w-fit' : 'w-[256px]'}`}
     >
-      <div className="flex flex-col gap-y-32px h-full">
+      <div className="flex flex-col gap-y-9 h-full">
         {isCollapsed ? (
           <Link href={'/'} className="flex items-center justify-center">
             <LogoIcon className="w-4.5 text-primary-container" />
@@ -86,10 +86,10 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
           {asideNavLinks}
 
           {/* actions */}
-          <div className="flex flex-col gap-4px capitalize">
+          <div className="flex flex-col gap-1 capitalize">
             <Button
               variant="ghost"
-              className="text-slate-dark! leading-5 justify-start gap-12px px-12px! py-10px! hover:text-primary! transition-colors duration-300 group hidden lg:flex"
+              className="text-slate-dark! leading-5 justify-start gap-3 px-3! py-2.5! hover:text-primary! transition-colors duration-300 group hidden lg:flex"
               onClick={toggleMenuCollapse}
             >
               {isCollapsed ? (
@@ -118,9 +118,9 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   // mobile aside
   const mobileAside = (
     <aside
-      className={`fixed top-0 bottom-0 inset-s-0 p-16px bg-surface-low transition-all duration-500 z-999 ${isOpen ? 'translate-x-0 w-[256px] visible opacity-100' : '-translate-x-full w-0 invisible opacity-0 text-[0px]'}`}
+      className={`fixed top-0 bottom-0 inset-s-0 p-4 bg-surface-low transition-all duration-500 z-999 ${isOpen ? 'translate-x-0 w-[256px] visible opacity-100' : '-translate-x-full w-0 invisible opacity-0'}`}
     >
-      <div className={`flex flex-col gap-y-32px h-full`}>
+      <div className={`flex flex-col gap-y-9 h-full`}>
         <Logo />
 
         <div className="flex flex-col justify-between flex-1">
@@ -128,7 +128,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
           {asideNavLinks}
 
           {/* actions */}
-          <div className="flex flex-col gap-4px capitalize">
+          <div className="flex flex-col gap-1 capitalize">
             <LogoutBtn />
           </div>
         </div>

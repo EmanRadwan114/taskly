@@ -127,21 +127,21 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white sm:max-w-3/4 2xl:max-w-3/4 sm:mx-auto">
-      <header className="space-y-8px self-start text-center md:text-start">
+    <section className="w-full space-y-10 md:rounded-lg md:p-12 md:shadow-form md:bg-white sm:max-w-3/4 2xl:max-w-3/4 sm:mx-auto">
+      <header className="space-y-2 self-start text-center md:text-start">
         <h1 className="form-headline">Create a New Password</h1>
         <p className="text-slate-md">
           Create a new, strong password to secure your workstation access.
         </p>
       </header>
-      <div className="bg-white md:bg-transparent rounded-8px p-32px pb-48px md:p-0 space-y-32px">
+      <div className="bg-white md:bg-transparent rounded-lg p-9 pb-12 md:p-0 space-y-9">
         {/* form */}
         <form
-          className="w-full flex flex-col gap-x-16px gap-y-16px "
+          className="w-full flex flex-col gap-x-4 gap-y-4 "
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* password & confirm password */}
-          <div className="flex flex-col gap-6px ">
+          <div className="flex flex-col gap-1.5 ">
             <Label
               htmlFor="password"
               activeVariant={errors.password ? 'error' : 'default'}
@@ -159,7 +159,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
               showPassIcon
             />
           </div>
-          <div className="flex flex-col gap-6px">
+          <div className="flex flex-col gap-1.5">
             <Label
               htmlFor="confirm password"
               activeVariant={errors.confirm_password ? 'error' : 'default'}
@@ -178,15 +178,15 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
           </div>
 
           {/* password validation */}
-          <div className="space-y-1.75 rounded-4px p-5 flex flex-col gap-y-12px md:gap-y-16px border border-slate-light/10 bg-border md:bg-border/50">
+          <div className="space-y-1.75 rounded-sm p-5 flex flex-col gap-y-3 md:gap-y-4 border border-slate-light/10 bg-border md:bg-border/50">
             <h2 className="text-label-sm">Security Requirements</h2>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-10px md:gap-12px">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
               {passValItems.map((item) => (
                 <PassValidationItem
                   key={item.id}
                   label={item.message}
                   isValid={item.condition}
-                  textClassNames={`text-[13px] ${item.condition ? 'text-slate-dark' : 'text-secondary-light'}`}
+                  textClassNames={`text-body-sm ${item.condition ? 'text-slate-dark' : 'text-secondary-light'}`}
                   validIcon={
                     isMobile ? (
                       <CheckFill className="size-3.5" />
@@ -203,14 +203,14 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
           </div>
 
           {/* submit */}
-          <Button className="md:col-span-2 py-14px" disabled={isPending}>
+          <Button className="md:col-span-2 py-3.5" disabled={isPending}>
             {isPending ? 'Submitting...' : 'Update Password'}
           </Button>
         </form>
 
         {/* success msg */}
         {resetPassActionState?.success && (
-          <div className="bg-success/20 backdrop-blur-md flex justify-center items-center p-16px rounded-4px">
+          <div className="bg-success/20 backdrop-blur-md flex justify-center items-center p-4 rounded-sm">
             <p className="text-success-text font-semibold text-center">
               Your password has been updated successfully. <br /> You can now
               log in
@@ -221,7 +221,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
         {/* back to sign in link */}
         <Link
           href="/login"
-          className="text-primary font-semibold flex justify-center items-center gap-6px"
+          className="text-primary font-semibold flex justify-center items-center gap-1.5"
         >
           <ArrowRight className="size-4 text-primary rotate-180" />
           Back to Log in

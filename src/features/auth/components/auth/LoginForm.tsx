@@ -46,20 +46,20 @@ const LoginForm: React.FC = ({}) => {
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:shadow-form md:bg-white md:max-w-[90%] md:mx-auto 2xl:max-w-3/4 flex flex-col flex-1 pt-10 md:p-48px">
+    <section className="w-full space-y-10 md:rounded-lg md:shadow-form md:bg-white md:max-w-[90%] md:mx-auto 2xl:max-w-3/4 flex flex-col flex-1 pt-10 md:p-12">
       <div className="gap-y-10 flex flex-col flex-1">
-        <header className="space-y-8px text-start md:text-center">
+        <header className="space-y-2 text-start md:text-center">
           <h1 className="form-headline text-center">Welcome Back</h1>
           <p className="text-slate-md text-center max-w-3/4 md:max-w-full mx-auto">
             Please enter your details to access your workspace
           </p>
         </header>
         <form
-          className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
+          className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6"
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* email */}
-          <div className="flex flex-col gap-6px md:col-span-2">
+          <div className="flex flex-col gap-1.5 md:col-span-2">
             <Label
               htmlFor="email address"
               activeVariant={errors.email ? 'error' : 'default'}
@@ -76,7 +76,7 @@ const LoginForm: React.FC = ({}) => {
           </div>
 
           {/* password */}
-          <div className="flex flex-col gap-6px md:col-span-2">
+          <div className="flex flex-col gap-1.5 md:col-span-2">
             <div className="flex justify-between items-center">
               <Label
                 htmlFor="password"
@@ -110,7 +110,7 @@ const LoginForm: React.FC = ({}) => {
           {/* remember me & forget password */}
           <div className="flex justify-between items-center md:col-span-2">
             {/* 1. rememeber me */}
-            <div className="flex items-center gap-x-8px">
+            <div className="flex items-center gap-x-2">
               <input
                 type="checkbox"
                 name="remember-me"
@@ -135,10 +135,7 @@ const LoginForm: React.FC = ({}) => {
           </div>
 
           {/* submit */}
-          <Button
-            className="md:col-span-2 py-14px gap-x-8px"
-            disabled={isPending}
-          >
+          <Button className="md:col-span-2 py-3.5 gap-x-2" disabled={isPending}>
             <span className="hidden md:block">
               {isPending ? 'Submitting...' : 'Log In'}
             </span>

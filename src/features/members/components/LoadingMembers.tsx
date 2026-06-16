@@ -41,7 +41,7 @@ const LoadingMembers: React.FC = () => {
 
   // Mobile list view loader
   const mobileSkeletonView = (
-    <div className="flex md:hidden flex-col gap-12px">
+    <div className="flex md:hidden flex-col gap-3">
       {dummyRows.map((_, index) => (
         <MemberItemSkeleton key={index} />
       ))}

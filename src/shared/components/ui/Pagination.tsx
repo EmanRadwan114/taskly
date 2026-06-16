@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import Button from './Button';
+import { getPaginationButtons } from '@/shared/utils/functions.client.utils';
 
 interface IProps {
   currentPage: number;
   totalPages: number;
   handleCurrentPage: (page: number) => void;
 }
-
 const Pagination: React.FC<IProps> = ({
   currentPage,
   totalPages,
@@ -25,6 +25,20 @@ const Pagination: React.FC<IProps> = ({
     }
   }, [currentPage]);
 
+  if (!totalPages) return null;
+
+  // total page button list for desktop
+  const pagesList: number[] = Array.from(
+    { length: totalPages },
+    (_, i) => i + 1
+  );
+
+  const btnsArray = useMemo(
+    () => getPaginationButtons(pagesList, currentPage, totalPages),
+    [pagesList, currentPage, totalPages]
+  );
+
+  // css style
   const isActiveStyle = (pageNum: number) =>
     pageNum === currentPage ? 'bg-primary! text-white!' : '';
 
@@ -42,17 +56,30 @@ const Pagination: React.FC<IProps> = ({
       >
         <ChevronLeftIcon className="w-1" />
       </Button>
-      {/* number list */}
-      {Array.from({ length: totalPages! || 2 }).map((_, index) => (
-        <Button
-          key={index}
-          variant="ghost"
-          className={`${baseStyle} ${isActiveStyle(index + 1)}`}
-          onClick={() => handleCurrentPage(index + 1)}
-        >
-          {index + 1}
-        </Button>
-      ))}
+
+      {/* btn list */}
+      {btnsArray?.map((btn, index) => {
+        if (typeof btn === 'number')
+          return (
+            <Button
+              key={`${btn}-${index}`}
+              variant="ghost"
+              className={`${baseStyle} ${isActiveStyle(btn)}`}
+              onClick={() => handleCurrentPage(btn)}
+            >
+              {btn}
+            </Button>
+          );
+
+        return (
+          <span
+            key={`${btn}-${index}`}
+            className={`${baseStyle} flex items-center justify-center`}
+          >
+            ...
+          </span>
+        );
+      })}
 
       {/* next */}
       <Button

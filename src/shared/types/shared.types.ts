@@ -3,7 +3,7 @@ export interface IMetaFetchedData {
   totalPages: number;
 }
 
-export interface IUseHandleMobilePagination {
-  list: unknown[]; 
-  paginationMetaData: IMetaFetchedData | undefined; 
+export interface IUseHandlePagination<T = unknown> {
+  list: T[];
+  paginationMetaData: IMetaFetchedData | undefined;
 }

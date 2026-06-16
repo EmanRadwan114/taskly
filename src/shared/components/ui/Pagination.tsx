@@ -17,7 +17,7 @@ const Pagination: React.FC<IProps> = ({
   handleCurrentPage,
 }) => {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth',

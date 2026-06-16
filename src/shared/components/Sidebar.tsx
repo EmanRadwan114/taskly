@@ -75,7 +75,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
     >
       <div className="flex flex-col gap-y-9 h-full">
         {isCollapsed ? (
-          <Link href={'/'} className="flex items-center justify-center">
+          <Link href={'/project'} className="flex items-center justify-center">
             <LogoIcon className="w-4.5 text-primary-container" />
           </Link>
         ) : (

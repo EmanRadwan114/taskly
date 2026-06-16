@@ -28,9 +28,9 @@ export default async function proxy(request: NextRequest) {
     pathname.startsWith(`/${route}`)
   );
 
-  // auth routes
-  if (isAuthRoute && refreshToken)
-    return NextResponse.redirect(new URL('/', request.nextUrl));
+  // auth routes and handle root route with valid tokens
+  if (refreshToken && (isAuthRoute || pathname === '/'))
+    return NextResponse.redirect(new URL('/project', request.nextUrl));
 
   if (isAuthRoute && !refreshToken)
     return NextResponse.next({ request: { headers: requestHeaders } });

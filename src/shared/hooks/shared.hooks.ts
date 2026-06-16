@@ -1,7 +1,8 @@
-import {  useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import {  IUseHandleMobilePagination } from '../types/shared.types';
+import { IUseHandlePagination } from '../types/shared.types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { FETCH_LIMIT } from '../utils/variables.utils';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -61,76 +62,91 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ Use Handle Pagination Hook -------------------------
-export const useHandleMobilePagination = ({list, paginationMetaData}: IUseHandleMobilePagination) => {
+export const useHandlePagination = <T>({
+  list,
+  paginationMetaData,
+}: IUseHandlePagination<T>) => {
   const [hasMore, setHasMore] = useState(true);
-  const pathname = usePathname()
-  const router = useRouter()
   const observerTarget = useRef(null);
 
-    const searchParams = useSearchParams()
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
+  const [currentPage, setCurrentPage] = useState<number>(
+    Number(searchParams.get('page') || 1)
+  );
+  const [accumulatedList, setAccumulatedList] = useState<T[]>(list || []);
 
-  const { isMobile } = useMobile(768);
+  const { isMobile } = useMobile(1024);
 
-  // handle hasMore state
+  // Update hasMore for mobile
   useEffect(() => {
     if (
-      list?.length === 0 
-      && paginationMetaData?.totalPages && currentPage >= paginationMetaData?.totalPages
+      paginationMetaData?.totalPages &&
+      currentPage >= paginationMetaData.totalPages
     ) {
       setHasMore(false);
     } else {
       setHasMore(true);
     }
-  }, [list, currentPage, paginationMetaData?.totalPages]);
+  }, [currentPage, paginationMetaData?.totalPages]);
 
-  // observer for infinite scroll on mobile
+  // Observer for infinite scroll on mobile
   useEffect(() => {
     const target = observerTarget.current;
+
     if (!target) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      async (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting && hasMore) {
-          setCurrentPage(currentPage + 1);
+          const nextPage = currentPage + 1;
+
+          const limit = FETCH_LIMIT;
+          const offset = (nextPage - 1) * limit;
+
+          // fetch new projects
+          const res = await fetch(
+            `/api/fetch-projects?limit=${limit}&offset=${offset}`
+          );
+          const data = await res.json();
+
+          // append new projects
+          setAccumulatedList((prev) => [...prev, ...data?.response?.data]);
+
+          setCurrentPage((c) => c + 1);
         }
       },
       { threshold: 0, root: null, rootMargin: '0px' }
     );
-    // watching target element
+
     observer.observe(target);
+
     return () => observer.disconnect();
-  }, [hasMore, currentPage, setCurrentPage]);
+  }, [hasMore, currentPage]);
 
-// handle current page
+  // Handle current page (desktop pagination)
   const handleCurrentPage = (page: number) => {
-    setCurrentPage(page)
-
-    const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('page', page.toString())
-
-    router.push(`${pathname}?${newSearchParams.toString()}`)
+    setCurrentPage(page);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', page.toString());
+    router.push(`${pathname}?${newSearchParams.toString()}`);
   };
-
 
   return {
     isMobile,
     hasMore,
     observerTarget,
     handleCurrentPage,
-    currentPage
+    currentPage,
+    accumulatedList,
   };
 };
 
 // ^ ------------------------ Use Handle Error Hook -------------------------
-export const useHandleError = ({
-  error,
-}: {
-  error: Error;
-}) => {
-
+export const useHandleError = ({ error }: { error: Error }) => {
   useEffect(() => {
     if (error.message) {
       toast.error(error.message);

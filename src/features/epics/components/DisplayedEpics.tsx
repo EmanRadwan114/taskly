@@ -6,7 +6,7 @@ import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
 import { useParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
-import { useHandleMobilePagination } from '@/shared/hooks/shared.hooks';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
@@ -20,7 +20,7 @@ const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
   const { projectId } = useParams();
 
   const { currentPage, handleCurrentPage, hasMore, isMobile, observerTarget } =
-    useHandleMobilePagination({ list: epics, paginationMetaData });
+    useHandlePagination({ list: epics, paginationMetaData });
 
   if (epics?.length === 0) return <EmptyEpics />;
 

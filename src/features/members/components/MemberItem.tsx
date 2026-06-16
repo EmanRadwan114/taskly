@@ -26,10 +26,10 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
   };
 
   const memberInfo = (
-    <div className="flex gap-16px">
+    <div className="flex gap-4">
       {/* avatar */}
       <div
-        className={`flex items-center justify-center rounded-lg size-48px`}
+        className={`flex items-center justify-center rounded-lg size-12`}
         style={{ backgroundColor: `#${avatarBg}` }}
       >
         <span className="text-surface-md font-bold uppercase">
@@ -56,7 +56,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
       {/* role */}
       <td className="text-center w-1/4 px-9 py-5">
         <Badge
-          className={`${roleStyle[member.role]} rounded-full! py-4px! px-12px!`}
+          className={`${roleStyle[member.role]} rounded-full! py-1! px-3!`}
         >
           {' '}
           {member.role}{' '}
@@ -75,10 +75,10 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
 
   // mobile view
   const mobileView = (
-    <div className="flex justify-between gap-16px bg-white rounded-8px p-16px md:hidden">
+    <div className="flex justify-between gap-4 bg-white rounded-lg p-4 md:hidden">
       {memberInfo}
       {/* actions & role */}
-      <div className="flex gap-4px items-start">
+      <div className="flex gap-1 items-start">
         {/* role */}
         <Badge className={`${roleStyle[member.role]}`}>{member.role}</Badge>
         {member.role !== 'owner' && (

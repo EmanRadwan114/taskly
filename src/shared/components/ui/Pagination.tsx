@@ -11,8 +11,11 @@ interface IProps {
   handleCurrentPage: (page: number) => void;
 }
 
-const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPage}) => {
-
+const Pagination: React.FC<IProps> = ({
+  currentPage,
+  totalPages,
+  handleCurrentPage,
+}) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({
@@ -26,10 +29,10 @@ const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPag
     pageNum === currentPage ? 'bg-primary! text-white!' : '';
 
   const baseStyle =
-    'text-secondary! rounded-2px! size-32px! border border-slate-light p-0! font-bold! text-[12px]!';
+    'text-secondary! rounded-xs! size-9! border border-slate-light p-0! font-bold! text-body-sm!';
 
   return (
-    <div className="flex gap-8px">
+    <div className="flex gap-2">
       {/* prev */}
       <Button
         variant="ghost"
@@ -37,7 +40,7 @@ const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPag
         onClick={() => handleCurrentPage(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        <ChevronLeftIcon className="w-4px" />
+        <ChevronLeftIcon className="w-1" />
       </Button>
       {/* number list */}
       {Array.from({ length: totalPages! || 2 }).map((_, index) => (
@@ -45,7 +48,7 @@ const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPag
           key={index}
           variant="ghost"
           className={`${baseStyle} ${isActiveStyle(index + 1)}`}
-          onClick={() =>  handleCurrentPage(index + 1)}
+          onClick={() => handleCurrentPage(index + 1)}
         >
           {index + 1}
         </Button>
@@ -58,7 +61,7 @@ const Pagination: React.FC<IProps> = ({currentPage, totalPages, handleCurrentPag
         onClick={() => handleCurrentPage(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        <ChevronRightIcon className="w-4px" />
+        <ChevronRightIcon className="w-1" />
       </Button>
     </div>
   );

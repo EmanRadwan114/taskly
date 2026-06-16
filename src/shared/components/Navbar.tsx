@@ -33,7 +33,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   // conditional rendering => user loading
   if (!user) {
     return (
-      <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-12px px-24px">
+      <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-3 px-6">
         {/* loading desktop */}
         <div className="hidden lg:flex justify-end gap-4">
           {/* user info loading on desktop*/}
@@ -44,18 +44,18 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
             <div className="bg-slate-light animate-pulse rounded-sm shadow-primary flex items-center justify-center w-24 h-4"></div>
           </div>
           {/* avatar loading */}
-          <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-10"></div>
+          <div className="bg-slate-light animate-pulse rounded-lg shadow-primary flex items-center justify-center size-10"></div>
         </div>
         {/* loading mobile */}
         <div className="lg:hidden flex justify-between items-center">
-          <div className="flex items-center gap-12px">
+          <div className="flex items-center gap-3">
             {/* burger menu on mobile only */}
-            <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-6"></div>
+            <div className="bg-slate-light animate-pulse rounded-lg shadow-primary flex items-center justify-center size-6"></div>
             {/* title on mobile only */}
-            <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center w-20 h-5"></div>
+            <div className="bg-slate-light animate-pulse rounded-lg shadow-primary flex items-center justify-center w-20 h-5"></div>
           </div>
           {/* avatar loading */}
-          <div className="bg-slate-light animate-pulse rounded-8px shadow-primary flex items-center justify-center size-10"></div>
+          <div className="bg-slate-light animate-pulse rounded-lg shadow-primary flex items-center justify-center size-10"></div>
         </div>
       </nav>
     );
@@ -65,16 +65,16 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   const avatar = (
     <div className="relative">
       <div
-        className="bg-primary-container rounded-8px shadow-primary flex items-center justify-center size-10 cursor-pointer"
+        className="bg-primary-container rounded-lg shadow-primary flex items-center justify-center size-10 cursor-pointer"
         onClick={toggleSubMenu}
       >
-        <span className="uppercase text-white text-[16px] font-bold leading-6">
+        <span className="uppercase text-white text-body-lg font-bold leading-6">
           {userInitials}
         </span>
       </div>
 
       {isSubMenuOpen && (
-        <div className="absolute inset-e-0 -bottom-14 bg-white shadow-primary p-4px rounded-4px w-50 z-9999">
+        <div className="absolute inset-e-0 -bottom-14 bg-white shadow-primary p-1 rounded-sm w-50 z-9999">
           <LogoutBtn />
         </div>
       )}
@@ -84,13 +84,13 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   // desktop nav
   const desktopNav = (
     <div className="flex justify-end">
-      <div className="flex gap-16px">
+      <div className="flex gap-4">
         {/* name */}
         <div className="flex flex-col items-end">
           <h3 className="font-semibold leading-5 text-slate-dark capitalize">
             {user?.name}
           </h3>
-          <span className="text-[10px] font-bold tracking-[1px] leading-5 text-primary uppercase">
+          <span className="text-body-xs font-bold letter-spacing-lg leading-5 text-primary uppercase">
             {user?.job_title}
           </span>
         </div>
@@ -104,7 +104,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   const mobileNav = (
     <div className="flex justify-between items-center">
       {/* menu burger */}
-      <div className="flex gap-12px items-center">
+      <div className="flex gap-3 items-center">
         <Button
           className="p-1! cursor-pointer!"
           variant="ghost"
@@ -112,7 +112,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
         >
           <Menu className="text-slate-dark w-5" />
         </Button>
-        <h3 className="font-bold text-[20px] leading-7 tracking-[-0.5px] uppercase">
+        <h3 className="font-bold text-heading-5 leading-7 letter-spacing-sm uppercase">
           Taskly
         </h3>
       </div>
@@ -122,7 +122,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
   );
 
   return (
-    <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-12px px-24px">
+    <nav className="sticky inset-s-0 inset-e-0 border-b border-b-black/10 py-3 px-6">
       {isMobileLayout ? mobileNav : desktopNav}
     </nav>
   );

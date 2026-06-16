@@ -15,7 +15,7 @@ const Label: React.FC<IProps> = ({
 }) => {
   return (
     <label
-      className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'} ${className}`}
+      className={`text-label-sm letter-spacing-md uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'} ${className}`}
       {...props}
     >
       {children}

@@ -17,13 +17,13 @@ export default async function DashboardLayout({
           <header>
             <Navbar />
           </header>
-          <main className="p-32px flex flex-col">{children}</main>
+          <main className="p-9 flex flex-col">{children}</main>
         </div>
       </div>
 
       <div className="flex flex-col lg:hidden">
         <MainLayoutMobile />
-        <main className="pt-8 pb-12 px-24px mb-16">{children}</main>
+        <main className="pt-8 pb-12 px-6 mb-16">{children}</main>
       </div>
     </>
   );

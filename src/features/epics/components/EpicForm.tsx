@@ -16,7 +16,9 @@ const EpicForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams();
 
-  const {members:projectMembers, isFetched} = useAppSelector((state) => state.members);
+  const { members: projectMembers, isFetched } = useAppSelector(
+    (state) => state.members
+  );
   const dispatch = useAppDispatch();
 
   const {
@@ -63,11 +65,11 @@ const EpicForm: React.FC = () => {
   };
   return (
     <form
-      className="lg:bg-white rounded-8px lg:shadow-primary lg:px-32px lg:py-10 flex flex-col gap-32px"
+      className="lg:bg-white rounded-lg lg:shadow-primary lg:px-9 lg:py-10 flex flex-col gap-9"
       onSubmit={handleSubmit(onSubmit)}
     >
       {/* name */}
-      <div className="flex flex-col lg:flex-row gap-6px">
+      <div className="flex flex-col lg:flex-row gap-1.5">
         <Label
           htmlFor="title"
           activeVariant={errors.title ? 'error' : 'default'}
@@ -86,7 +88,7 @@ const EpicForm: React.FC = () => {
         />
       </div>
       {/* description */}
-      <div className="flex flex-col lg:flex-row gap-6px">
+      <div className="flex flex-col lg:flex-row gap-1.5">
         <Label
           htmlFor="description"
           className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! lg:w-1/6"
@@ -110,9 +112,9 @@ const EpicForm: React.FC = () => {
       </div>
 
       {/* assigness & deadline */}
-      <div className="flex flex-col lg:flex-row gap-32px mb-10">
+      <div className="flex flex-col lg:flex-row gap-9 mb-10">
         {/* assignees */}
-        <div className="flex flex-col gap-6px flex-1">
+        <div className="flex flex-col gap-1.5 flex-1">
           <Label
             htmlFor="assignee_id"
             className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
@@ -136,7 +138,7 @@ const EpicForm: React.FC = () => {
           </FormField>
         </div>
         {/* deadline */}
-        <div className="flex flex-col gap-6px flex-1">
+        <div className="flex flex-col gap-1.5 flex-1">
           <Label
             htmlFor="deadline"
             className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
@@ -153,7 +155,7 @@ const EpicForm: React.FC = () => {
         </div>
       </div>
       {/* actions */}
-      <div className="flex flex-col lg:flex-row justify-end items-end gap-16px">
+      <div className="flex flex-col lg:flex-row justify-end items-end gap-4">
         <Button
           variant="ghost"
           type="button"

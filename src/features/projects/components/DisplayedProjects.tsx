@@ -17,15 +17,18 @@ interface IProps {
   paginationMetaData?: IMetaFetchedData | undefined;
 }
 
-const DisplayedProjects: React.FC<IProps> = ({projects, paginationMetaData}) => {
-const {isMobile, hasMore, observerTarget, handleCurrentPage, currentPage} = useHandleMobilePagination({
-  list: projects,
+const DisplayedProjects: React.FC<IProps> = ({
+  projects,
   paginationMetaData,
-})
-  
+}) => {
+  const { isMobile, hasMore, observerTarget, handleCurrentPage, currentPage } =
+    useHandleMobilePagination({
+      list: projects,
+      paginationMetaData,
+    });
+
   // conditional rendering
   if (projects?.length === 0) return <EmptyProjects />;
-
 
   return (
     <section className="flex flex-col gap-10">
@@ -33,23 +36,29 @@ const {isMobile, hasMore, observerTarget, handleCurrentPage, currentPage} = useH
       <ProjectsHeader />
 
       {/* project list */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-24px pb-10 lg:pb-20">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-10 lg:pb-20">
         {projects?.map((project: IProject) => (
           <ProjectCard project={project} key={project.id} />
         ))}
-
       </section>
 
       {/* pagination footer on desktop */}
       {!isMobile && (
-        <footer className="flex flex-col lg:flex-row justify-center items-center gap-24px lg:justify-between lg:items-center">
-          <p className="font-medium text-secondary text-[12px]">
-            Showing {projects?.length} of {paginationMetaData?.totalCount} active projects
+        <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+          <p className="font-medium text-secondary text-body-sm">
+            Showing {projects?.length} of {paginationMetaData?.totalCount}{' '}
+            active projects
           </p>
 
           {/* pagination component */}
-          {paginationMetaData?.totalPages && paginationMetaData?.totalPages > 1 && 
-          <Pagination currentPage={currentPage} handleCurrentPage={handleCurrentPage} totalPages={paginationMetaData?.totalPages} />}
+          {paginationMetaData?.totalPages &&
+            paginationMetaData?.totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                handleCurrentPage={handleCurrentPage}
+                totalPages={paginationMetaData?.totalPages}
+              />
+            )}
         </footer>
       )}
 
@@ -59,7 +68,7 @@ const {isMobile, hasMore, observerTarget, handleCurrentPage, currentPage} = useH
       {/* mobile add project btn */}
       <LinkButton
         href={'/project/add'}
-        btnClassName="lg:hidden fixed bottom-20 inset-e-24px z-99999 rounded-12px! size-14!"
+        btnClassName="lg:hidden fixed bottom-20 inset-e-6 z-99999 rounded-3! size-14!"
       >
         <PlusIcon className="text-white size-3.5" />
       </LinkButton>

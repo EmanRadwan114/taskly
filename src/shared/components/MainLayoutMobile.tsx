@@ -33,7 +33,7 @@ const MainLayoutMobile: React.FC = () => {
         <section className="fixed w-full bottom-0 z-5 bg-surface-low px-6.5 h-16">
           <div className="h-full flex flex-col justify-center">
             <div
-              className={`flex ${projectId ? 'justify-between gap-4px' : 'justify-center gap-48px'} items-end `}
+              className={`flex ${projectId ? 'justify-between gap-1' : 'justify-center gap-12'} items-end `}
             >
               {displayedSidebarLinks.map((link) => {
                 const isLinkActive = pathname === link.href;
@@ -41,13 +41,13 @@ const MainLayoutMobile: React.FC = () => {
                 return (
                   <Link
                     href={link.href}
-                    className={` flex flex-col items-center justify-center text-center sm:p-6px hover:text-primary-container gap-4px group-hover:text-primary transition-all duration-300 ${isLinkActive ? 'text-primary-container' : 'text-slate-dark/70'} capitalize`}
+                    className={` flex flex-col items-center justify-center text-center sm:p-1.5 hover:text-primary-container gap-1 group-hover:text-primary transition-all duration-300 ${isLinkActive ? 'text-primary-container' : 'text-slate-dark/70'} capitalize`}
                     key={link.id}
                   >
                     <span className={`w-5 transition-transform duration-300`}>
                       <Icon />
                     </span>
-                    <span className={`text-[10px] leading-3.75`}>
+                    <span className={`text-body-xs leading-3.75`}>
                       {link.label.split(' ').length > 1
                         ? link.label.split(' ')[1]
                         : link.label}

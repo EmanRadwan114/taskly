@@ -26,11 +26,11 @@ const Input: React.FC<IProps> = ({
   };
   return (
     <div
-      className={`w-full flex justify-between items-center gap-2px rounded-4px focus-within:outline-1 focus-visible:outline-1 ${inputVariants[variant]} ${props.className}`}
+      className={`w-full flex justify-between items-center gap-0.5 rounded-sm focus-within:outline-1 focus-visible:outline-1 ${inputVariants[variant]} ${props.className}`}
     >
       <input
         {...props}
-        className={`${icon ? 'w-3/4' : 'w-full! pe-16px'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-16px py-14px`}
+        className={`${icon ? 'w-3/4' : 'w-full! pe-4'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-4 py-3.5`}
         type={
           props.type === 'password'
             ? isPasswordShown
@@ -43,7 +43,7 @@ const Input: React.FC<IProps> = ({
       {/* password show & hide icon */}
       {props.type === 'password' && showPassIcon && (
         <div
-          className="w-1/4 cursor-pointer flex items-center justify-end px-16px py-14px"
+          className="w-1/4 cursor-pointer flex items-center justify-end px-4 py-3.5"
           onClick={() => setIsPasswordShown((s) => !s)}
           title={`${isPasswordShown ? 'Hide Password' : 'Show Password'}`}
         >
@@ -55,7 +55,7 @@ const Input: React.FC<IProps> = ({
         </div>
       )}
       {/* icon */}
-      {icon && <div className="px-16px py-14px">{icon}</div>}
+      {icon && <div className="px-4 py-3.5">{icon}</div>}
     </div>
   );
 };

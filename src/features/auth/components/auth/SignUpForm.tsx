@@ -58,19 +58,19 @@ const SignUpForm: React.FC = ({}) => {
   };
 
   return (
-    <section className="w-full space-y-10 md:rounded-8px md:p-48px md:shadow-form md:bg-white 2xl:max-w-3/4 2xl:mx-auto">
-      <header className="space-y-8px self-start md:text-center">
+    <section className="w-full space-y-10 md:rounded-lg md:p-12 md:shadow-form md:bg-white 2xl:max-w-3/4 2xl:mx-auto">
+      <header className="space-y-2 self-start md:text-center">
         <h1 className="form-headline">Create your workspace</h1>
         <p className="text-slate-md">
           Join the editorial approach to task management.
         </p>
       </header>
       <form
-        className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16px gap-y-24px"
+        className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* name */}
-        <div className="flex flex-col gap-6px md:col-span-2">
+        <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="name"
             activeVariant={errors.data?.name ? 'error' : 'default'}
@@ -87,7 +87,7 @@ const SignUpForm: React.FC = ({}) => {
         </div>
 
         {/* email */}
-        <div className="flex flex-col gap-6px md:col-span-2">
+        <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="email"
             activeVariant={errors.email ? 'error' : 'default'}
@@ -103,7 +103,7 @@ const SignUpForm: React.FC = ({}) => {
         </div>
 
         {/* job title */}
-        <div className="flex flex-col gap-6px md:col-span-2">
+        <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="job title"
             activeVariant={errors.data?.job_title ? 'error' : 'default'}
@@ -120,7 +120,7 @@ const SignUpForm: React.FC = ({}) => {
         </div>
 
         {/* password & confirm password */}
-        <div className="flex flex-col gap-6px">
+        <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="password"
             activeVariant={errors.password ? 'error' : 'default'}
@@ -136,7 +136,7 @@ const SignUpForm: React.FC = ({}) => {
             showPassIcon
           />
         </div>
-        <div className="flex flex-col gap-6px">
+        <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="confirm password"
             activeVariant={errors.confirm_password ? 'error' : 'default'}
@@ -153,7 +153,7 @@ const SignUpForm: React.FC = ({}) => {
         </div>
 
         {/* password validation */}
-        <ul className="hidden md:block space-y-1.75 rounded-8px p-16px bg-slate-lighter md:col-span-2">
+        <ul className="hidden md:block space-y-1.75 rounded-lg p-4 bg-slate-lighter md:col-span-2">
           {passValidations.map((validation) => (
             <PassValidationItem
               key={validation.id}
@@ -164,13 +164,13 @@ const SignUpForm: React.FC = ({}) => {
         </ul>
 
         {/* submit */}
-        <Button className="md:col-span-2 py-14px" disabled={isPending}>
+        <Button className="md:col-span-2 py-3.5" disabled={isPending}>
           {isPending ? 'Submitting...' : 'Create Account'}
         </Button>
       </form>
 
       {/* sign in link */}
-      <div className="flex items-center justify-center gap-x-4px pt-8px">
+      <div className="flex items-center justify-center gap-x-1 pt-2">
         <span className="text-slate-md">Already have an account?</span>
         <Link href="/login" className="text-primary font-semibold">
           Log in

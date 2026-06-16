@@ -13,7 +13,7 @@ const LogoutBtn: React.FC<Props> = ({ isCollapsed }) => {
   return (
     <Button
       variant="ghost"
-      className="text-error! leading-5 justify-start gap-12px px-12px! py-10px! hover:text-error-dark! transition-colors duration-500 group"
+      className="text-error! leading-5 justify-start gap-3 px-3! py-2.5! hover:text-error-dark! transition-colors duration-500 group"
       onClick={onHandleLogout}
       disabled={isPending}
     >

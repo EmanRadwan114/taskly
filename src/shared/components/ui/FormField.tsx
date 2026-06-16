@@ -53,7 +53,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
   const activeVariant = fieldState.error ? 'error' : variant;
 
   return (
-    <div className={`flex flex-col gap-6px ${containerClassName}`}>
+    <div className={`flex flex-col gap-1.5 ${containerClassName}`}>
       {isTextArea ? (
         <TextArea
           id={label}

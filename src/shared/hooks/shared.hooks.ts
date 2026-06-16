@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { IUseHandlePagination } from '../types/shared.types';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { IMetaFetchedData, IUseHandlePagination } from '../types/shared.types';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { FETCH_LIMIT } from '../utils/variables.utils';
+import { fetchProjects } from '@/features/projects/services/project.services';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -65,6 +71,7 @@ export const useMobile = (breakPoint: number = 768) => {
 export const useHandlePagination = <T>({
   list,
   paginationMetaData,
+  fetchFn,
 }: IUseHandlePagination<T>) => {
   const [hasMore, setHasMore] = useState(true);
   const observerTarget = useRef(null);
@@ -108,13 +115,13 @@ export const useHandlePagination = <T>({
           const offset = (nextPage - 1) * limit;
 
           // fetch new projects
-          const res = await fetch(
-            `/api/fetch-projects?limit=${limit}&offset=${offset}`
-          );
-          const data = await res.json();
+          const fetchedItems = await fetchFn({ limit, offset });
 
           // append new projects
-          setAccumulatedList((prev) => [...prev, ...data?.response?.data]);
+          setAccumulatedList((prev) => [
+            ...prev,
+            ...(fetchedItems?.data || []),
+          ]);
 
           setCurrentPage((c) => c + 1);
         }

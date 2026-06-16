@@ -10,6 +10,7 @@ import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { fetchEpics } from '../services/epics.services';
 
 interface IProps {
   epics: IEpics[];
@@ -19,8 +20,19 @@ interface IProps {
 const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
   const { projectId } = useParams();
 
-  const { currentPage, handleCurrentPage, hasMore, isMobile, observerTarget } =
-    useHandlePagination({ list: epics, paginationMetaData });
+  const {
+    isMobile,
+    hasMore,
+    observerTarget,
+    handleCurrentPage,
+    currentPage,
+    accumulatedList,
+  } = useHandlePagination<IEpics>({
+    list: epics,
+    paginationMetaData,
+    fetchFn: async (params) =>
+      await fetchEpics({ ...params, projectId: projectId as string }),
+  });
 
   if (epics?.length === 0) return <EmptyEpics />;
 
@@ -54,31 +66,34 @@ const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
       </header>
       {/* epic items */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
-        {epics?.map((epic) => (
-          <EpicItem key={epic?.id} epicItem={epic} />
+        {/* on mobile use accumulatedList (appends pages), on desktop use epics */}
+        {(isMobile ? accumulatedList : epics)?.map((epic) => (
+          <EpicItem epicItem={epic} key={epic?.id} />
         ))}
       </div>
 
       {/* pagination with footer on desktop */}
-      {!isMobile && (
-        <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
-          <p className="font-medium text-secondary text-body-sm">
-            Showing {epics?.length} of {paginationMetaData?.totalCount} active
-            epics
-          </p>
-          {paginationMetaData?.totalPages &&
-            paginationMetaData?.totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                handleCurrentPage={handleCurrentPage}
-                totalPages={paginationMetaData?.totalPages}
-              />
-            )}
-        </footer>
-      )}
+      <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+        <p className="font-medium text-secondary text-body-sm">
+          Showing {epics?.length} of {paginationMetaData?.totalCount} active
+          epics
+        </p>
+        {paginationMetaData?.totalPages &&
+          paginationMetaData?.totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              handleCurrentPage={handleCurrentPage}
+              totalPages={paginationMetaData?.totalPages}
+            />
+          )}
+      </footer>
 
-      {/* mobile load more */}
-      {isMobile && hasMore && <div ref={observerTarget} className=""></div>}
+      {/* loadmore on mobile */}
+      {hasMore && (
+        <div ref={observerTarget} className="lg:hidden h-4 w-full">
+          Loading More...
+        </div>
+      )}
     </section>
   );
 };

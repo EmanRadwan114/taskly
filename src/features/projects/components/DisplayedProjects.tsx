@@ -9,6 +9,7 @@ import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import { fetchProjects } from '../services/project.services';
 
 interface IProps {
   projects: IProject[];
@@ -29,6 +30,7 @@ const DisplayedProjects: React.FC<IProps> = ({
   } = useHandlePagination<IProject>({
     list: projects,
     paginationMetaData,
+    fetchFn: fetchProjects,
   });
 
   // conditional rendering

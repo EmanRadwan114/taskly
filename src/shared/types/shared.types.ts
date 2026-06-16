@@ -6,4 +6,9 @@ export interface IMetaFetchedData {
 export interface IUseHandlePagination<T = unknown> {
   list: T[];
   paginationMetaData: IMetaFetchedData | undefined;
+  fetchFn: (params: {
+    limit: number;
+    offset: number;
+    projectId?: string;
+  }) => Promise<{ data: T[]; meta: IMetaFetchedData } | null>;
 }

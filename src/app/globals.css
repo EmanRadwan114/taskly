@@ -172,7 +172,7 @@ input[type='checkbox'] {
   /* Custom Check mark using SVG */
   -webkit-appearance: none;
   appearance: none;
-  @apply border border-slate-light bg-surface-low size-3.5 rounded-2px;
+  @apply border border-slate-light bg-surface-low size-3.5 rounded-xs;
 }
 
 input[type='checkbox']:checked {

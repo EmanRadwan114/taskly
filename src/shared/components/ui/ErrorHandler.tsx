@@ -10,7 +10,7 @@ interface IProps {
 
 const ErrorHandler: React.FC<IProps> = ({ handleRetry, description }) => {
   return (
-    <section className="lg:min-h-[80vh] flex items-center justify-center sm:max-w-1/2 xl:max-w-[40%] sm:mx-auto">
+    <section className="min-h-[80vh] flex items-center justify-center sm:max-w-1/2 xl:max-w-[40%] sm:mx-auto">
       <div className="flex flex-col justify-center items-center gap-11">
         <div className="flex justify-center items-center bg-error-background rounded-3 size-16">
           <ErrorIcon className="6.5 text-error" />

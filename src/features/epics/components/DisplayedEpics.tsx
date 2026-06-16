@@ -4,40 +4,59 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
-import { IMetaFetchedData } from '@/shared/types/shared.types';
-import { fetchEpics } from '../services/epics.services';
+import { useState } from 'react';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import LoadingEpics from './LoadingEpics';
+import { useGetEpicsQuery } from '@/shared/libs/store/slices/epics.slice';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 
-interface IProps {
-  epics: IEpics[];
-  paginationMetaData: IMetaFetchedData | undefined;
-}
-
-const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
+const DisplayedEpics: React.FC = () => {
   const { projectId } = useParams();
+
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page'));
+
+  const [currentPage, setCurrentPage] = useState<number>(page || 1);
+
+  const limit = FETCH_LIMIT;
+  const offset = ((currentPage || 1) - 1) * limit;
+
+  const {
+    data: epics,
+    isLoading,
+    isFetching,
+  } = useGetEpicsQuery({
+    limit,
+    offset,
+    projectId: projectId as string,
+  });
+
+  const incomingData = epics?.response?.data || [];
+  const meta = epics?.response?.meta;
 
   const {
     isMobile,
     hasMore,
     observerTarget,
-    handleCurrentPage,
-    currentPage,
     accumulatedList,
+    handleCurrentPage,
   } = useHandlePagination<IEpics>({
-    list: epics,
-    paginationMetaData,
-    fetchFn: async (params) =>
-      await fetchEpics({ ...params, projectId: projectId as string }),
+    incomingData,
+    meta,
+    isFetching,
+    setCurrentPage,
+    currentPage,
   });
 
-  if (epics?.length === 0) return <EmptyEpics />;
+  if (isLoading) return <LoadingEpics />;
+  if (incomingData.length === 0 && !isFetching) return <EmptyEpics />;
 
   return (
-    <section>
+    <section className="flex flex-col flex-1 min-h-screen">
       {/* page header */}
       <header className="lg:justify-between lg:items-center flex gap-4 flex-col lg:flex-row mb-5 lg:mb-10">
         <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 w-full">
@@ -66,8 +85,7 @@ const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
       </header>
       {/* epic items */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
-        {/* on mobile use accumulatedList (appends pages), on desktop use epics */}
-        {(isMobile ? accumulatedList : epics)?.map((epic) => (
+        {(isMobile ? accumulatedList : epics?.response?.data)?.map((epic) => (
           <EpicItem epicItem={epic} key={epic?.id} />
         ))}
       </div>
@@ -75,22 +93,22 @@ const DisplayedEpics: React.FC<IProps> = ({ epics, paginationMetaData }) => {
       {/* pagination with footer on desktop */}
       <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
         <p className="font-medium text-secondary text-body-sm">
-          Showing {epics?.length} of {paginationMetaData?.totalCount} active
-          epics
+          Showing {epics?.response?.data?.length} of{' '}
+          {epics?.response?.meta?.totalCount} active epics
         </p>
-        {paginationMetaData?.totalPages &&
-          paginationMetaData?.totalPages > 1 && (
+        {epics?.response?.meta?.totalPages &&
+          epics?.response?.meta?.totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
               handleCurrentPage={handleCurrentPage}
-              totalPages={paginationMetaData?.totalPages}
+              totalPages={epics?.response?.meta?.totalPages}
             />
           )}
       </footer>
 
       {/* loadmore on mobile */}
-      {hasMore && (
-        <div ref={observerTarget} className="lg:hidden h-4 w-full">
+      {hasMore && !isFetching && (
+        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
           Loading More...
         </div>
       )}

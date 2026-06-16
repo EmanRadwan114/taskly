@@ -1,4 +1,8 @@
-import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
+import {
+  BASE_URL,
+  FETCH_LIMIT,
+  requestHeaders,
+} from '@/shared/utils/variables.utils';
 import { TEpicsInput } from '../validation/validation.epics';
 import { IEpics } from '../types/epics.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
@@ -33,8 +37,8 @@ export const createEpic = async ({
 
 // ^--------------------- fetch project epics ---------------------
 export const fetchEpics = async ({
-  limit,
-  offset,
+  limit = FETCH_LIMIT,
+  offset = 0,
   projectId,
 }: {
   limit: number;

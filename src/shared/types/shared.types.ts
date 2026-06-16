@@ -1,14 +1,14 @@
+import React from 'react';
+
 export interface IMetaFetchedData {
   totalCount: number;
   totalPages: number;
 }
 
-export interface IUseHandlePagination<T = unknown> {
-  list: T[];
-  paginationMetaData: IMetaFetchedData | undefined;
-  fetchFn: (params: {
-    limit: number;
-    offset: number;
-    projectId?: string;
-  }) => Promise<{ data: T[]; meta: IMetaFetchedData } | null>;
+export interface IUseHandlePagination<T> {
+  incomingData: T[];
+  meta: IMetaFetchedData | undefined;
+  isFetching: boolean;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  currentPage: number;
 }

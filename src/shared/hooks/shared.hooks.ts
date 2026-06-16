@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { IMetaFetchedData, IUseHandlePagination } from '../types/shared.types';
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
-import { FETCH_LIMIT } from '../utils/variables.utils';
-import { fetchProjects } from '@/features/projects/services/project.services';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { IUseHandlePagination } from '../types/shared.types';
+import { log } from 'console';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -68,87 +62,71 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ Use Handle Pagination Hook -------------------------
-export const useHandlePagination = <T>({
-  list,
-  paginationMetaData,
-  fetchFn,
+export const useHandlePagination = <T extends { id: string | number }>({
+  incomingData,
+  meta,
+  isFetching,
+  setCurrentPage,
+  currentPage,
 }: IUseHandlePagination<T>) => {
-  const [hasMore, setHasMore] = useState(true);
-  const observerTarget = useRef(null);
-
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const observerTarget = useRef<HTMLDivElement | null>(null);
 
-  const [currentPage, setCurrentPage] = useState<number>(
-    Number(searchParams.get('page') || 1)
-  );
-  const [accumulatedList, setAccumulatedList] = useState<T[]>(list || []);
+  const [hasMore, setHasMore] = useState(false);
 
   const { isMobile } = useMobile(1024);
 
-  // Update hasMore for mobile
+  const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
+
   useEffect(() => {
-    if (
-      paginationMetaData?.totalPages &&
-      currentPage >= paginationMetaData.totalPages
-    ) {
+    if (meta?.totalPages && currentPage >= meta.totalPages) {
       setHasMore(false);
     } else {
       setHasMore(true);
     }
-  }, [currentPage, paginationMetaData?.totalPages]);
+  }, [currentPage, meta?.totalPages]);
 
-  // Observer for infinite scroll on mobile
+  useEffect(() => {
+    setAccumulatedList((prev) => [...prev, ...incomingData]);
+
+    console.log(currentPage);
+  }, [incomingData]);
+
+  // Infinite Scroll Observer Configuration
   useEffect(() => {
     const target = observerTarget.current;
-
-    if (!target) return;
+    if (!target || !isMobile || !hasMore || isFetching) return;
 
     const observer = new IntersectionObserver(
-      async (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && hasMore) {
-          const nextPage = currentPage + 1;
-
-          const limit = FETCH_LIMIT;
-          const offset = (nextPage - 1) * limit;
-
-          // fetch new projects
-          const fetchedItems = await fetchFn({ limit, offset });
-
-          // append new projects
-          setAccumulatedList((prev) => [
-            ...prev,
-            ...(fetchedItems?.data || []),
-          ]);
-
-          setCurrentPage((c) => c + 1);
+      (entires) => {
+        const entry = entires[0];
+        if (entry.isIntersecting) {
+          setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, root: null, rootMargin: '0px' }
+      { threshold: 0, rootMargin: '10px' }
     );
 
     observer.observe(target);
-
     return () => observer.disconnect();
-  }, [hasMore, currentPage]);
+  }, [isMobile, hasMore, isFetching]);
 
-  // Handle current page (desktop pagination)
+  // Desktop Page Click Link Sync Handler
   const handleCurrentPage = (page: number) => {
     setCurrentPage(page);
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.set('page', page.toString());
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
   };
 
   return {
     isMobile,
     hasMore,
     observerTarget,
-    handleCurrentPage,
-    currentPage,
     accumulatedList,
+    handleCurrentPage,
   };
 };
 

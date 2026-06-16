@@ -121,7 +121,7 @@
   @apply text-heading-6 font-medium leading-6.75 tracking-normal;
 }
 
-@utility text-body {
+@utility text-body-md {
   @apply text-body font-normal leading-[22.75px] tracking-normal;
 }
 

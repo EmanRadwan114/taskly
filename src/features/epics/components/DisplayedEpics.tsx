@@ -11,8 +11,8 @@ import { IEpics } from '../types/epics.types';
 import { useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
-import { useGetEpicsQuery } from '@/shared/libs/store/slices/epics.slice';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
 const DisplayedEpics: React.FC = () => {
   const { projectId } = useParams();
@@ -35,7 +35,7 @@ const DisplayedEpics: React.FC = () => {
     projectId: projectId as string,
   });
 
-  const incomingData = epics?.response?.data || [];
+  const incomingEpics = epics?.response?.data || [];
   const meta = epics?.response?.meta;
 
   const {
@@ -45,7 +45,7 @@ const DisplayedEpics: React.FC = () => {
     accumulatedList,
     handleCurrentPage,
   } = useHandlePagination<IEpics>({
-    incomingData,
+    incomingData: incomingEpics,
     meta,
     isFetching,
     setCurrentPage,
@@ -53,10 +53,10 @@ const DisplayedEpics: React.FC = () => {
   });
 
   if (isLoading) return <LoadingEpics />;
-  if (incomingData.length === 0 && !isFetching) return <EmptyEpics />;
+  if (incomingEpics.length === 0 && !isFetching) return <EmptyEpics />;
 
   return (
-    <section className="flex flex-col flex-1 min-h-screen">
+    <section className="flex flex-col min-h-screen">
       {/* page header */}
       <header className="lg:justify-between lg:items-center flex gap-4 flex-col lg:flex-row mb-5 lg:mb-10">
         <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 w-full">
@@ -85,7 +85,7 @@ const DisplayedEpics: React.FC = () => {
       </header>
       {/* epic items */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
-        {(isMobile ? accumulatedList : epics?.response?.data)?.map((epic) => (
+        {(isMobile ? accumulatedList : incomingEpics)?.map((epic) => (
           <EpicItem epicItem={epic} key={epic?.id} />
         ))}
       </div>
@@ -93,17 +93,15 @@ const DisplayedEpics: React.FC = () => {
       {/* pagination with footer on desktop */}
       <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
         <p className="font-medium text-secondary text-body-sm">
-          Showing {epics?.response?.data?.length} of{' '}
-          {epics?.response?.meta?.totalCount} active epics
+          Showing {incomingEpics?.length} of {meta?.totalCount} active epics
         </p>
-        {epics?.response?.meta?.totalPages &&
-          epics?.response?.meta?.totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              handleCurrentPage={handleCurrentPage}
-              totalPages={epics?.response?.meta?.totalPages}
-            />
-          )}
+        {meta?.totalPages && meta?.totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            handleCurrentPage={handleCurrentPage}
+            totalPages={meta?.totalPages}
+          />
+        )}
       </footer>
 
       {/* loadmore on mobile */}

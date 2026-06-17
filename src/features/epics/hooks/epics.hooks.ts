@@ -3,11 +3,9 @@ import { toast } from 'react-toastify';
 import { TEpicsInput } from '../validation/validation.epics';
 import { createEpicAction } from '../server-actions/epics.actions';
 import { IEpics } from '../types/epics.types';
-import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
-import { fetchEpics } from '../services/epics.services';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
 // ^ ---------------------------- Create epic Hook -------------------------

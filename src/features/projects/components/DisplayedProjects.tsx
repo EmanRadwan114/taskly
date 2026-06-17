@@ -2,52 +2,26 @@
 
 import PlusIcon from '@/assets/icons/plus.svg';
 import ProjectCard from '@/features/projects/components/ProjectCard';
-import { IProject } from '@/features/projects/types/project.types';
 import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import LoadingProjects from './LoadingProjects';
-import { useGetProjectsQuery } from '@/shared/libs/store/redux-toolkit-query/projects-api';
+import { useFetchProjects } from '../hooks/project.hooks';
 
 const DisplayedProjects: React.FC = () => {
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page'));
-
-  const [currentPage, setCurrentPage] = useState<number>(page || 1);
-
-  const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
-
   const {
-    data: projects,
-    isLoading,
-    isFetching,
-  } = useGetProjectsQuery({
-    limit,
-    offset,
-  });
-
-  const incomingProjects = projects?.response?.data || [];
-  const meta = projects?.response?.meta;
-
-  const {
-    isMobile,
     hasMore,
     observerTarget,
     accumulatedList,
     handleCurrentPage,
-  } = useHandlePagination<IProject>({
-    incomingData: incomingProjects,
-    meta,
-    isFetching,
-    setCurrentPage,
     currentPage,
-  });
+    meta,
+    incomingProjects,
+    isLoading,
+    isFetching,
+    isMobile,
+  } = useFetchProjects();
 
   if (isLoading) return <LoadingProjects />;
   if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;

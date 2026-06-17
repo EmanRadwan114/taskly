@@ -4,39 +4,14 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
 import Pagination from '@/shared/components/ui/Pagination';
-import { IEpics } from '../types/epics.types';
-import { useState } from 'react';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
-import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import { useFetchEpics } from '../hooks/epics.hooks';
 
 const DisplayedEpics: React.FC = () => {
   const { projectId } = useParams();
-
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page'));
-
-  const [currentPage, setCurrentPage] = useState<number>(page || 1);
-
-  const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
-
-  const {
-    data: epics,
-    isLoading,
-    isFetching,
-  } = useGetEpicsQuery({
-    limit,
-    offset,
-    projectId: projectId as string,
-  });
-
-  const incomingEpics = epics?.response?.data || [];
-  const meta = epics?.response?.meta;
 
   const {
     isMobile,
@@ -44,13 +19,12 @@ const DisplayedEpics: React.FC = () => {
     observerTarget,
     accumulatedList,
     handleCurrentPage,
-  } = useHandlePagination<IEpics>({
-    incomingData: incomingEpics,
-    meta,
-    isFetching,
-    setCurrentPage,
     currentPage,
-  });
+    meta,
+    incomingEpics,
+    isLoading,
+    isFetching,
+  } = useFetchEpics(projectId as string);
 
   if (isLoading) return <LoadingEpics />;
   if (incomingEpics.length === 0 && !isFetching) return <EmptyEpics />;

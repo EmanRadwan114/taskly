@@ -7,7 +7,8 @@ import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { fetchEpics } from '../services/epics.services';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
 // ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
@@ -39,4 +40,61 @@ export const useCreateEpic = (projectId: string) => {
   };
 
   return { onHandleSubmitEpic, isPending, epicState: state };
+};
+
+// ^ ---------------------------- Feth Epics Hook -------------------------
+export const useFetchEpics = (projectId: string) => {
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page'));
+
+  const [currentPage, setCurrentPage] = useState<number>(page || 1);
+
+  const limit = FETCH_LIMIT;
+  const offset = ((currentPage || 1) - 1) * limit;
+
+  const {
+    data: epics,
+    isLoading,
+    isFetching,
+  } = useGetEpicsQuery({
+    limit,
+    offset,
+    projectId: projectId as string,
+  });
+
+  const incomingEpics = epics?.response?.data || [];
+  const meta = epics?.response?.meta;
+
+  const {
+    isMobile,
+    hasMore,
+    observerTarget,
+    accumulatedList,
+    handleCurrentPage,
+  } = useHandlePagination<IEpics>({
+    incomingData: incomingEpics,
+    meta,
+    isFetching,
+    setCurrentPage,
+    currentPage,
+  });
+
+  useEffect(() => {
+    if (projectId) {
+      setCurrentPage(1);
+    }
+  }, [projectId]);
+
+  return {
+    isMobile,
+    hasMore,
+    observerTarget,
+    accumulatedList,
+    handleCurrentPage,
+    currentPage,
+    meta,
+    incomingEpics,
+    isLoading,
+    isFetching,
+  };
 };

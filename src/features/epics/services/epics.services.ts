@@ -1,5 +1,11 @@
-import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
+import {
+  BASE_URL,
+  FETCH_LIMIT,
+  requestHeaders,
+} from '@/shared/utils/variables.utils';
 import { TEpicsInput } from '../validation/validation.epics';
+import { IEpics } from '../types/epics.types';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
 
 // ^-------------------------Create new epic -------------------------//
 export const createEpic = async ({
@@ -25,6 +31,37 @@ export const createEpic = async ({
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'Failed to create epic';
+    throw new Error(errMsg);
+  }
+};
+
+// ^--------------------- fetch project epics ---------------------
+export const fetchEpics = async ({
+  limit = FETCH_LIMIT,
+  offset = 0,
+  projectId,
+}: {
+  limit: number;
+  offset: number;
+  projectId: string;
+}): Promise<{ data: IEpics[]; meta: IMetaFetchedData }> => {
+  try {
+    const response = await fetch(
+      `/api/fetch-epics?limit=${limit}&offset=${offset}&projectId=${projectId}`
+    );
+
+    if (response.status === 204)
+      return { data: [], meta: { totalCount: 0, totalPages: 0 } };
+
+    const result = await response.json();
+
+    if (!response.ok)
+      throw new Error(result?.message || 'Failed to fetch epics');
+
+    return result?.response;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch epics';
     throw new Error(errMsg);
   }
 };

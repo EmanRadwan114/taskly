@@ -1,9 +1,15 @@
-import { useActionState, useEffect, useTransition } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 import { toast } from 'react-toastify';
 import { TEpicsInput } from '../validation/validation.epics';
 import { createEpicAction } from '../server-actions/epics.actions';
+import { IEpics } from '../types/epics.types';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import { fetchEpics } from '../services/epics.services';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import { useParams } from 'next/navigation';
 
-// ^ ---------------------------- Create epic Hook ------------------------- //
+// ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
   const action = createEpicAction.bind(null, projectId);
 

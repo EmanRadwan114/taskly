@@ -1,7 +1,8 @@
-import {  useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import {  IUseHandleMobilePagination } from '../types/shared.types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { IUseHandlePagination } from '../types/shared.types';
+import { log } from 'console';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -61,76 +62,76 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ Use Handle Pagination Hook -------------------------
-export const useHandleMobilePagination = ({list, paginationMetaData}: IUseHandleMobilePagination) => {
-  const [hasMore, setHasMore] = useState(true);
-  const pathname = usePathname()
-  const router = useRouter()
-  const observerTarget = useRef(null);
+export const useHandlePagination = <T extends { id: string | number }>({
+  incomingData,
+  meta,
+  isFetching,
+  setCurrentPage,
+  currentPage,
+}: IUseHandlePagination<T>) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const observerTarget = useRef<HTMLDivElement | null>(null);
 
-    const searchParams = useSearchParams()
+  const [hasMore, setHasMore] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page') || 1));
+  const { isMobile } = useMobile(1024);
 
-  const { isMobile } = useMobile(768);
+  const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
 
-  // handle hasMore state
   useEffect(() => {
-    if (
-      list?.length === 0 
-      && paginationMetaData?.totalPages && currentPage >= paginationMetaData?.totalPages
-    ) {
+    if (meta?.totalPages && currentPage >= meta.totalPages) {
       setHasMore(false);
     } else {
       setHasMore(true);
     }
-  }, [list, currentPage, paginationMetaData?.totalPages]);
+  }, [currentPage, meta?.totalPages]);
 
-  // observer for infinite scroll on mobile
+  useEffect(() => {
+    setAccumulatedList((prev) => [...prev, ...incomingData]);
+
+    console.log(currentPage);
+  }, [incomingData]);
+
+  // Infinite Scroll Observer Configuration
   useEffect(() => {
     const target = observerTarget.current;
-    if (!target) return;
+    if (!target || !isMobile || !hasMore || isFetching) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && hasMore) {
-          setCurrentPage(currentPage + 1);
+      (entires) => {
+        const entry = entires[0];
+        if (entry.isIntersecting) {
+          setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, root: null, rootMargin: '0px' }
+      { threshold: 0, rootMargin: '10px' }
     );
-    // watching target element
+
     observer.observe(target);
     return () => observer.disconnect();
-  }, [hasMore, currentPage, setCurrentPage]);
+  }, [isMobile, hasMore, isFetching]);
 
-// handle current page
+  // Desktop Page Click Link Sync Handler
   const handleCurrentPage = (page: number) => {
-    setCurrentPage(page)
-
-    const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('page', page.toString())
-
-    router.push(`${pathname}?${newSearchParams.toString()}`)
+    setCurrentPage(page);
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('page', page.toString());
+    router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
   };
-
 
   return {
     isMobile,
     hasMore,
     observerTarget,
+    accumulatedList,
     handleCurrentPage,
-    currentPage
   };
 };
 
 // ^ ------------------------ Use Handle Error Hook -------------------------
-export const useHandleError = ({
-  error,
-}: {
-  error: Error;
-}) => {
-
+export const useHandleError = ({ error }: { error: Error }) => {
   useEffect(() => {
     if (error.message) {
       toast.error(error.message);

@@ -7,63 +7,86 @@ import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
 import LinkButton from '@/shared/components/ui/LinkButton';
-import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useHandleMobilePagination } from '@/shared/hooks/shared.hooks';
+import { useSearchParams } from 'next/navigation';
+import LoadingProjects from './LoadingProjects';
+import { useGetProjectsQuery } from '@/shared/libs/store/redux-toolkit-query/projects-api';
 
-interface IProps {
-  projects: IProject[];
-  paginationMetaData?: IMetaFetchedData | undefined;
-}
+const DisplayedProjects: React.FC = () => {
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page'));
 
-const DisplayedProjects: React.FC<IProps> = ({
-  projects,
-  paginationMetaData,
-}) => {
-  const { isMobile, hasMore, observerTarget, handleCurrentPage, currentPage } =
-    useHandleMobilePagination({
-      list: projects,
-      paginationMetaData,
-    });
+  const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
-  // conditional rendering
-  if (projects?.length === 0) return <EmptyProjects />;
+  const limit = FETCH_LIMIT;
+  const offset = ((currentPage || 1) - 1) * limit;
 
+  const {
+    data: projects,
+    isLoading,
+    isFetching,
+  } = useGetProjectsQuery({
+    limit,
+    offset,
+  });
+
+  const incomingProjects = projects?.response?.data || [];
+  const meta = projects?.response?.meta;
+
+  const {
+    isMobile,
+    hasMore,
+    observerTarget,
+    accumulatedList,
+    handleCurrentPage,
+  } = useHandlePagination<IProject>({
+    incomingData: incomingProjects,
+    meta,
+    isFetching,
+    setCurrentPage,
+    currentPage,
+  });
+
+  if (isLoading) return <LoadingProjects />;
+  if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-10 min-h-screen">
       {/* section header */}
       <ProjectsHeader />
 
       {/* project list */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-10 lg:pb-20">
-        {projects?.map((project: IProject) => (
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-5 lg:pb-20">
+        {/* on mobile use accumulatedList (appends pages), on desktop use projects */}
+        {(isMobile ? accumulatedList : incomingProjects)?.map((project) => (
           <ProjectCard project={project} key={project.id} />
         ))}
       </section>
 
       {/* pagination footer on desktop */}
-      {!isMobile && (
-        <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
-          <p className="font-medium text-secondary text-body-sm">
-            Showing {projects?.length} of {paginationMetaData?.totalCount}{' '}
-            active projects
-          </p>
+      <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+        <p className="font-medium text-secondary text-body-sm">
+          Showing {incomingProjects?.length} of {meta?.totalCount} active
+          projects
+        </p>
 
-          {/* pagination component */}
-          {paginationMetaData?.totalPages &&
-            paginationMetaData?.totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                handleCurrentPage={handleCurrentPage}
-                totalPages={paginationMetaData?.totalPages}
-              />
-            )}
-        </footer>
-      )}
+        {/* pagination component */}
+        {meta?.totalPages && meta?.totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            handleCurrentPage={handleCurrentPage}
+            totalPages={meta?.totalPages}
+          />
+        )}
+      </footer>
 
       {/* loadmore on mobile */}
-      {isMobile && hasMore && <div ref={observerTarget} className=""></div>}
+      {hasMore && !isFetching && (
+        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+          Loading More...
+        </div>
+      )}
 
       {/* mobile add project btn */}
       <LinkButton

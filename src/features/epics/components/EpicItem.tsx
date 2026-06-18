@@ -5,6 +5,7 @@ import { IEpics } from '../types/epics.types';
 import CreatedByIcon from '@/assets/icons/created-by.svg';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
+import Link from 'next/link';
 
 interface IProps {
   epicItem: IEpics;
@@ -144,10 +145,10 @@ const EpicItem: React.FC<IProps> = ({ epicItem }) => {
   );
 
   return (
-    <>
+    <Link href={`/project/${epicItem?.project_id}/epics/${epicItem?.id}`}>
       {desktopView}
       {mobileView}
-    </>
+    </Link>
   );
 };
 

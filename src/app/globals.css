@@ -188,7 +188,8 @@ input[type='checkbox']:checked {
 
 /* scrollbar style */
 .modal-container {
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--slate-lighter) transparent;
 }
 
 .modal-container.is-scrolling {
@@ -207,12 +208,14 @@ input[type='checkbox']:checked {
 }
 
 .modal-container.is-scrolling::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 .modal-container.is-scrolling::-webkit-scrollbar-thumb {
-  background: #888888;
+  background: var(--slate-light);
 }
 
 .modal-container::-webkit-scrollbar-button {
   display: none;
+  width: 0;
+  height: 0;
 }

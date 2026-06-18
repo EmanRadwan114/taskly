@@ -8,18 +8,14 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useCreateEpic } from '../hooks/epics.hooks';
+import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 
 const EpicForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams();
 
-  const { members: projectMembers, isFetched } = useAppSelector(
-    (state) => state.members
-  );
-  const dispatch = useAppDispatch();
+  const { members: projectMembers } = useFetchMembers(projectId as string);
 
   const {
     handleSubmit,
@@ -41,13 +37,6 @@ const EpicForm: React.FC = () => {
   const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic(
     projectId as string
   );
-
-  //   fetch members
-  useEffect(() => {
-    if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId as string));
-    }
-  }, [projectId, isFetched]);
 
   useEffect(() => {
     if (epicState?.success) {

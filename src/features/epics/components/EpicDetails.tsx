@@ -14,14 +14,12 @@ import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import { useEffect } from 'react';
-import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
 import MembersOption from './MembersOption';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
+import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   epic: IEpics;
@@ -31,8 +29,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const { projectId } = useParams();
   const router = useRouter();
 
-  const { members, isFetched } = useAppSelector((state) => state.members);
-  const dispatch = useAppDispatch();
+  const { members } = useFetchMembers(projectId as string);
 
   const {
     control,
@@ -55,13 +52,6 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     projectId as string,
     epic?.id as string
   );
-
-  //   fetch members
-  useEffect(() => {
-    if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId as string));
-    }
-  }, [projectId, isFetched]);
 
   // handlers
   const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {

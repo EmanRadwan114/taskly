@@ -4,7 +4,11 @@ import DotsIcon from '@/assets/icons/dots.svg';
 import { IEpics } from '../types/epics.types';
 import CreatedByIcon from '@/assets/icons/created-by.svg';
 import CalenderIcon from '@/assets/icons/calender.svg';
-import { getNameInitials } from '@/shared/utils/functions.client.utils';
+import {
+  formateDateString,
+  getNameInitials,
+} from '@/shared/utils/functions.client.utils';
+import Link from 'next/link';
 
 interface IProps {
   epicItem: IEpics;
@@ -13,14 +17,7 @@ interface IProps {
 const EpicItem: React.FC<IProps> = ({ epicItem }) => {
   const assigneeInitials = getNameInitials(epicItem?.assignee?.name);
 
-  const formatedDeadline = new Date(epicItem?.deadline).toLocaleDateString(
-    'en-GB',
-    {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }
-  );
+  const formatedDeadline = formateDateString(epicItem?.deadline);
 
   //   desktop view
   const desktopView = (
@@ -144,10 +141,10 @@ const EpicItem: React.FC<IProps> = ({ epicItem }) => {
   );
 
   return (
-    <>
+    <Link href={`/project/${epicItem?.project_id}/epics/${epicItem?.id}`}>
       {desktopView}
       {mobileView}
-    </>
+    </Link>
   );
 };
 

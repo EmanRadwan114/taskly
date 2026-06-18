@@ -37,18 +37,18 @@
   --error-background: #ffdad6;
   --warning: #ffb300;
 
-  /* font-size 1rem = 14px*/
-  --heading-1: 4rem; /*56px*/
-  --heading-2: 2.571rem; /*36px*/
-  --heading-3: 2rem; /*28px*/
-  --heading-4: 1.714rem; /*24px*/
-  --heading-5: 1.428rem; /*20px*/
-  --heading-6: 1.285rem; /*18px*/
-  --body-lg: 1.143rem; /*16px*/
-  --body: 1rem; /*14px*/
-  --body-sm: 0.857rem; /*12px*/
-  --body-xs: 0.714rem; /*10px*/
-  --label: 0.785rem; /*11px*/
+  /* font-size */
+  --heading-1: 56px;
+  --heading-2: 36px;
+  --heading-3: 28px;
+  --heading-4: 24px;
+  --heading-5: 20px;
+  --heading-6: 18px;
+  --body-lg: 16px;
+  --body: 14px;
+  --body-sm: 12px;
+  --body-xs: 10px;
+  --label: 11px;
 
   /* shadow */
   --app-shadow: 0 1px 2px 0px #0000000d;
@@ -97,6 +97,7 @@
   --text-heading-4: var(--heading-4);
   --text-heading-5: var(--heading-5);
   --text-heading-6: var(--heading-6);
+  --text-body-lg: var(--body-lg);
   --text-body: var(--body);
   --text-body-sm: var(--body-sm);
   --text-body-xs: var(--body-xs);
@@ -134,6 +135,11 @@
   color: white;
 }
 
+@utility light-gradient {
+  @apply bg-linear-[135deg] from-white to-surface-low from-5% lg:from-white lg:to-white;
+  color: var(--slate-dark);
+}
+
 @utility form-headline {
   @apply text-heading-3 md:text-3xl leading-9 tracking-[-0.75px] text-slate-dark font-semibold;
 }
@@ -160,12 +166,12 @@
 
 /*^----------------------------- base style ----------------------------- */
 :root {
-  font-size: 14px;
+  font-size: 16px;
 }
 body {
   background: var(--background);
   color: var(--foreground);
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 input[type='checkbox'] {
@@ -178,4 +184,35 @@ input[type='checkbox'] {
 input[type='checkbox']:checked {
   border: 1px solid var(--primary);
   background: url('/icons/check2.svg') var(--primary) center no-repeat;
+}
+
+/* scrollbar style */
+.modal-container {
+  scrollbar-width: none;
+}
+
+.modal-container.is-scrolling {
+  scrollbar-width: thin;
+}
+
+.modal-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-container::-webkit-scrollbar-track,
+.modal-container::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.modal-container.is-scrolling::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.modal-container.is-scrolling::-webkit-scrollbar-thumb {
+  background: #888888;
+}
+
+.modal-container::-webkit-scrollbar-button {
+  display: none;
 }

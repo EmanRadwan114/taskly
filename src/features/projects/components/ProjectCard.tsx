@@ -6,6 +6,7 @@ import Link from 'next/link';
 import EditIcon from '@/assets/icons/edit.svg';
 import Button from '@/shared/components/ui/Button';
 import DotsIcon from '@/assets/icons/dots.svg';
+import { formateDateString } from '@/shared/utils/functions.client.utils';
 
 interface IProps {
   project: IProject;
@@ -14,14 +15,7 @@ interface IProps {
 const ProjectCard: React.FC<IProps> = ({ project }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const projectFormatedDate = new Date(project.created_at).toLocaleDateString(
-    'en-GB',
-    {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }
-  );
+  const projectFormatedDate = formateDateString(project.created_at);
 
   return (
     <div
@@ -30,9 +24,14 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
     >
       {/* actions  */}
       <header className="flex items-center justify-between">
-        <h2 className="text-title-md text-slate-dark capitalize">
-          {project?.name}
-        </h2>
+        <Link
+          href={`/project/${project?.id}/epics`}
+          className="w-full flex flex-col gap-y-3.5"
+        >
+          <h2 className="text-title-md text-slate-dark capitalize">
+            {project?.name}
+          </h2>
+        </Link>
         <Button
           variant="ghost"
           className="p-1! justify-end w-fit! "

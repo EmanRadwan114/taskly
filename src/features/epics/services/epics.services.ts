@@ -34,6 +34,33 @@ export const createEpic = async ({
     throw new Error(errMsg);
   }
 };
+// ^-------------------------update epic -------------------------//
+export const updateEpic = async ({
+  data,
+  accessToken,
+  epicId,
+}: {
+  data: Partial<TEpicsInput>;
+  accessToken: string;
+  epicId: string;
+}) => {
+  try {
+    const response = await fetch(`${BASE_URL}/rest/v1/epics?id=eq.${epicId}`, {
+      method: 'PATCH',
+      headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify(data),
+    });
+
+    if (response.status !== 204) {
+      const result = await response.json();
+      throw new Error(result?.message || 'Failed to update epic');
+    }
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to update epic';
+    throw new Error(errMsg);
+  }
+};
 
 // ^--------------------- fetch project epics ---------------------
 export const fetchEpics = async ({

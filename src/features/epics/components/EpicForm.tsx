@@ -63,6 +63,13 @@ const EpicForm: React.FC = () => {
     if (!projectId) return;
     onHandleSubmitEpic(data);
   };
+
+  const membersOptions = projectMembers?.map((member) => {
+    return {
+      value: member?.user_id,
+      label: member?.metadata?.name,
+    };
+  });
   return (
     <form
       className="lg:bg-white rounded-lg lg:shadow-primary lg:px-9 lg:py-10 flex flex-col gap-9"
@@ -128,14 +135,8 @@ const EpicForm: React.FC = () => {
             label="assignee_id"
             containerClassName="flex-1"
             isSelect
-          >
-            <option value="">Select a member...</option>
-            {projectMembers?.map((member) => (
-              <option key={member?.user_id} value={member?.user_id}>
-                {member?.metadata?.name}
-              </option>
-            ))}
-          </FormField>
+            options={membersOptions}
+          />
         </div>
         {/* deadline */}
         <div className="flex flex-col gap-1.5 flex-1">

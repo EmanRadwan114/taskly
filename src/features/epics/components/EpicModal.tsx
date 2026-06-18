@@ -1,27 +1,29 @@
 'use client';
 
-import EpicIdIcon from '@/assets/icons/epic-id.svg';
-import { useState } from 'react';
 import EpicDetails from './EpicDetails';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
 import EmptyTasks from '@/features/tasks/components/EmptyTasks';
 import Badge from '@/shared/components/ui/Badge';
 import { IEpics } from '../types/epics.types';
+import { useRouter } from 'next/navigation';
 
 interface IProps {
   epic: IEpics;
 }
 
 const EpicModal: React.FC<IProps> = ({ epic }) => {
-  const [modalStatus, setModalStatus] = useState({
-    isEditing: true,
-    isSaving: false,
-  });
+  const router = useRouter();
 
   return (
-    <section className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-9999999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center">
-      <div className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8">
+    <div
+      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-9999999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
+      onClick={() => router.back()}
+    >
+      <div
+        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* modal content */}
         <EpicDetails epic={epic} />
 
@@ -51,7 +53,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
           <EmptyTasks />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

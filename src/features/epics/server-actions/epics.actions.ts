@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
 import { revalidatePath } from 'next/cache';
-import { createEpic } from '../services/epics.services';
+import { createEpic, updateEpic } from '../services/epics.services';
 
 // ^ ------------------------- Create Epic Action ------------------------- //
 export const createEpicAction = async (
@@ -41,8 +41,6 @@ export const createEpicAction = async (
     values.deadline = deadline;
   }
 
-  console.log(values, projectId);
-
   try {
     if (!accessToken) return;
 
@@ -55,6 +53,57 @@ export const createEpicAction = async (
     return {
       success: true,
       message: 'Epic created successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Something went wrong',
+    };
+  }
+};
+// ^ ------------------------- update Epic Action ------------------------- //
+export const updateEpicAction = async (
+  projectId: string,
+  epicId: string,
+  _: unknown,
+  formData: FormData
+) => {
+  // get access token
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const assignee_id = (formData.get('assignee_id') as string) || null;
+  const deadline = formData.get('deadline') as string;
+
+  const values: {
+    title?: string;
+    description?: string;
+    assignee_id?: string | null;
+    deadline?: string;
+  } = {};
+
+  if (title) values.title = title;
+  if (description) values.description = description;
+  if (assignee_id) values.assignee_id = assignee_id;
+  else values.assignee_id = null;
+  if (deadline) values.deadline = deadline;
+
+  console.log(values);
+
+  try {
+    if (!accessToken) return;
+
+    if (epicId) {
+      await updateEpic({ data: values, accessToken, epicId });
+      revalidatePath(`/project/${projectId}/epics/${epicId}`);
+      revalidatePath('/epics');
+    }
+
+    return {
+      success: true,
+      message: 'Epic updated successfully!',
     };
   } catch (error) {
     return {

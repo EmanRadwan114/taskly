@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const epicsApi = createApi({
   reducerPath: 'epicsApi',
+  tagTypes: ['Epics'],
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   endpoints: (builder) => ({
     getEpics: builder.query<
@@ -12,6 +13,7 @@ export const epicsApi = createApi({
     >({
       query: ({ limit, offset, projectId }) =>
         `/fetch-epics?limit=${limit}&offset=${offset}&projectId=${projectId}`,
+      providesTags: ['Epics'],
     }),
   }),
 });

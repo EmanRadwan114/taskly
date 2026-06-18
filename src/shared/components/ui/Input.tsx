@@ -34,7 +34,7 @@ const Input: React.FC<IProps> = ({
     >
       <input
         {...props}
-        className={`${icon ? 'w-3/4' : 'w-full! pe-4'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-4 py-3.5 ${inputClassName}`}
+        className={`${icon ? 'w-3/4' : 'w-full! pe-4'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-4 py-3.5 disabled:opacity-60 disabled:cursor-default ${inputClassName}`}
         type={
           props.type === 'password'
             ? isPasswordShown

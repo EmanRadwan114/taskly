@@ -1,3 +1,5 @@
+'use client';
+
 import CalenderIcon from '@/assets/icons/calender.svg';
 import UnassignIcon from '@/assets/icons/unassigned.svg';
 import EpicAvatar from './EpicAvatar';
@@ -8,27 +10,37 @@ import {
 } from '@/shared/utils/functions.client.utils';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import CloseIcon from '@/assets/icons/close.svg';
-import EditableFormField from '@/shared/components/ui/EditableFormField';
 import { useForm } from 'react-hook-form';
 import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
 import { zodResolver } from '@hookform/resolvers/zod';
 import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
-import { useAppSelector } from '@/shared/libs/store/store';
-import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
+import { useEffect, useRef, useState } from 'react';
+import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
+import { useParams, useRouter } from 'next/navigation';
+import FormField from '@/shared/components/ui/FormField';
+import MembersOption from './MembersOption';
+import { useUpdateEpic } from '../hooks/epics.hooks';
+import Button from '@/shared/components/ui/Button';
 
 interface IProps {
   epic: IEpics;
 }
 
 const EpicDetails: React.FC<IProps> = ({ epic }) => {
-  const [dateType, setDateType] = useState('text');
-  const members = useAppSelector((state) => state.members.members);
+  const { projectId } = useParams();
+  const router = useRouter();
+
+  const { members, isFetched } = useAppSelector((state) => state.members);
+  const dispatch = useAppDispatch();
+
   const {
-    handleSubmit,
     control,
-    watch,
-    reset,
+    getValues,
+    trigger,
+    register,
+    getFieldState,
     formState: { errors },
   } = useForm<TEpicsInput>({
     resolver: zodResolver(epicsSchema),
@@ -36,26 +48,76 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     defaultValues: {
       title: epic?.title,
       description: epic?.description,
-      assignee_id: epic?.assignee?.sub,
+      assignee_id: epic?.assignee?.sub || '',
       deadline: epic?.deadline,
     },
   });
 
-  const userInitial = getNameInitials(epic?.created_by?.name!);
-  const assigneeInitial = getNameInitials(epic?.assignee?.name!);
+  const { onHandleSubmitEpic, isPending } = useUpdateEpic(
+    projectId as string,
+    epic?.id as string
+  );
 
+  //   fetch members
+  useEffect(() => {
+    if (!isFetched && projectId) {
+      dispatch(fetchMembers(projectId as string));
+    }
+  }, [projectId, isFetched]);
+
+  // handlers
+  const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {
+    const isFieldValid = await trigger(fieldName);
+    const { isDirty: isFieldDirty } = getFieldState(fieldName);
+
+    if (isFieldValid && isFieldDirty) {
+      if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
+        onHandleSubmitEpic({
+          [fieldName]: null,
+        });
+      } else {
+        onHandleSubmitEpic({
+          [fieldName]: getValues(fieldName),
+        });
+      }
+    }
+  };
+
+  const userInitial = getNameInitials(epic?.created_by?.name!);
   const formattedDeadline = formateDateString(epic?.deadline!, 'en-US');
   const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
-
   const metaContentStyle = `font-medium leading-5 text-body text-slate-dark`;
+  const membersDefaultValue = {
+    value: '',
+    label: 'Unassigned',
+    icon: (
+      <EpicAvatar
+        className="bg-surface-dark text-slate-dark/80!"
+        content={<UnassignIcon className="w-3 text-secondary" />}
+      />
+    ),
+  };
+  const membersOptions = [
+    membersDefaultValue,
+    ...(members?.map((member) => ({
+      value: member?.user_id,
+      label: member?.metadata?.name,
+      icon: (
+        <EpicAvatar
+          className="bg-surface-dark text-slate-dark/80!"
+          content={getNameInitials(member.metadata?.name)}
+        />
+      ),
+    })) || []),
+  ];
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
       <div className="flex flex-col gap-1 light-gradient pt-6 lg:pt-8 px-6 lg:px-8 lg:border-b lg:border-b-slate-light/15">
         {/* epic id */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 cursor-default">
           <EpicIdIcon className="w-5 text-primary hidden lg:block" />
           <span className="font-bold text-body-xs text-primary lg:text-body-sm leading-4 letter-spacing-md lg:text-slate-dark/40 uppercase">
             {epic?.epic_id}
@@ -63,24 +125,26 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
         </div>
         {/* epic title */}
         <div className="flex justify-between items-start">
-          <EditableFormField
+          <FormField
             inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-6"
             control={control}
             name="title"
             label={epic?.title}
             placeholder="Enter title"
             className="bg-transparent!"
+            isEditing
+            disabled={isPending}
+            onBlur={(e) => handleUpdateEpic('title')}
           />
 
           {/* close btn */}
-          <LinkButton
-            href=""
+          <Button
             variant="ghost"
-            btnClassName="-mt-4"
-            className="p-0.5!"
+            className="-mt-4 w-fit! p-0.5! items-end!"
+            onClick={() => router.back()}
           >
             <CloseIcon className="size-3.5 text-slate-dark/40" />
-          </LinkButton>
+          </Button>
         </div>
       </div>
       {/* epic info */}
@@ -94,20 +158,23 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
           >
             description
           </Label>
-          <EditableFormField
+          <FormField
             control={control}
             name="description"
-            label={epic?.description || 'No description provided'}
-            placeholder={`Provide a high-level overview of the project's architectural objectives and key milestones...`}
+            label={epic?.description}
+            placeholder={`No description provided`}
             inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
             isTextArea
+            isEditing
+            disabled={isPending}
             className="bg-transparent!"
+            onBlur={(e) => handleUpdateEpic('description')}
           />
         </div>
         {/* meta */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 items-start gap-y-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 items-start gap-6">
           {/*1. created by */}
-          <div className={`flex flex-col gap-2`}>
+          <div className={`flex flex-col gap-2 cursor-default`}>
             <span
               className={`text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`}
             >
@@ -121,7 +188,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             </div>
           </div>
           {/*2. assignee */}
-          <div className="flex flex-col gap-2 mb-2">
+          <div className="flex flex-col gap-2 mb-2 w-full">
             <Label
               htmlFor="assignee_id"
               className={metaLabelStyle}
@@ -129,45 +196,28 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             >
               assignee
             </Label>
-            <div className="flex items-center gap-2">
-              <span>
-                <EpicAvatar
-                  className="bg-surface-dark text-slate-dark/80!"
-                  content={
-                    epic?.assignee?.name ? (
-                      assigneeInitial
-                    ) : (
-                      <UnassignIcon className="size-3 text-secondary" />
-                    )
-                  }
-                />
-              </span>
-
-              <EditableFormField
+            <div className="flex items-center gap-2 w-full">
+              <FormField
                 control={control}
                 name="assignee_id"
                 label={epic?.assignee?.name || 'Unassigned'}
                 placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle} -ms-0.5`}
+                className={`bg-transparent! ${metaContentStyle} select-field`}
                 isSelect
-              >
-                <option value="">{epic?.assignee?.name || 'Unassigned'}</option>
-                {members?.map((member) => (
-                  <option
-                    key={member?.user_id}
-                    value={member?.user_id}
-                    className={metaContentStyle}
-                  >
-                    {member?.metadata?.name}
-                  </option>
-                ))}
-              </EditableFormField>
+                isEditing
+                disabled={isPending}
+                onChange={() => {
+                  handleUpdateEpic('assignee_id');
+                }}
+                options={membersOptions}
+                customOptionComponents={{ Option: MembersOption }}
+              />
             </div>
           </div>
           <div className="lg:hidden border-t border-t-slate-dark/30 col-span-2"></div>
           {/*3. deadline */}
-          {epic?.deadline && (
-            <div className="flex flex-col gap-2">
+          {epic?.deadline && getValues('deadline') && (
+            <div className="flex flex-col gap-2 relative">
               <Label
                 htmlFor="deadline"
                 className={metaLabelStyle}
@@ -175,33 +225,34 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
               >
                 deadline
               </Label>
-              <Label htmlFor="deadline">
-                <EditableFormField
-                  control={control}
-                  type={dateType}
-                  name="deadline"
-                  label={formattedDeadline}
-                  inputClassName={`${metaContentStyle} order-2 w-full`}
-                  className="gap-2! bg-transparent! items-center mt-1"
-                  placeholder="YYYY-MM-DD"
-                  onFocus={() => setDateType('date')}
-                  onBlur={() => setDateType('text')}
-                  icon={
-                    <CalenderIcon className="text-primary lg:text-slate-dark/40 w-3.25" />
-                  }
-                  iconClassName="px-0! py-0!"
-                />
-              </Label>
+              <FormField
+                control={control}
+                type="date"
+                name="deadline"
+                label={formattedDeadline}
+                inputClassName={`${metaContentStyle} order-2 w-full`}
+                className="gap-2! bg-transparent! items-center date relative"
+                placeholder="YYYY-MM-DD"
+                isEditing={true}
+                disabled={isPending}
+                onBlur={() => {
+                  handleUpdateEpic('deadline');
+                }}
+                icon={
+                  <CalenderIcon className="text-primary lg:text-slate-dark/40 w-3.25" />
+                }
+                iconClassName="px-0! py-0!"
+              />
             </div>
           )}
           {/*4. created at */}
-          <div className={`flex flex-col gap-2`}>
+          <div className={`flex flex-col gap-2 cursor-default`}>
             <span
               className={`text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`}
             >
               created at
             </span>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2">
               <span>
                 <CalenderIcon className="text-primary lg:text-slate-dark/40 w-3.25" />
               </span>

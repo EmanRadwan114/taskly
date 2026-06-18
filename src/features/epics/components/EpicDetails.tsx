@@ -11,7 +11,7 @@ import {
 import LinkButton from '@/shared/components/ui/LinkButton';
 import CloseIcon from '@/assets/icons/close.svg';
 import { useForm } from 'react-hook-form';
-import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
+import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';

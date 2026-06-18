@@ -17,7 +17,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
 
   return (
     <div
-      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-9999999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
+      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-99999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
       onClick={() => router.back()}
     >
       <div
@@ -40,7 +40,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </Badge>
             {/* desktop link */}
             <LinkButton
-              href=""
+              href={`/project/${epic?.project_id}/tasks/new`}
               variant="ghost"
               btnClassName="hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
               className="p-0!"
@@ -50,7 +50,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </LinkButton>
           </div>
           {/* tasks list */}
-          <EmptyTasks />
+          <EmptyTasks epic={epic} />
         </div>
       </div>
     </div>

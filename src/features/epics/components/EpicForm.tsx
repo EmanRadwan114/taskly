@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
-import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
+import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
 import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
 import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useCreateEpic } from '../hooks/epics.hooks';

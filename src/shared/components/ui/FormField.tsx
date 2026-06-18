@@ -81,10 +81,9 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
             field.onChange(e);
             if (onChange) onChange(e);
           }}
-          inputClassName={`${isEditing ? inputStyle : ''} ${isEditing ? inputClassName : ''}`}
-          rows={2}
+          inputClassName={`${isEditing ? `${inputStyle} field-sizing-content` : ''} ${isEditing ? inputClassName : ''}`}
           {...restHtmlProps}
-          className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}
+          className={`${isEditing ? `containerStyle` : ''} ${restHtmlProps.className}`}
         />
       ) : isSelect ? (
         <SelectField

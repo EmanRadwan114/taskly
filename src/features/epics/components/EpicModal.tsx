@@ -7,10 +7,14 @@ import EpicView from './EpicView';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
 import EmptyTasks from '@/features/tasks/components/EmptyTasks';
-import CloseIcon from '@/assets/icons/close.svg';
 import Badge from '@/shared/components/ui/Badge';
+import { IEpics } from '../types/epics.types';
 
-const EpicModal: React.FC = ({}) => {
+interface IProps {
+  epic: IEpics;
+}
+
+const EpicModal: React.FC<IProps> = ({ epic }) => {
   const [modalStatus, setModalStatus] = useState({
     isEditing: false,
     isSaving: false,
@@ -18,18 +22,18 @@ const EpicModal: React.FC = ({}) => {
 
   return (
     <section className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-9999999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center">
-      <div className="bg-white pb-6 lg:pb-8 rounded-lg sm:max-w-3/4 lg:max-w-2/3 2xl:max-w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container">
+      <div className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative">
         {/* epic id */}
         <div className="light-gradient px-6 lg:px-8 pt-6 lg:pt-8">
           <div className="flex gap-2">
             <EpicIdIcon className="w-5 text-primary hidden lg:block" />
             <span className="font-bold text-body-xs text-primary lg:text-body-sm leading-4 letter-spacing-md lg:text-slate-dark/40 uppercase">
-              Epic 101
+              {epic?.epic_id}
             </span>
           </div>
         </div>
         {/* modal content */}
-        {modalStatus.isEditing ? <EpicEditForm /> : <EpicView />}
+        {modalStatus.isEditing ? <EpicEditForm /> : <EpicView epic={epic} />}
 
         {/* tasks section */}
         <div className="flex flex-col gap-4 lg:gap-6 px-6 lg:px-8">

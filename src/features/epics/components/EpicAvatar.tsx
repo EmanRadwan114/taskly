@@ -1,5 +1,7 @@
+import { ReactNode } from 'react';
+
 interface IProps {
-  content: string;
+  content: string | ReactNode;
   className?: string;
 }
 const EpicAvatar: React.FC<IProps> = ({ content, className }) => {

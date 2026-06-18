@@ -15,7 +15,7 @@ const EmptyTasks: React.FC = ({}) => {
         <LinkButton
           href=""
           btnClassName="rounded-sm"
-          className="px-4! py-1.5! lg:px-6! lg:py-3!"
+          className="px-4! py-1.5! lg:px-5! lg:py-2!"
         >
           <PlusIcon className="text-white w-2.75" />
           Add task

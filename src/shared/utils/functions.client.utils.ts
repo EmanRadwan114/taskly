@@ -9,6 +9,15 @@ export const getNameInitials = (name: string) => {
     : name?.split('').slice(0, 2).join('');
 };
 
+// ^ ------------------------ formate date ------------------------
+export const formateDateString = (date: string, type: string = 'en-GB') => {
+  return new Date(date).toLocaleDateString(type, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 // ^ ------------------------ get pagination buttons ------------------------
 export function getPaginationButtons(
   pagesList: number[],

@@ -1,50 +1,77 @@
 import CalenderIcon from '@/assets/icons/calender.svg';
+import UnassignIcon from '@/assets/icons/unassigned.svg';
 import EpicAvatar from './EpicAvatar';
+import { IEpics } from '../types/epics.types';
+import {
+  formateDateString,
+  getNameInitials,
+} from '@/shared/utils/functions.client.utils';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import CloseIcon from '@/assets/icons/close.svg';
 
-const EpicView: React.FC = ({}) => {
+interface IProps {
+  epic: IEpics;
+}
+
+const EpicView: React.FC<IProps> = ({ epic }) => {
+  const userInitial = getNameInitials(epic?.created_by?.name!);
+  const assigneeInitial = getNameInitials(epic?.assignee?.name!);
+
+  const formattedDeadline = formateDateString(epic?.deadline!, 'en-US');
+  const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
+
   const epicMeta = [
     {
       id: 1,
       title: 'created by',
-      content: 'Mahmoud Taha',
-      icon: <EpicAvatar content="mt" />,
+      content: epic?.created_by?.name,
+      icon: <EpicAvatar content={userInitial} />,
+      isRendered: !!epic?.created_by,
     },
     {
       id: 2,
       title: 'assignee',
-      content: 'John Doe',
+      content: epic?.assignee?.name || 'Unassigned',
       icon: (
         <EpicAvatar
           className="bg-surface-dark text-slate-dark/80!"
-          content="jd"
+          content={
+            epic?.assignee?.name ? (
+              assigneeInitial
+            ) : (
+              <UnassignIcon className="size-3 text-secondary" />
+            )
+          }
         />
       ),
+      isRendered: !!epic?.assignee,
     },
     {
       id: 3,
       title: 'deadline',
-      content: 'Oct 15, 2025',
+      content: formattedDeadline,
       icon: (
         <CalenderIcon className="text-primary lg:text-slate-dark/40 w-3.25" />
       ),
+      isRendered: !!epic?.deadline,
     },
     {
       id: 4,
       title: 'created at',
-      content: 'Oct 15, 2025',
+      content: formattedCreatedDate,
       icon: (
         <CalenderIcon className="text-primary lg:text-slate-dark/40 w-3.25" />
       ),
+      isRendered: !!epic?.created_at,
     },
   ];
+
   return (
     <div className="flex flex-col">
       {/* epic title */}
-      <div className="pt-1 pb-4 lg:pt-4 lg:pb-8 light-gradient lg:border-b lg:border-b-slate-light/15 flex justify-between items-start px-6 lg:px-8">
+      <div className="pt-1 pb-4 lg:pt-4 lg:pb-6 light-gradient lg:border-b lg:border-b-slate-light/15 flex justify-between items-start px-6 lg:px-8">
         <h1 className="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize">
-          hi hi epic title
+          {epic?.title}
         </h1>
         <LinkButton
           href=""
@@ -63,36 +90,37 @@ const EpicView: React.FC = ({}) => {
             description
           </span>
           <p className="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque nihil
-            itaque quaerat. Optio molestias voluptates accusantium adipisci
-            dolorum nisi quaerat, voluptate consequatur deleniti temporibus,
-            ratione itaque rerum officiis minima porro.
+            {epic?.description || 'No description provided'}
           </p>
         </div>
         {/* meta */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6">
-          {epicMeta.map((item, indx) => (
-            <div key={item.id} className={`flex flex-col gap-2`}>
-              {indx > 1 && (
-                <div className="border-b border-b-slate-dark/30 lg:border-b-0"></div>
-              )}
-              {/* title */}
-              <span
-                className={`text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase ${
-                  indx > 1 ? 'mt-1 lg:mt-0' : ''
-                }`}
-              >
-                {item.title}
-              </span>
-              {/* content & icon */}
-              <div className="flex items-center gap-2">
-                <span>{item.icon}</span>
-                <span className="font-medium leading-5 text-body text-slate-dark">
-                  {item.content}
+          {epicMeta.map((item, indx) => {
+            if (!item.isRendered) return;
+
+            return (
+              <div key={item.id} className={`flex flex-col gap-2`}>
+                {indx > 1 && (
+                  <div className="border-b border-b-slate-dark/30 lg:border-b-0"></div>
+                )}
+                {/* title */}
+                <span
+                  className={`text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase ${
+                    indx > 1 ? 'mt-1 lg:mt-0' : ''
+                  }`}
+                >
+                  {item.title}
                 </span>
+                {/* content & icon */}
+                <div className="flex items-center gap-2">
+                  <span>{item.icon}</span>
+                  <span className="font-medium leading-5 text-body text-slate-dark">
+                    {item.content}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

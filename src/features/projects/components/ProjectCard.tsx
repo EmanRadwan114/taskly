@@ -30,9 +30,14 @@ const ProjectCard: React.FC<IProps> = ({ project }) => {
     >
       {/* actions  */}
       <header className="flex items-center justify-between">
-        <h2 className="text-title-md text-slate-dark capitalize">
-          {project?.name}
-        </h2>
+        <Link
+          href={`/project/${project?.id}/epics`}
+          className="w-full flex flex-col gap-y-3.5"
+        >
+          <h2 className="text-title-md text-slate-dark capitalize">
+            {project?.name}
+          </h2>
+        </Link>
         <Button
           variant="ghost"
           className="p-1! justify-end w-fit! "

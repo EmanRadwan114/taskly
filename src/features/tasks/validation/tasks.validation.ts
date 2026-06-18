@@ -3,16 +3,14 @@ import z from 'zod';
 import { TaskStatusEnum } from '../types/tasks.types';
 
 // ^ ------------------ add project schema ------------------
-export const projectSchema = z.object({
+export const taskSchema = z.object({
   title: z
     .string({
       error: (issue) =>
-        issue.input === undefined
-          ? 'Project title is required'
-          : 'Not a string',
+        issue.input === undefined ? 'Task title is required' : 'Not a string',
     })
-    .min(3, 'Project title must be at least 3 characters')
-    .max(100, 'Project title must be at most 100 characters'),
+    .min(3, 'Task title must be at least 3 characters')
+    .max(100, 'Task title must be at most 100 characters'),
   description: projectDescriptionSchema,
   status: z
     .enum([
@@ -24,10 +22,9 @@ export const projectSchema = z.object({
       TaskStatusEnum.REOPENED,
       TaskStatusEnum.READY_FOR_PRODUCTION,
       TaskStatusEnum.DONE,
-    ])
-    .optional()
-    .default(TaskStatusEnum.TODO),
+    ]),
   assignee_id: z.string().nullable().optional(),
+  epic_id: z.string().nullable().optional(),
   due_date: z
     .string()
     .refine(
@@ -45,4 +42,4 @@ export const projectSchema = z.object({
     .optional(),
 });
 
-export type TProjectInput = z.infer<typeof projectSchema>;
+export type TTaskInput = z.infer<typeof taskSchema>;

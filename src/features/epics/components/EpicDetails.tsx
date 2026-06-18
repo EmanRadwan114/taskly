@@ -8,7 +8,6 @@ import {
   formateDateString,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import LinkButton from '@/shared/components/ui/LinkButton';
 import CloseIcon from '@/assets/icons/close.svg';
 import { useForm } from 'react-hook-form';
 import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
@@ -16,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
 import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
@@ -39,7 +38,6 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     control,
     getValues,
     trigger,
-    register,
     getFieldState,
     formState: { errors },
   } = useForm<TEpicsInput>({

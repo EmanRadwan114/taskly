@@ -5,24 +5,27 @@ import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { useSubmitProject } from '../hooks/project.hooks';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { IProject } from '../types/project.types';
-import { projectSchema, TProjectInput } from '../validation/project.validation';
+import { IEpics } from '@/features/epics/types/epics.types';
+import { useCreateTask } from '../hooks/tasks.hooks';
+import { taskSchema, TTaskInput } from '../validation/tasks.validation';
+import { TaskStatusEnum } from '../types/tasks.types';
+import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
-  projectItem?: IProject | undefined;
+  selectedEpic?: IEpics;
 }
 
-const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
+const ProjectForm: React.FC<IProps> = ({ selectedEpic }) => {
   const router = useRouter();
+  const { projectId } = useParams<{ projectId: string }>();
 
-  const isEditMode = !!projectItem?.id;
-
-  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject(
-    isEditMode ? projectItem?.id : undefined
+  const { onHandleCreateTask, isPending, taskState } = useCreateTask(
+    projectId as string
   );
+
+  const { members } = useFetchMembers(projectId as string);
 
   const {
     handleSubmit,
@@ -30,28 +33,50 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<TProjectInput>({
-    resolver: zodResolver(projectSchema),
+  } = useForm<TTaskInput>({
+    resolver: zodResolver(taskSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: isEditMode ? projectItem?.name : '',
-      description: isEditMode ? projectItem?.description : '',
+      title: '',
+      description: '',
+      status: TaskStatusEnum.TODO,
+      assignee_id: '',
+      due_date: '',
+      epic_id: selectedEpic?.id || null,
     },
   });
 
   useEffect(() => {
-    if (projectState?.success && !isEditMode) {
-      reset({ name: '', description: '' });
+    if (taskState?.success) {
+      reset({
+        title: '',
+        description: '',
+        status: TaskStatusEnum.TODO,
+        assignee_id: '',
+        due_date: '',
+        epic_id: selectedEpic?.id ?? null,
+      });
     }
-  }, [projectState, isEditMode, reset]);
-
-  // watchers
-  const descriptionWatcher = watch('description');
+  }, [taskState, reset]);
 
   // handlers
-  const onSubmit = (data: TProjectInput) => {
-    onHandleSubmitProject(data);
+  const onSubmit = (data: TTaskInput) => {
+    onHandleCreateTask(data);
   };
+
+  // select options
+  const membersDefaultValue = {
+    value: '',
+    label: 'Unassigned',
+  };
+
+  const membersOptions = [
+    membersDefaultValue,
+    ...(members?.map((member) => ({
+      value: member?.user_id,
+      label: member?.metadata?.name,
+    })) || []),
+  ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -103,6 +128,7 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
               name="assignee_id"
               label="assignee"
               isSelect
+              options={membersOptions}
             />
           </div>
         </div>

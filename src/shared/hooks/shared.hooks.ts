@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { IUseHandlePagination } from '../types/shared.types';
 import { log } from 'console';
+import { useAppDispatch, useAppSelector } from '../libs/store/store';
+import { fetchMembers } from '../libs/store/slices/members.slice';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -137,4 +139,18 @@ export const useHandleError = ({ error }: { error: Error }) => {
       toast.error(error.message);
     }
   }, [error]);
+};
+
+// ^ ------------------------ Use Fetch Members Hook -------------------------
+export const useFetchMembers = (projectId: string) => {
+  const { members, isFetched } = useAppSelector((state) => state.members);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!isFetched && projectId) {
+      dispatch(fetchMembers(projectId as string));
+    }
+  }, [projectId, isFetched]);
+
+  return { members, isFetched };
 };

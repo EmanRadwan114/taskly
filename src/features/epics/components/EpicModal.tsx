@@ -6,7 +6,8 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import EmptyTasks from '@/features/tasks/components/EmptyTasks';
 import Badge from '@/shared/components/ui/Badge';
 import { IEpics } from '../types/epics.types';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface IProps {
   epic: IEpics;
@@ -14,10 +15,21 @@ interface IProps {
 
 const EpicModal: React.FC<IProps> = ({ epic }) => {
   const router = useRouter();
+  const { projectId } = useParams<{ projectId: string }>();
+
+  useEffect(() => {
+    if (typeof epic === 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   return (
     <div
-      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-99999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
+      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
       onClick={() => router.back()}
     >
       <div
@@ -40,7 +52,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </Badge>
             {/* desktop link */}
             <LinkButton
-              href={`/project/${epic?.project_id}/tasks/new`}
+              href={`/project/${projectId}/tasks/new`}
               variant="ghost"
               btnClassName="hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
               className="p-0!"

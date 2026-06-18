@@ -1,5 +1,6 @@
 import { generateNewTokens } from '@/features/auth/services/auth.services';
 import { cookies } from 'next/headers';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
 import {
   ACCESS_TOKEN_KEY,
@@ -95,6 +96,11 @@ export const fetchWithAuthServer = async (
 
     return { data, meta: result };
   } catch (error) {
+    // Next.js redirect() throws a special internal error — must not be caught
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     if (
       error instanceof Error &&
       (error.message.includes('401') || error.message.includes('403'))

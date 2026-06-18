@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import StoreProvider from '@/shared/libs/store/StoreProvider';
 import GlobalNetworkGuard from '@/shared/components/GlobalNetworkGuard';
 import GlobalLayout from '@/shared/components/GlobalLayout';
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <ToastContainer />
+        <ToastContainer className={'ultimate-top-toast'} />
         <StoreProvider>
           <GlobalNetworkGuard />
           <GlobalLayout />

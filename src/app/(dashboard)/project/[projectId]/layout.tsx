@@ -20,7 +20,7 @@ export default async function ProjectLayout({
   }
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-4">
       <BreadCrumb projectItem={projectItem} />
       {children}
     </section>

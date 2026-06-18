@@ -176,7 +176,7 @@ const ProjectForm: React.FC<IProps> = ({ selectedEpic }) => {
           />
         </div>
         {/* actions */}
-        <div className="flex flex-col lg:flex-row justify-between items-end gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-end gap-4 mt-6">
           <Button
             variant="ghost"
             type="button"

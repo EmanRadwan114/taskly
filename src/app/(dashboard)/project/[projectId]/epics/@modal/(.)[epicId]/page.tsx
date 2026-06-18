@@ -1,9 +1,8 @@
 import EpicModal from '@/features/epics/components/EpicModal';
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 
-export const dynamic = "force-dynamic";
 interface Props {
-  params: { epicId: string; projectId: string };
+  params: Promise<{ epicId: string; projectId: string }>;
 }
 
 export default async function Page({ params }: Props) {

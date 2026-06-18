@@ -22,7 +22,9 @@ export const taskSchema = z.object({
       TaskStatusEnum.REOPENED,
       TaskStatusEnum.READY_FOR_PRODUCTION,
       TaskStatusEnum.DONE,
-    ]),
+    ])
+    .optional()
+    .default(TaskStatusEnum.TODO),
   assignee_id: z.string().nullable().optional(),
   epic_id: z.string().nullable().optional(),
   due_date: z

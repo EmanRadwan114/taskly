@@ -148,9 +148,9 @@ export const useFetchMembers = (projectId: string) => {
 
   useEffect(() => {
     if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId as string));
+      dispatch(fetchMembers(projectId));
     }
-  }, [projectId, isFetched]);
+  }, [projectId]);
 
   return { members, isFetched };
 };

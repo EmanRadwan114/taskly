@@ -23,7 +23,7 @@ interface IInitialState {
   loading: 'pending' | 'success' | 'rejected';
   error: string | null;
   members: IMember[];
-  isFetched:boolean;
+  isFetched: boolean;
 }
 
 const membersSlice = createSlice({
@@ -32,9 +32,9 @@ const membersSlice = createSlice({
     loading: 'pending',
     error: null,
     members: [],
-    isFetched:false
+    isFetched: false,
   },
-  reducers: {  },
+  reducers: {},
   extraReducers: (builder) => {
     // fetch projects
     builder

@@ -83,7 +83,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           }}
           inputClassName={`${isEditing ? `${inputStyle} field-sizing-content` : ''} ${isEditing ? inputClassName : ''}`}
           {...restHtmlProps}
-          className={`${isEditing ? `containerStyle` : ''} ${restHtmlProps.className}`}
+          className={`${isEditing ? `${containerStyle}` : ''} ${restHtmlProps.className}`}
         />
       ) : isSelect ? (
         <SelectField

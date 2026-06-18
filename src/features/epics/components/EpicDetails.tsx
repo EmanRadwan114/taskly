@@ -95,7 +95,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
       icon: (
         <EpicAvatar
           className="bg-surface-dark text-slate-dark/80!"
-          content={getNameInitials(member.metadata?.name)}
+          content={getNameInitials(member?.metadata?.name)}
         />
       ),
     })) || []),
@@ -138,7 +138,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
       {/* epic info */}
       <div className="flex flex-col gap-5 lg:gap-8 px-6 lg:px-8 pb-6 lg:pb-8">
         {/* details */}
-        <div className="flex flex-col gap-2 mb-2">
+        <div className="flex flex-col gap-2">
           <Label
             htmlFor="description"
             className="lg:hidden text-label-sm text-secondary uppercase"

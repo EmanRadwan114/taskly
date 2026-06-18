@@ -46,7 +46,6 @@ export const createTaskAction = async (
     await createTask({
       data: values,
       accessToken,
-      projectId,
     });
     revalidatePath(`/project/${projectId}/tasks`);
 

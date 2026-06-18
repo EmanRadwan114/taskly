@@ -4,21 +4,16 @@ import { TTaskInput } from '../validation/tasks.validation';
 // ^ ------------------------- Create Task Service ------------------------- //
 export const createTask = async ({
   data,
-  projectId,
   accessToken,
 }: {
-  data: TTaskInput;
-  projectId: string;
+  data: TTaskInput & { project_id: string };
   accessToken: string;
 }) => {
   try {
     const response = await fetch(`${BASE_URL}/rest/v1/tasks`, {
       method: 'POST',
       headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
-      body: JSON.stringify({
-        ...data,
-        project_id: projectId,
-      }),
+      body: JSON.stringify(data),
     });
 
     if (response.status !== 201) {

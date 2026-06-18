@@ -27,6 +27,7 @@ export const useCreateTask = (projectId: string) => {
     if (data.status) formData.append('status', data.status);
     if (data.assignee_id) formData.append('assignee_id', data.assignee_id);
     if (data.due_date) formData.append('due_date', data.due_date);
+    if (data.epic_id) formData.append('epic_id', data.epic_id);
 
     startTransition(() => {
       formAction(formData);

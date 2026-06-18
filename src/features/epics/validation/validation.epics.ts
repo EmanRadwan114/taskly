@@ -10,7 +10,7 @@ export const epicsSchema = z.object({
     .min(3, 'Epic title must be at least 3 characters')
     .max(100, 'Epic title must be at most 100 characters'),
   description: projectDescriptionSchema,
-  assignee_id: z.string().optional(),
+  assignee_id: z.string().nullable().optional(),
   deadline: z
     .string()
     .refine(

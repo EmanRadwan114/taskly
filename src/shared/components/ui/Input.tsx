@@ -8,12 +8,16 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
   icon?: ReactNode;
   showPassIcon?: boolean;
+  inputClassName?: string;
+  iconClassName?: string;
 }
 
 const Input: React.FC<IProps> = ({
   variant = 'default',
   icon,
   showPassIcon = false,
+  inputClassName = '',
+  iconClassName = '',
   ...props
 }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
@@ -30,7 +34,7 @@ const Input: React.FC<IProps> = ({
     >
       <input
         {...props}
-        className={`${icon ? 'w-3/4' : 'w-full! pe-4'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-4 py-3.5`}
+        className={`${icon ? 'w-3/4' : 'w-full! pe-4'} focus-within:outline-0 focus-visible:outline-0 bg-transparent [:-webkit-autofill]:[-webkit-text-fill-color:var(--color-secondary)] autofill:text-secondary autofill:transition-colors autofill:duration-[5000000s] ps-4 py-3.5 disabled:opacity-60 disabled:cursor-default ${inputClassName}`}
         type={
           props.type === 'password'
             ? isPasswordShown
@@ -55,7 +59,7 @@ const Input: React.FC<IProps> = ({
         </div>
       )}
       {/* icon */}
-      {icon && <div className="px-4 py-3.5">{icon}</div>}
+      {icon && <div className={`px-4 py-3.5 ${iconClassName}`}>{icon}</div>}
     </div>
   );
 };

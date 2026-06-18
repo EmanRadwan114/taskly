@@ -12,7 +12,7 @@ interface IProps {
 
 const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
   const pathname = usePathname();
-  const { projectId } = useParams();
+  const { projectId, epicId } = useParams();
 
   const segments = pathname
     .split('/')
@@ -30,12 +30,15 @@ const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
         </Link>
       )}
       {segments.map((segment, index) => {
+        if (segment === epicId) return;
+
         const isLastSegment = index === segments.length - 1;
 
         const href =
           segment === projectId
             ? `/project/${projectId}/edit`
             : `/project/${segments.slice(0, index + 1).join('/')}`;
+
         let label =
           segment === projectId && projectItem?.name
             ? projectItem?.name

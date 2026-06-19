@@ -1,17 +1,7 @@
 import AddTaskForm from '@/features/tasks/components/AddTaskForm';
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 
-interface Props {
-  params: Promise<{ projectId: string }>;
-}
-
-export default async function Page({ params }: Props) {
-  const { projectId } = await params;
-
-  const endpoint = `rest/v1/project_epics?project_id=eq.${projectId}`;
-
-  const epic = await fetchWithAuthServer(endpoint);
-
+export default async function Page() {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
@@ -23,7 +13,7 @@ export default async function Page({ params }: Props) {
           ecosystem.
         </p>
       </header>
-      <AddTaskForm selectedEpic={epic?.data[0]} />
+      <AddTaskForm />
     </section>
   );
 }

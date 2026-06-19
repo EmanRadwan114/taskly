@@ -13,7 +13,7 @@ export default async function DashboardLayout({
         <div className="">
           <Sidebar />
         </div>
-        <div className="lg:flex-1">
+        <div className="lg:flex-1 min-w-0">
           <header>
             <Navbar />
           </header>

@@ -22,25 +22,27 @@ const StatusTitle: React.FC<IProps> = ({
   textColor,
 }) => {
   const { projectId } = useParams();
+
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center justify-between gap-2 ${className}`}>
       <div className="flex items-center gap-2">
         <div className={`size-2 rounded-full ${dotBackgroundColor}`}></div>
         <span className={`text-label-sm text-accent-dark ${textColor}`}>
           {title}
         </span>
         <div
-          className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 ${lengthClassName}`}
+          className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${lengthClassName}`}
         >
           <span>{length}</span>
         </div>
       </div>
       <LinkButton
         href={`/project/${projectId}/tasks/new`}
-        btnClassName="border border-slate-lighter/30 border-dashed w-full!"
+        variant="ghost"
+        btnClassName="border border-slate-lighter/30 border-dashed"
         className="gap-2! p-4!"
       >
-        <PlusIcon className="text-2.75 text-secondary" />
+        <PlusIcon className="w-2.75 text-secondary" />
       </LinkButton>
     </div>
   );

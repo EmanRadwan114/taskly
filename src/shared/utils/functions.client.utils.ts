@@ -10,11 +10,23 @@ export const getNameInitials = (name: string) => {
 };
 
 // ^ ------------------------ formate date ------------------------
-export const formateDateString = (date: string, type: string = 'en-GB') => {
-  return new Date(date).toLocaleDateString(type, {
+export const formateDateString = (
+  date: string,
+  type: string = 'en-GB',
+  options: {
+    year?: 'numeric' | '2-digit' | undefined;
+    month?: 'short' | 'long' | 'numeric' | '2-digit' | undefined;
+    day?: 'numeric' | '2-digit' | undefined;
+  } = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+  }
+) => {
+  return new Date(date).toLocaleDateString(type, {
+    year: options?.year,
+    month: options?.month,
+    day: options?.day,
   });
 };
 

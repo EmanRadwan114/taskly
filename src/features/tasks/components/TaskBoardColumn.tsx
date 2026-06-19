@@ -1,20 +1,30 @@
-import { useGetProjectTasksByStatusQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+'use client';
+
 import { TaskStatusEnum } from '../types/tasks.types';
 import BoardAddTaskBtn from './BoardAddTaskBtn';
 import StatusTitle from './StatusTitle';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
+import { useGetProjectTasksByStatusQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { setSelectedStatus } from '@/shared/libs/store/slices/tasks.slice';
 
 interface IProps {
   status: TaskStatusEnum;
 }
 const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const { projectId } = useParams();
+  const dispatch = useDispatch();
 
   const { data, isFetching, isLoading, error } =
     useGetProjectTasksByStatusQuery({ status, projectId: projectId as string });
 
   const tasks = data?.response?.data || [];
+
+  useEffect(() => {
+    dispatch(setSelectedStatus(status));
+  }, [status]);
 
   const statusColor: {
     [key: string]: {
@@ -23,14 +33,14 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     };
   } = {
     [TaskStatusEnum.TODO]: {
-      dotBackgroundColor: 'bg-accent-secondary',
+      dotBackgroundColor: 'bg-accent-dark',
     },
     [TaskStatusEnum.IN_PROGRESS]: {
       dotBackgroundColor: 'bg-primary-container',
     },
     [TaskStatusEnum.BLOCKED]: {
       dotBackgroundColor: 'bg-error',
-      lengthClassName: 'bg-error-background text-error',
+      lengthClassName: 'bg-error-background! text-error',
     },
     [TaskStatusEnum.IN_REVIEW]: {
       dotBackgroundColor: 'bg-slate-dark',
@@ -52,7 +62,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const displayedStatusTitle = status.replace(/_/g, ' ');
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 min-w-80">
       <StatusTitle
         dotBackgroundColor={statusColor[status]?.dotBackgroundColor}
         title={displayedStatusTitle}

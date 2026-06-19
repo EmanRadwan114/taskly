@@ -62,7 +62,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
         length={tasks?.length}
         status={status}
       />
-      <BoardAddTaskBtn />
+      <BoardAddTaskBtn status={status} />
       {tasks.map((task) => (
         <BoardTaskCard key={task.id} task={task} />
       ))}

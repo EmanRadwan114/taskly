@@ -7,14 +7,18 @@ import { useAppDispatch } from '@/shared/libs/store/store';
 import { setSelectedStatus } from '@/shared/libs/store/slices/tasks.slice';
 import { TaskStatusEnum } from '../types/tasks.types';
 
-const BoardAddTaskBtn: React.FC = ({}) => {
+interface Props {
+  status: TaskStatusEnum;
+}
+
+const BoardAddTaskBtn: React.FC<Props> = ({ status }) => {
   const { projectId } = useParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
   return (
     <Button
       onClick={() => {
-        dispatch(setSelectedStatus(TaskStatusEnum.TODO));
+        dispatch(setSelectedStatus(status));
         router.push(`/project/${projectId}/tasks/new`);
       }}
       variant="ghost"

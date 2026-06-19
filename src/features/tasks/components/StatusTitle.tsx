@@ -1,11 +1,9 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import PlusIcon from '@/assets/icons/plus.svg';
-import LinkButton from '@/shared/components/ui/LinkButton';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import Button from '@/shared/components/ui/Button';
-import { useRouter } from 'next/router';
 import { setSelectedStatus } from '@/shared/libs/store/slices/tasks.slice';
 import { TaskStatusEnum } from '../types/tasks.types';
 
@@ -47,7 +45,7 @@ const StatusTitle: React.FC<IProps> = ({
       </div>
       <Button
         variant="ghost"
-        className="gap-2! p-4! border border-slate-lighter/30 border-dashed"
+        className="gap-2! p-0! border border-slate-lighter/30 border-dashed text-end! w-fit!"
         onClick={() => {
           dispatch(setSelectedStatus(status));
           router.push(`/project/${projectId}/tasks/new`);

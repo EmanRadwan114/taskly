@@ -8,3 +8,32 @@ export enum TaskStatusEnum {
   READY_FOR_PRODUCTION = 'READY_FOR_PRODUCTION',
   DONE = 'DONE',
 }
+
+export interface ITask {
+  id: string;
+  project_id: string;
+  epic_id: string;
+  title: string;
+  description: string;
+  status: TaskStatusEnum;
+  created_at: string;
+  due_date: string;
+  task_id: string;
+  epic: {
+    id: string;
+    title: string;
+    epic_id: string;
+  };
+  created_by: {
+    id: string;
+    name: string;
+    email: string;
+    department: string;
+  };
+  assignee: {
+    id: string;
+    name: string;
+    email: string;
+    department: string;
+  };
+}

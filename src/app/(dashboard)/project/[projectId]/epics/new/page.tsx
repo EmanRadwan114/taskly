@@ -1,5 +1,4 @@
 import EpicForm from '@/features/epics/components/EpicForm';
-import Button from '@/shared/components/ui/Button';
 
 export default function Page() {
   return (

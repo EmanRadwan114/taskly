@@ -8,6 +8,10 @@ import Badge from '@/shared/components/ui/Badge';
 import { IEpics } from '../types/epics.types';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import EpicTasks from '@/features/tasks/components/EpicTasks';
+import { useGetEpicsTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { toast } from 'react-toastify';
+import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
 
 interface IProps {
   epic: IEpics;
@@ -17,8 +21,18 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
 
+  const {
+    data: epicsTasksData,
+    isLoading: isLoadingEpicsTasks,
+    error,
+  } = useGetEpicsTasksQuery({
+    epicId: epic?.id!,
+  });
+
+  const tasks = epicsTasksData?.response?.data;
+
   useEffect(() => {
-    if (typeof epic === 'undefined') {
+    if (typeof window !== 'undefined') {
       document.body.style.overflow = 'hidden';
     }
 
@@ -26,6 +40,8 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
+  if (error) toast.error('Failed to fetch tasks');
 
   return (
     <div
@@ -48,7 +64,7 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </h2>
             {/* mobile badge */}
             <Badge className="py-0.5 px-2 bg-surface-md rounded-xl lg:hidden">
-              0 tasks
+              {tasks?.length} tasks
             </Badge>
             {/* desktop link */}
             <LinkButton
@@ -62,7 +78,13 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </LinkButton>
           </div>
           {/* tasks list */}
-          <EmptyTasks epic={epic} />
+          {isLoadingEpicsTasks ? (
+            <LoadingEpicTasks />
+          ) : tasks?.length ? (
+            <EpicTasks tasks={tasks} />
+          ) : (
+            <EmptyTasks epic={epic} />
+          )}
         </div>
       </div>
     </div>

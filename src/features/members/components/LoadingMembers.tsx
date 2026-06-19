@@ -3,6 +3,9 @@
 import React from 'react';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import MemberItemSkeleton from './MemberItemSkeleton';
+import Table from '@/shared/components/ui/Table';
+import TableRow from '@/shared/components/ui/TableRow';
+import TableHead from '@/shared/components/ui/TableHead';
 
 const LoadingMembers: React.FC = () => {
   const { isMobile } = useMobile(768);
@@ -12,31 +15,25 @@ const LoadingMembers: React.FC = () => {
 
   // Desktop table view loader
   const desktopSkeletonView = (
-    <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
+    <Table>
       <thead>
-        <tr className="bg-surface-md/30 text-left">
-          <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Member
-          </th>
-          <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Role
-          </th>
-          <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Actions
-          </th>
-        </tr>
+        <TableRow>
+          <TableHead className="w-1/2">Member</TableHead>
+          <TableHead className="w-1/4">Role</TableHead>
+          <TableHead className="w-1/4">Actions</TableHead>
+        </TableRow>
       </thead>
       <tbody>
         {dummyRows.map((_, index) => (
-          <tr
+          <TableRow
             key={index}
             className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row"
           >
             <MemberItemSkeleton />
-          </tr>
+          </TableRow>
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 
   // Mobile list view loader

@@ -19,6 +19,7 @@
   --border: #f1f3ff;
   --border-dark: #004e32;
   --accent: #6b7280;
+  --accent-dark: #64748b;
 
   /* Slate Neutrals */
   --slate-dark: #041b3c;
@@ -73,6 +74,7 @@
   --color-border: var(--border);
   --color-border-dark: var(--border-dark);
   --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
 
   /* Slate Neutrals */
   --color-slate-dark: var(--slate-dark);
@@ -164,6 +166,10 @@
 
 @utility letter-spacing-xl {
   @apply tracking-[1.2px];
+}
+
+@utility board-title {
+  @apply text-[30px] leading-7.5 tracking-[-0.75px];
 }
 
 /*^----------------------------- base style ----------------------------- */

@@ -7,6 +7,7 @@ import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
+import TableCol from '@/shared/components/ui/TableCol';
 
 interface IProps {
   member: IMember;
@@ -52,24 +53,24 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
   const desktopView = (
     <>
       {/* member details */}
-      <td className="w-1/2 px-9 py-5">{memberInfo}</td>
+      <TableCol className="w-1/2">{memberInfo}</TableCol>
       {/* role */}
-      <td className="text-center w-1/4 px-9 py-5">
+      <TableCol className="text-center w-1/4">
         <Badge
           className={`${roleStyle[member.role]} rounded-full! py-1! px-3!`}
         >
           {' '}
           {member.role}{' '}
         </Badge>
-      </td>
+      </TableCol>
       {/* action */}
-      <td className=" w-1/4 px-9 py-5">
+      <TableCol className=" w-1/4">
         {member.role !== 'owner' && (
           <Button variant="ghost" className="p-1! justify-end">
             <DotsIcon className="text-secondary w-0.75" />
           </Button>
         )}
-      </td>
+      </TableCol>
     </>
   );
 

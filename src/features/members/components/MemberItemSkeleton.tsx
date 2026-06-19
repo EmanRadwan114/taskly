@@ -4,6 +4,7 @@ import React from 'react';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import { useMobile } from '@/shared/hooks/shared.hooks';
+import TableCol from '@/shared/components/ui/TableCol';
 
 const MemberItemSkeleton: React.FC = () => {
   const { isMobile } = useMobile(768);
@@ -26,15 +27,15 @@ const MemberItemSkeleton: React.FC = () => {
   const desktopView = (
     <>
       {/* member details [1] */}
-      <td className="w-1/2 px-9 py-5">{memberInfoSkeleton}</td>
+      <TableCol className="w-1/2">{memberInfoSkeleton}</TableCol>
 
       {/* role [1] */}
-      <td className="text-center w-1/4 px-9 py-5">
+      <TableCol className="text-center w-1/4">
         <div className="inline-block h-6 w-16 bg-slate-200 rounded-full! animate-pulse" />
-      </td>
+      </TableCol>
 
       {/* action [1] */}
-      <td className="w-1/4 px-9 py-5">
+      <TableCol className="w-1/4">
         <div className="flex justify-end animate-pulse">
           <Button
             variant="ghost"
@@ -43,7 +44,7 @@ const MemberItemSkeleton: React.FC = () => {
             <DotsIcon className="text-secondary w-0.75" />
           </Button>
         </div>
-      </td>
+      </TableCol>
     </>
   );
 

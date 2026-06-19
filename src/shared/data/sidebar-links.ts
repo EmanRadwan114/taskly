@@ -30,7 +30,7 @@ export const getAsideLinks = (
   {
     id: 3,
     label: 'project tasks',
-    href: `/project/${projectId}/tasks`,
+    href: `/project/${projectId}/tasks?view=board`,
     icon: TasksIcon,
     protected: true,
   },

@@ -9,6 +9,9 @@ import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams } from 'next/navigation';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import LoadingMembers from './LoadingMembers';
+import Table from '@/shared/components/ui/Table';
+import TableRow from '@/shared/components/ui/TableRow';
+import TableHead from '@/shared/components/ui/TableHead';
 
 const DisplayedMembers: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -35,28 +38,22 @@ const DisplayedMembers: React.FC = ({}) => {
 
   // desktop members view
   const desktopMembersView = (
-    <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
+    <Table>
       <thead>
-        <tr className="bg-surface-md/30 text-left">
-          <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Member
-          </th>
-          <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Role
-          </th>
-          <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-            Actions
-          </th>
-        </tr>
+        <TableRow>
+          <TableHead className="w-1/2">Member</TableHead>
+          <TableHead className="w-1/4">Role</TableHead>
+          <TableHead className="w-1/4">Actions</TableHead>
+        </TableRow>
       </thead>
       <tbody>
-        <tr className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
+        <TableRow className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
           {members.map((member) => (
             <MemberItem key={member?.member_id} member={member} />
           ))}
-        </tr>
+        </TableRow>
       </tbody>
-    </table>
+    </Table>
   );
 
   // mobile members view

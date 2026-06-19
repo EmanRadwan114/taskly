@@ -44,12 +44,15 @@ const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
             ? projectItem?.name
             : segment.replace(/-/g, ' ');
 
-        if (label.includes('add')) {
+        if (label.includes('add') && segments[index - 1] === 'project') {
           label = 'add new project';
         }
 
-        if (label.includes('new')) {
+        if (label.includes('new') && segments[index - 1] === 'epics') {
           label = 'new epic';
+        }
+        if (label.includes('new') && segments[index - 1] === 'tasks') {
+          label = 'new task';
         }
 
         return (

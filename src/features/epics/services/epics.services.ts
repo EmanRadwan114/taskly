@@ -3,7 +3,7 @@ import {
   FETCH_LIMIT,
   requestHeaders,
 } from '@/shared/utils/variables.utils';
-import { TEpicsInput } from '../validation/validation.epics';
+import { TEpicsInput } from '../validation/epics.validation';
 import { IEpics } from '../types/epics.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 

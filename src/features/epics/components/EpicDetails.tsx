@@ -8,21 +8,18 @@ import {
   formateDateString,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import LinkButton from '@/shared/components/ui/LinkButton';
 import CloseIcon from '@/assets/icons/close.svg';
 import { useForm } from 'react-hook-form';
-import { epicsSchema, TEpicsInput } from '../validation/validation.epics';
+import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import { useEffect, useRef, useState } from 'react';
-import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
 import MembersOption from './MembersOption';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
+import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   epic: IEpics;
@@ -32,14 +29,12 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const { projectId } = useParams();
   const router = useRouter();
 
-  const { members, isFetched } = useAppSelector((state) => state.members);
-  const dispatch = useAppDispatch();
+  const { members } = useFetchMembers(projectId as string);
 
   const {
     control,
     getValues,
     trigger,
-    register,
     getFieldState,
     formState: { errors },
   } = useForm<TEpicsInput>({
@@ -57,13 +52,6 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     projectId as string,
     epic?.id as string
   );
-
-  //   fetch members
-  useEffect(() => {
-    if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId as string));
-    }
-  }, [projectId, isFetched]);
 
   // handlers
   const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {
@@ -107,7 +95,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
       icon: (
         <EpicAvatar
           className="bg-surface-dark text-slate-dark/80!"
-          content={getNameInitials(member.metadata?.name)}
+          content={getNameInitials(member?.metadata?.name)}
         />
       ),
     })) || []),
@@ -150,7 +138,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
       {/* epic info */}
       <div className="flex flex-col gap-5 lg:gap-8 px-6 lg:px-8 pb-6 lg:pb-8">
         {/* details */}
-        <div className="flex flex-col gap-2 mb-2">
+        <div className="flex flex-col gap-2">
           <Label
             htmlFor="description"
             className="lg:hidden text-label-sm text-secondary uppercase"

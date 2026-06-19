@@ -1,10 +1,11 @@
 import EpicModal from '@/features/epics/components/EpicModal';
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
-
-export const dynamic = "force-dynamic";
+import DisplayedEpics from '@/features/epics/components/DisplayedEpics';
+import LoadingEpics from '@/features/epics/components/LoadingEpics';
+import { Suspense } from 'react';
 
 interface Props {
-  params: { epicId: string; projectId: string };
+  params: Promise<{ epicId: string; projectId: string }>;
 }
 
 export default async function Page({ params }: Props) {
@@ -14,5 +15,13 @@ export default async function Page({ params }: Props) {
 
   const epic = await fetchWithAuthServer(endpoint);
 
-  return <EpicModal epic={epic?.data[0]} />;
+  return (
+    <>
+      {/* Render the epics list in the background — mirrors soft-nav behaviour */}
+      <Suspense fallback={<LoadingEpics />}>
+        <DisplayedEpics />
+      </Suspense>
+      <EpicModal epic={epic?.data[0]} />
+    </>
+  );
 }

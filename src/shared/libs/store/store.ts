@@ -4,6 +4,7 @@ import authReducer from './slices/auth.slice';
 import membersReducer from './slices/members.slice';
 import { epicsApi } from './redux-toolkit-query/epics-api';
 import { projectsApi } from './redux-toolkit-query/projects-api';
+import { tasksApi } from './redux-toolkit-query/tasks-api';
 
 export const makeStore = () => {
   return configureStore({
@@ -12,11 +13,13 @@ export const makeStore = () => {
       members: membersReducer,
       [epicsApi.reducerPath]: epicsApi.reducer,
       [projectsApi.reducerPath]: projectsApi.reducer,
+      [tasksApi.reducerPath]: tasksApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
         epicsApi.middleware,
-        projectsApi.middleware
+        projectsApi.middleware,
+        tasksApi.middleware
       ),
   });
 };

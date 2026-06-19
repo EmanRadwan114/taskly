@@ -11,7 +11,7 @@ export const tasksApi = createApi({
       { response: { data: ITask[]; meta: IMetaFetchedData }; error: null },
       { epicId: string }
     >({
-      query: ({ epicId }) => `/fetch-tasks?epicId=${epicId}`,
+      query: ({ epicId }) => `/fetch-epic-tasks?epicId=${epicId}`,
       providesTags: ['EpicsTasks'],
     }),
   }),

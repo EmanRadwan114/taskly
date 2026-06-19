@@ -1,8 +1,4 @@
-import {
-  useActionState,
-  useEffect,
-  useTransition,
-} from 'react';
+import { useActionState, useEffect, useTransition } from 'react';
 import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TProjectInput } from '../validation/project.validation';

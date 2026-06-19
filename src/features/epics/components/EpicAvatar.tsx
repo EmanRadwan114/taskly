@@ -1,17 +1,18 @@
 import { ReactNode } from 'react';
+import { CSSProperties } from 'react';
 
 interface IProps {
   content: string | ReactNode;
   className?: string;
+  style?: CSSProperties;
 }
-const EpicAvatar: React.FC<IProps> = ({ content, className }) => {
+const EpicAvatar: React.FC<IProps> = ({ content, className, style }) => {
   return (
     <div
-      className={`rounded-xl bg-primary size-6 lg:size-7 flex items-center justify-center lg:pt-1.5 lg:pb-1.75 text-white ${className}`}
+      className={`rounded-xl bg-primary size-6 lg:size-7 flex items-center justify-center lg:pt-1.5 lg:pb-1.75 text-white font-bold text-body-xs leading-3.75 uppercase ${className}`}
+      style={style}
     >
-      <span className="font-bold text-body-xs leading-3.75 uppercase">
-        {content}
-      </span>
+      {content}
     </div>
   );
 };

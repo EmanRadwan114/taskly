@@ -14,9 +14,9 @@ interface IProps {
 }
 
 const MemberItem: React.FC<IProps> = ({ member }) => {
-  const [avatarBg, _] = useState(Math.round(Math.random() * 255));
   const { isMobile } = useMobile(768);
 
+  const avatarBg = Math.round(Math.random() * 255) + 1;
   const memberInitials = getNameInitials(member?.metadata.name);
 
   const roleStyle = {

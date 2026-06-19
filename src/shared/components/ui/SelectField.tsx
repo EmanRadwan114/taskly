@@ -99,7 +99,7 @@ const SelectField = ({
             ...base,
             color: 'var(--color-secondary-light)',
             margin: '0px',
-                        disabled: {
+            disabled: {
               opacity: '0.6',
               cursor: 'default',
             },
@@ -115,7 +115,7 @@ const SelectField = ({
             '&:hover': {
               color: 'var(--color-secondary)',
             },
-                        disabled: {
+            disabled: {
               opacity: '0.6',
               cursor: 'default',
             },

@@ -19,6 +19,7 @@
   --border: #f1f3ff;
   --border-dark: #004e32;
   --accent: #6b7280;
+  --accent-dark: #64748b;
 
   /* Slate Neutrals */
   --slate-dark: #041b3c;
@@ -55,6 +56,7 @@
   --app-shadow: 0 1px 2px 0px #0000000d;
   --form-shadow: 0 24px 48px 0 #041b3c0f;
   --form-shadow-sm: 0 24px 48px -12px #041b3c0f;
+  --board-shadow: 0 2px 8px 0 #00000005;
 }
 
 /*^-------------------------- tailwind theme --------------------------- */
@@ -73,6 +75,7 @@
   --color-border: var(--border);
   --color-border-dark: var(--border-dark);
   --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
 
   /* Slate Neutrals */
   --color-slate-dark: var(--slate-dark);
@@ -109,6 +112,7 @@
   --shadow-primary: var(--app-shadow);
   --shadow-form: var(--form-shadow);
   --shadow-form-sm: var(--form-shadow-sm);
+  --shadow-board: var(--board-shadow);
 }
 
 /*^----------------------------- utilities ----------------------------- */
@@ -164,6 +168,10 @@
 
 @utility letter-spacing-xl {
   @apply tracking-[1.2px];
+}
+
+@utility board-title {
+  @apply text-[30px] leading-7.5 tracking-[-0.75px];
 }
 
 /*^----------------------------- base style ----------------------------- */

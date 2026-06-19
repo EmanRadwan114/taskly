@@ -2,7 +2,6 @@
 
 import CalenderIcon from '@/assets/icons/calender.svg';
 import UnassignIcon from '@/assets/icons/unassigned.svg';
-import EpicAvatar from './EpicAvatar';
 import { IEpics } from '../types/epics.types';
 import {
   formateDateString,
@@ -20,6 +19,7 @@ import MembersOption from './MembersOption';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
+import UserAvatar from '@/shared/components/ui/UserAvatar';
 
 interface IProps {
   epic: IEpics;
@@ -81,7 +81,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     value: '',
     label: 'Unassigned',
     icon: (
-      <EpicAvatar
+      <UserAvatar
         className="bg-surface-dark text-slate-dark/80!"
         content={<UnassignIcon className="w-3 text-secondary" />}
       />
@@ -93,7 +93,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
       value: member?.user_id,
       label: member?.metadata?.name,
       icon: (
-        <EpicAvatar
+        <UserAvatar
           className="bg-surface-dark text-slate-dark/80!"
           content={getNameInitials(member?.metadata?.name)}
         />
@@ -170,7 +170,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             </span>
             <div className="flex items-center gap-2">
               <span>
-                <EpicAvatar content={userInitial} />
+                <UserAvatar content={userInitial} />
               </span>
               <span className={metaContentStyle}>{epic?.created_by?.name}</span>
             </div>

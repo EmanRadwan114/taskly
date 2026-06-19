@@ -1,0 +1,54 @@
+'use client';
+
+import Search from '@/shared/components/ui/Search';
+import TaskViewSelect from './TaskViewSelect';
+import FilterProjectTasks from './FilterProjectTasks';
+import LinkButton from '@/shared/components/ui/LinkButton';
+import PlusIcon from '@/assets/icons/plus.svg';
+import { useDispatch } from 'react-redux';
+
+const ProjectTasksHeader: React.FC = ({}) => {
+  const dispatch = useDispatch();
+
+  const desktopView = (
+    <header className="flex justify-between items-end">
+      <div className="hidden lg:flex flex-col gap-1">
+        <h1 className="font-semibold text-slate-dark board-title">
+          Active Workboard
+        </h1>
+        <p className="text-body leading-5 text-accent-dark">
+          Curating Project Alpha's production pipeline and milestones.
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <Search placeholder="Search tasks..." className="px-4! py-0.75!" />
+        <TaskViewSelect />
+        <FilterProjectTasks />
+      </div>
+    </header>
+  );
+
+  const mobileView = (
+    <header className="flex flex-col lg:hidden gap-6">
+      <h1 className="font-semibold text-slate-dark board-title">
+        Active Workboard
+      </h1>
+      <div className="lex flex-col gap-1">
+        <Search placeholder="Search tasks..." />
+        <LinkButton href="" className="py-2! w-full font-semibold leading-5">
+          <PlusIcon className="text-white w-2" />
+          Create Task
+        </LinkButton>
+      </div>
+    </header>
+  );
+
+  return (
+    <>
+      {desktopView}
+      {mobileView}
+    </>
+  );
+};
+
+export default ProjectTasksHeader;

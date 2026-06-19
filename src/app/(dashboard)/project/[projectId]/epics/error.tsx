@@ -10,7 +10,7 @@ export default function Error({
   error: Error;
   reset: () => void;
 }) {
- useHandleError({
+  useHandleError({
     error,
   });
 

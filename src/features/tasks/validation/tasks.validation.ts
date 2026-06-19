@@ -12,17 +12,16 @@ export const taskSchema = z.object({
     .min(3, 'Task title must be at least 3 characters')
     .max(100, 'Task title must be at most 100 characters'),
   description: projectDescriptionSchema,
-  status: z
-    .enum([
-      TaskStatusEnum.TODO,
-      TaskStatusEnum.IN_PROGRESS,
-      TaskStatusEnum.BLOCKED,
-      TaskStatusEnum.IN_REVIEW,
-      TaskStatusEnum.READY_FOR_QA,
-      TaskStatusEnum.REOPENED,
-      TaskStatusEnum.READY_FOR_PRODUCTION,
-      TaskStatusEnum.DONE,
-    ]),
+  status: z.enum([
+    TaskStatusEnum.TODO,
+    TaskStatusEnum.IN_PROGRESS,
+    TaskStatusEnum.BLOCKED,
+    TaskStatusEnum.IN_REVIEW,
+    TaskStatusEnum.READY_FOR_QA,
+    TaskStatusEnum.REOPENED,
+    TaskStatusEnum.READY_FOR_PRODUCTION,
+    TaskStatusEnum.DONE,
+  ]),
   assignee_id: z.string().nullable().optional(),
   epic_id: z.string().nullable().optional(),
   due_date: z

@@ -80,7 +80,9 @@ export const fetchWithAuthServer = async (
 
     const data = await response?.json();
     if (!response.ok)
-      throw new Error(`${response.status}: ${data?.msg || 'Failed to fetch data'}`);
+      throw new Error(
+        `${response.status}: ${data?.msg || 'Failed to fetch data'}`
+      );
 
     //^ return pagination metadata
     const result: IMetaFetchedData = { totalCount: 0, totalPages: 0 };

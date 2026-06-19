@@ -1,5 +1,5 @@
 import Check from '@/assets/icons/check.svg';
-import EpicAvatar from '@/features/epics/components/EpicAvatar';
+import UserAvatar from '@/shared/components/ui/UserAvatar';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import CalenderIcon from '@/assets/icons/calender.svg';
@@ -27,7 +27,7 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
             {task?.title}
           </h3>
           <div className="flex items-center gap-1">
-            <EpicAvatar
+            <UserAvatar
               className="size-6! bg-surface-dark rounded-xl text-label-xs text-secondary-light!"
               content={
                 task?.assignee?.name ? (
@@ -66,7 +66,7 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
       </div>
       <div className="flex justify-between items-center gap-2">
         <div className="flex gap-2 items-center">
-          <EpicAvatar
+          <UserAvatar
             className="size-6 bg-primary-container rounded-xl text-label-xs text-white"
             content={
               task?.assignee?.name ? (

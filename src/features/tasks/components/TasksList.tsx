@@ -1,4 +1,5 @@
 'use client';
+
 import Table from '@/shared/components/ui/Table';
 import TableHead from '@/shared/components/ui/TableHead';
 import TableRow from '@/shared/components/ui/TableRow';
@@ -10,10 +11,11 @@ import Button from '@/shared/components/ui/Button';
 import DotsIcon from '@/assets/icons/dots.svg';
 import TasksListPagination from './TasksListPagination';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 const TasksList: React.FC = ({}) => {
+  const params = useParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const status: string = TaskStatusEnum.TODO;
 
   const avatarBgColor = Math.round(Math.random() * 255) + 1;
 

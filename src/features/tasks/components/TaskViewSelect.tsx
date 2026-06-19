@@ -21,6 +21,7 @@ const TaskViewSelect: React.FC = ({}) => {
       className="w-full"
       classNamePrefix="custom"
       isSearchable={false}
+      defaultValue={options[0]}
       components={{
         IndicatorSeparator: () => null,
       }}

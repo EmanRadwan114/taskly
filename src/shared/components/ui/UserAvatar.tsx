@@ -6,7 +6,7 @@ interface IProps {
   className?: string;
   style?: CSSProperties;
 }
-const EpicAvatar: React.FC<IProps> = ({ content, className, style }) => {
+const UserAvatar: React.FC<IProps> = ({ content, className, style }) => {
   return (
     <div
       className={`rounded-xl bg-primary size-6 lg:size-7 flex items-center justify-center lg:pt-1.5 lg:pb-1.75 text-white font-bold text-body-xs leading-3.75 uppercase ${className}`}
@@ -17,4 +17,4 @@ const EpicAvatar: React.FC<IProps> = ({ content, className, style }) => {
   );
 };
 
-export default EpicAvatar;
+export default UserAvatar;

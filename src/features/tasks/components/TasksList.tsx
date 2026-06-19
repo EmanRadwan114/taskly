@@ -6,7 +6,7 @@ import TableRow from '@/shared/components/ui/TableRow';
 import TableCol from '@/shared/components/ui/TableCol';
 import Badge from '@/shared/components/ui/Badge';
 import { TaskStatusEnum } from '../types/tasks.types';
-import EpicAvatar from '@/features/epics/components/EpicAvatar';
+import UserAvatar from '@/shared/components/ui/UserAvatar';
 import Button from '@/shared/components/ui/Button';
 import DotsIcon from '@/assets/icons/dots.svg';
 import TasksListPagination from './TasksListPagination';
@@ -72,7 +72,7 @@ const TasksList: React.FC = ({}) => {
           <TableCol className={`${tdStyle} w-1/8`}>
             {/* assignee info */}
             <div className="flex items-center gap-3">
-              <EpicAvatar
+              <UserAvatar
                 content="JD"
                 className={`size-6.5! rounded-xl text-label font-bold`}
                 style={{ backgroundColor: `#${avatarBgColor}` }}

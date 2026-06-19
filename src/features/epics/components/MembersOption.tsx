@@ -1,6 +1,6 @@
 import { components, OptionProps, GroupBase } from 'react-select';
-import EpicAvatar from './EpicAvatar';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
+import UserAvatar from '@/shared/components/ui/UserAvatar';
 
 export interface MemberSelectOption {
   value: string | number;
@@ -18,7 +18,7 @@ const MembersOption = (
     <components.Option {...props}>
       <div className="flex items-center gap-2 cursor-pointer">
         <span>
-          <EpicAvatar
+          <UserAvatar
             className="bg-surface-dark text-slate-dark/80!"
             content={displayName ? getNameInitials(displayName) : 'Unassigned'}
           />

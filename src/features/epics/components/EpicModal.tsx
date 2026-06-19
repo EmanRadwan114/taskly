@@ -12,6 +12,9 @@ import EpicTasks from '@/features/tasks/components/EpicTasks';
 import { useGetEpicsTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
 import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
+import { useAppDispatch } from '@/shared/libs/store/store';
+import Button from '@/shared/components/ui/Button';
+import { setSelectedEpic } from '@/shared/libs/store/slices/tasks.slice';
 
 interface IProps {
   epic: IEpics;
@@ -20,6 +23,8 @@ interface IProps {
 const EpicModal: React.FC<IProps> = ({ epic }) => {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
+
+  const dispatch = useAppDispatch();
 
   const {
     data: epicsTasksData,
@@ -67,15 +72,17 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
               {tasks?.length} tasks
             </Badge>
             {/* desktop link */}
-            <LinkButton
-              href={`/project/${projectId}/tasks/new`}
+            <Button
               variant="ghost"
-              btnClassName="hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
-              className="p-0!"
+              className="p-0! w-fit! text-end hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
+              onClick={() => {
+                dispatch(setSelectedEpic(epic));
+                router.push(`/project/${projectId}/tasks/new`);
+              }}
             >
               <PlusIcon className="w-2.75" />
               Add task
-            </LinkButton>
+            </Button>
           </div>
           {/* tasks list */}
           {isLoadingEpicsTasks ? (

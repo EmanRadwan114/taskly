@@ -16,14 +16,12 @@ import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { useAppSelector } from '@/shared/libs/store/store';
 
-interface IProps {
-  selectedEpic?: IEpics;
-}
-
-const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
+const AddTaskForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
-  const selectedStatus = useAppSelector((state) => state.tasks.selectedStatus);
+  const { selectedStatus, selectedEpic } = useAppSelector(
+    (state) => state.tasks
+  );
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [accumulatedList, setAccumulatedList] = useState<IEpics[]>([]);
@@ -42,7 +40,7 @@ const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
     defaultValues: {
       title: '',
       description: '',
-      status: TaskStatusEnum.TODO,
+      status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
       epic_id: selectedEpic?.id || '',

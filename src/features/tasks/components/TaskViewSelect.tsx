@@ -9,7 +9,7 @@ const TaskViewSelect: React.FC = ({}) => {
     {
       label: 'Board View',
       value: 'board',
-      icon: <BoardIcon className="text-slate-dark w-3" />,
+      icon: <BoardIcon className="text-slate-dark w-3.5" />,
     },
     {
       label: 'List View',
@@ -20,7 +20,7 @@ const TaskViewSelect: React.FC = ({}) => {
   return (
     <Select
       options={options}
-      className="w-full"
+      className="w-44"
       classNamePrefix="custom"
       isSearchable={false}
       defaultValue={options[0]}
@@ -33,14 +33,9 @@ const TaskViewSelect: React.FC = ({}) => {
           backgroundColor: 'white',
           border: '1px solid #C3C6D633',
           boxShadow: 'var(--app-shadow)',
-          padding: '8px 16px',
+          padding: '4px 8px',
           borderRadius: '4px',
-        }),
-        singleValue: (provided) => ({
-          ...provided,
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#0A0E1A',
+          alignItems: 'center',
         }),
         indicatorsContainer: (provided) => ({
           ...provided,

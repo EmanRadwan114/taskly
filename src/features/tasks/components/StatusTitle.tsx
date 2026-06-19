@@ -1,8 +1,11 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import PlusIcon from '@/assets/icons/plus.svg';
-import LinkButton from '@/shared/components/ui/LinkButton';
+import { useAppDispatch } from '@/shared/libs/store/store';
+import Button from '@/shared/components/ui/Button';
+import { setSelectedStatus } from '@/shared/libs/store/slices/tasks.slice';
+import { TaskStatusEnum } from '../types/tasks.types';
 
 interface IProps {
   title: string;
@@ -11,6 +14,7 @@ interface IProps {
   length?: number;
   lengthClassName?: string;
   textColor?: string;
+  status: TaskStatusEnum;
 }
 
 const StatusTitle: React.FC<IProps> = ({
@@ -20,8 +24,11 @@ const StatusTitle: React.FC<IProps> = ({
   length = 0,
   lengthClassName,
   textColor,
+  status,
 }) => {
   const { projectId } = useParams();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
   return (
     <div className={`flex items-center justify-between gap-2 ${className}`}>
@@ -36,14 +43,16 @@ const StatusTitle: React.FC<IProps> = ({
           <span>{length}</span>
         </div>
       </div>
-      <LinkButton
-        href={`/project/${projectId}/tasks/new`}
+      <Button
         variant="ghost"
-        btnClassName="border border-slate-lighter/30 border-dashed"
-        className="gap-2! p-4!"
+        className="gap-2! p-0! border border-slate-lighter/30 border-dashed text-end! w-fit!"
+        onClick={() => {
+          dispatch(setSelectedStatus(status));
+          router.push(`/project/${projectId}/tasks/new`);
+        }}
       >
         <PlusIcon className="w-2.75 text-secondary" />
-      </LinkButton>
+      </Button>
     </div>
   );
 };

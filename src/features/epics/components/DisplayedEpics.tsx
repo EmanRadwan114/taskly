@@ -53,7 +53,7 @@ const DisplayedEpics: React.FC = () => {
   });
 
   if (isLoading) return <LoadingEpics />;
-  if (incomingEpics.length === 0 && !isFetching) return <EmptyEpics />;
+  if (incomingEpics.length === 0 && !isLoading) return <EmptyEpics />;
 
   return (
     <section className="flex flex-col min-h-screen">

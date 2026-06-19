@@ -42,7 +42,7 @@ const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
     defaultValues: {
       title: '',
       description: '',
-      status: TaskStatusEnum.TODO,
+      status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
       epic_id: selectedEpic?.id || '',

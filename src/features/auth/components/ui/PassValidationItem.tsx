@@ -14,7 +14,7 @@ interface IProps {
 const PassValidationItem: React.FC<IProps> = ({
   isValid = false,
   label,
-  validIcon = <Check className="size-3" />,
+  validIcon = <Check className="size-3 text-success-text" />,
   invalidIcon = <Circle className="size-3 text-secondary-light" />,
   containerClassName,
   textClassNames,

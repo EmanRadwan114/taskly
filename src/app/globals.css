@@ -49,6 +49,7 @@
   --body-sm: 12px;
   --body-xs: 10px;
   --label: 11px;
+  --label-xs: 8px;
 
   /* shadow */
   --app-shadow: 0 1px 2px 0px #0000000d;
@@ -102,6 +103,7 @@
   --text-body-sm: var(--body-sm);
   --text-body-xs: var(--body-xs);
   --text-label: var(--label);
+  --text-label-xs: var(--label-xs);
 
   /* shadow */
   --shadow-primary: var(--app-shadow);

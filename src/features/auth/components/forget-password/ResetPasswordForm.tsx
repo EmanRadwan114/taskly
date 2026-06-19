@@ -191,7 +191,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
                     isMobile ? (
                       <CheckFill className="size-3.5" />
                     ) : (
-                      <Check className="size-3.5" />
+                      <Check className="size-3.5 text-success-text" />
                     )
                   }
                   invalidIcon={

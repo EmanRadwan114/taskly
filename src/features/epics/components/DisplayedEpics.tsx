@@ -77,7 +77,7 @@ const DisplayedEpics: React.FC = () => {
           {/* new epic btn on mobile */}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
-            btnClassName="lg:hidden fixed bottom-20 inset-e-6 z-99999 rounded-3! size-14! shadow-primary!"
+            btnClassName="lg:hidden fixed bottom-20 inset-e-6 z-99 rounded-3! size-14! shadow-primary!"
           >
             <PlusIcon className="text-white size-3.5" />
           </LinkButton>

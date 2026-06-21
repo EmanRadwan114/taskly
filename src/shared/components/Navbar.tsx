@@ -74,7 +74,7 @@ const Navbar: React.FC<Props> = ({ toggleSideBar }) => {
       </div>
 
       {isSubMenuOpen && (
-        <div className="absolute inset-e-0 -bottom-14 bg-white shadow-primary p-1 rounded-sm w-50 z-9999">
+        <div className="absolute inset-e-0 -bottom-14 bg-white shadow-primary p-1 rounded-sm w-50 z-99">
           <LogoutBtn />
         </div>
       )}

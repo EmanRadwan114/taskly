@@ -1,5 +1,4 @@
 'use server';
-import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
 import { createTask } from '../services/tasks.services';
@@ -47,7 +46,6 @@ export const createTaskAction = async (
       data: values,
       accessToken,
     });
-    revalidatePath(`/project/${projectId}/tasks`);
 
     return {
       success: true,

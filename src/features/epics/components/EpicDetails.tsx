@@ -15,11 +15,11 @@ import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
 import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
-import MembersOption from './MembersOption';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
+import { ReactNode } from 'react';
 
 interface IProps {
   epic: IEpics | undefined;
@@ -61,7 +61,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     if (isFieldValid && isFieldDirty) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
-          [fieldName]: null,
+          assignee_id: null,
         });
       } else {
         onHandleSubmitEpic({
@@ -77,18 +77,18 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
   const metaContentStyle = `font-medium leading-5 text-body text-slate-dark`;
-  const membersDefaultValue = {
-    value: '',
-    label: 'Unassigned',
-    icon: (
-      <UserAvatar
-        className="bg-surface-dark text-slate-dark/80!"
-        content={<UnassignIcon className="w-3 text-secondary" />}
-      />
-    ),
-  };
+
   const membersOptions = [
-    membersDefaultValue,
+    {
+      value: '',
+      label: 'Unassigned',
+      icon: (
+        <UserAvatar
+          className="bg-surface-dark text-slate-dark/80!"
+          content={<UnassignIcon className="w-3 text-secondary" />}
+        />
+      ),
+    },
     ...(members?.map((member) => ({
       value: member?.user_id,
       label: member?.metadata?.name,
@@ -190,7 +190,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                 name="assignee_id"
                 label={epic?.assignee?.name || 'Unassigned'}
                 placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle} select-field`}
+                className={`bg-transparent! ${metaContentStyle}`}
                 isSelect
                 isEditing
                 disabled={isPending}
@@ -198,7 +198,18 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                   handleUpdateEpic('assignee_id');
                 }}
                 options={membersOptions}
-                customOptionComponents={{ Option: MembersOption }}
+                formatOptionLabel={({
+                  label,
+                  icon,
+                }: {
+                  label: string;
+                  icon: ReactNode;
+                }) => (
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    <span>{icon}</span>
+                    <span>{label}</span>
+                  </div>
+                )}
               />
             </div>
           </div>

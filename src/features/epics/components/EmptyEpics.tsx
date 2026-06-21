@@ -51,7 +51,7 @@ const EmptyEpics: React.FC = ({}) => {
           </div>
           <LinkButton
             href={`/project/${projectId}/epics/new`}
-            btnClassName="backdrop-blur-sm!"
+            className="backdrop-blur-sm!"
           >
             <EnergyIcon className="text-white w-4" />
             Create First Epic

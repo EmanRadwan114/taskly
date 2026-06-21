@@ -10,14 +10,13 @@ import {
 import TextArea from './TextArea';
 import AlertIcon from '@/assets/icons/alert.svg';
 import SelectField, { SelectOption } from './SelectField';
+import { GroupBase, Props as SelectProps } from 'react-select';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
     Omit<
-      InputHTMLAttributes<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >,
-      'defaultValue' | 'name' | 'options' | 'components' | 'onChange'
+      InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+      'defaultValue' | 'name' | 'value' | 'onChange' | 'onBlur'
     >,
     Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
   label: string;
@@ -32,8 +31,9 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   isEditing?: boolean;
   iconClassName?: string;
   inputClassName?: string;
-  customOptionComponents?: Record<string, React.ComponentType<any>>;
-  onChange?: (value: any) => void;
+  formatOptionLabel?: (option: any, labelMeta: any) => ReactNode;
+  onChange?: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -53,13 +53,14 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     showPassIcon = false,
     isTextArea = false,
     isSelect = false,
-    customOptionComponents,
     options = [],
     children,
     isEditing,
     iconClassName = '',
     inputClassName = '',
-    onChange,
+    onChange: customOnChange,
+    onBlur: customOnBlur,
+    name,
     ...restHtmlProps
   } = props;
 
@@ -71,7 +72,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <div className={`flex flex-col gap-1.5 w-full ${containerClassName}`}>
-      {isTextArea ? (
+      {isTextArea && (
         <TextArea
           id={label}
           variant={activeVariant}
@@ -79,13 +80,19 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           {...field}
           onChange={(e) => {
             field.onChange(e);
-            if (onChange) onChange(e);
+            customOnChange?.(e);
           }}
-          inputClassName={`${isEditing ? `${inputStyle} field-sizing-content` : ''} ${isEditing ? inputClassName : ''}`}
+          onBlur={(e) => {
+            field.onBlur();
+            customOnBlur?.(e);
+          }}
+          inputClassName={`${isEditing ? inputStyle + ' ' + 'field-sizing-content' + ' ' + inputClassName : ''}`}
           {...restHtmlProps}
-          className={`${isEditing ? `${containerStyle}` : ''} ${restHtmlProps.className}`}
+          className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}
         />
-      ) : isSelect ? (
+      )}
+
+      {isSelect && (
         <SelectField
           id={label}
           variant={activeVariant}
@@ -93,19 +100,22 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           options={options}
           name={field.name}
           ref={field.ref}
-          components={customOptionComponents}
-          value={options.find((opt) => opt.value === field.value) || null}
+          value={options?.find((opt) => opt.value === field.value) || null}
           onChange={(val) => {
-            const newValue = val ? val.value : '';
-            field.onChange(newValue);
-            if (onChange) onChange(newValue);
+            field.onChange((val as SelectOption)?.value);
+            customOnChange?.(val);
           }}
-          onBlur={field.onBlur}
-          isEditing={isEditing}
-          inputClassName={`${isEditing ? inputStyle : ''} ${isEditing ? inputClassName : ''}`}
+          onBlur={() => {
+            field.onBlur();
+            customOnBlur?.();
+          }}
+          inputClassName={`${isEditing ? inputStyle + ' ' + inputClassName : ''}`}
           className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className || ''}`}
+          {...(restHtmlProps as any)}
         />
-      ) : (
+      )}
+
+      {!isSelect && !isTextArea && (
         <Input
           id={label}
           variant={activeVariant}
@@ -113,11 +123,15 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           {...field}
           onChange={(e) => {
             field.onChange(e);
-            if (onChange) onChange(e);
+            customOnChange?.(e);
+          }}
+          onBlur={(e) => {
+            field.onBlur();
+            customOnBlur?.(e);
           }}
           icon={icon}
           showPassIcon={showPassIcon}
-          inputClassName={`${isEditing ? inputStyle : ''} ${isEditing ? inputClassName : ''}`}
+          inputClassName={`${isEditing ? inputStyle + ' ' + inputClassName : ''}`}
           iconClassName={iconClassName}
           {...restHtmlProps}
           className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}

@@ -5,6 +5,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const projectsApi = createApi({
   reducerPath: 'projectsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  tagTypes: ['Projects'],
   keepUnusedDataFor: 60 * 1, // 1 minute
   endpoints: (builder) => ({
     getProjects: builder.query<
@@ -13,6 +14,7 @@ export const projectsApi = createApi({
     >({
       query: ({ limit, offset }) =>
         `/fetch-projects?limit=${limit}&offset=${offset}`,
+      providesTags: ['Projects'],
     }),
   }),
 });

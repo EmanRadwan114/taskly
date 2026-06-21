@@ -91,7 +91,7 @@ const DisplayedProjects: React.FC = () => {
       {/* mobile add project btn */}
       <LinkButton
         href={'/project/add'}
-        btnClassName="lg:hidden fixed bottom-20 inset-e-6 z-99 rounded-3! size-14!"
+        className="lg:hidden fixed bottom-20 inset-e-6 z-99 rounded-3! size-14!"
       >
         <PlusIcon className="text-white size-3.5" />
       </LinkButton>

@@ -5,7 +5,7 @@ import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IEpics } from '@/features/epics/types/epics.types';
 import { useCreateTask } from '../hooks/tasks.hooks';
@@ -18,6 +18,11 @@ import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 const AddTaskForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
+  const searchParams = useSearchParams();
+
+  const selectedStatus = searchParams.get('status') as TaskStatusEnum | null;
+
+  const selectedEpicId = searchParams.get('epic_id') || '';
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [accumulatedList, setAccumulatedList] = useState<IEpics[]>([]);
@@ -39,7 +44,7 @@ const AddTaskForm: React.FC = () => {
       status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
-      epic_id: selectedEpic?.id || '',
+      epic_id: selectedEpicId,
     },
   });
 
@@ -66,10 +71,10 @@ const AddTaskForm: React.FC = () => {
         status: selectedStatus || TaskStatusEnum.TODO,
         assignee_id: '',
         due_date: '',
-        epic_id: selectedEpic?.id || '',
+        epic_id: selectedEpicId,
       });
     }
-  }, [taskState, reset]);
+  }, [taskState, reset, selectedStatus, selectedEpicId]);
 
   // fetch more epics when react to list bottom
   useEffect(() => {

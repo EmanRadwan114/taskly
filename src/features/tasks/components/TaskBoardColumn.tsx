@@ -1,11 +1,12 @@
 'use client';
 
 import { TaskStatusEnum } from '../types/tasks.types';
-import BoardAddTaskBtn from './BoardAddTaskBtn';
-import StatusTitle from './StatusTitle';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
 import { useGetProjectTasksByStatusQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import LinkButton from '@/shared/components/ui/LinkButton';
+import PlusBorderIcon from '@/assets/icons/plus-border.svg';
+import PlusIcon from '@/assets/icons/plus.svg';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -53,16 +54,45 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
 
   const displayedStatusTitle = status.replace(/_/g, ' ');
 
+  const href = status
+    ? `/project/${projectId}/tasks/new?status=${status}`
+    : `/project/${projectId}/tasks/new`;
+
   return (
     <div className="flex flex-col gap-4 min-w-64">
-      <StatusTitle
-        dotBackgroundColor={statusColor[status]?.dotBackgroundColor}
-        title={displayedStatusTitle}
-        lengthClassName={statusColor[status]?.lengthClassName}
-        length={tasks?.length}
-        status={status}
-      />
-      <BoardAddTaskBtn status={status} />
+      {/* status header */}
+      <div className={`flex items-center justify-between gap-2`}>
+        <div className="flex items-center gap-2">
+          <div
+            className={`size-2 rounded-full ${statusColor[status]?.dotBackgroundColor}`}
+          ></div>
+          <span className={`text-label-sm text-accent-dark`}>
+            {displayedStatusTitle}
+          </span>
+          <div
+            className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${statusColor[status]?.lengthClassName}`}
+          >
+            <span>{tasks?.length}</span>
+          </div>
+        </div>
+        <LinkButton
+          href={href}
+          className="border border-slate-lighter/30 border-dashed w-full! gap-2! p-4!"
+        >
+          <PlusIcon className="text-2.75 text-secondary" />
+        </LinkButton>
+      </div>
+      {/* add task link */}
+      <LinkButton
+        href={href}
+        className="border border-slate-lighter/30 border-dashed p-4! w-full! gap-2!"
+      >
+        <PlusBorderIcon className="text-secondary/60 size-4.5" />
+        <span className="uppercase text-secondary/60 font-bold text-body-sm letter-spacing-xl leading-4">
+          Add New Task
+        </span>
+      </LinkButton>
+      {/* cards */}
       {tasks.map((task) => (
         <BoardTaskCard key={task.id} task={task} />
       ))}

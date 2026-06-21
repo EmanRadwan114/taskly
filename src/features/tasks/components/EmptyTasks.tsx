@@ -14,9 +14,8 @@ const EmptyTasks: React.FC<{ epic: IEpics | undefined }> = ({ epic }) => {
           No tasks have been added to this epic yet
         </p>
         <LinkButton
-          href={`/project/${epic?.project_id}/tasks/new`}
-          btnClassName="rounded-sm"
-          className="px-4! py-1.5! lg:px-5! lg:py-2!"
+          href={`/project/${epic?.project_id}/tasks/new?epic=${epic?.id}`}
+          className="rounded-sm! px-4! py-1.5! lg:px-5! lg:py-2!"
         >
           <PlusIcon className="text-white w-2.75" />
           Add task

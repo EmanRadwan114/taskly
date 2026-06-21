@@ -1,5 +1,6 @@
 import AddTaskForm from '@/features/tasks/components/AddTaskForm';
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
+import { Suspense } from 'react';
 
 export default async function Page() {
   return (
@@ -13,7 +14,9 @@ export default async function Page() {
           ecosystem.
         </p>
       </header>
-      <AddTaskForm />
+      <Suspense fallback={<div>Loading form...</div>}>
+        <AddTaskForm />
+      </Suspense>
     </section>
   );
 }

@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import EpicTasks from '@/features/tasks/components/EpicTasks';
 import { useGetEpicsTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
+import LoadingEpicDetails from './LoadingEpicDetails';
 import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
 import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
@@ -47,10 +48,7 @@ const EpicModal = () => {
       document.body.style.overflow = 'auto';
     };
   }, []);
-
   if (epicError) toast.error('Failed to fetch epic');
-
-  if (isLoadingEpic) return <div>Loading...</div>;
 
   return (
     <div
@@ -62,38 +60,41 @@ const EpicModal = () => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* modal content */}
-        <EpicDetails epic={epic} />
+        {isLoadingEpic ? <LoadingEpicDetails /> : <EpicDetails epic={epic} />}
 
         {/* tasks section */}
         <div className="flex flex-col gap-4 lg:gap-6 px-6 lg:px-8">
-          {/* header */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-label-sm text-secondary lg:font-semibold lg:text-slate-dark lg:text-heading-6 lg:leading-7 lg:capitalize">
-              Tasks
-            </h2>
-            {/* mobile badge */}
-            <Badge className="py-0.5 px-2 bg-surface-md rounded-xl lg:hidden">
-              {tasks?.length} tasks
-            </Badge>
-            {/* desktop link */}
-            <LinkButton
-              href={`/project/${projectId}/tasks/new`}
-              variant="ghost"
-              btnClassName="hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
-              className="p-0!"
-            >
-              <PlusIcon className="w-2.75" />
-              Add task
-            </LinkButton>
-          </div>
           {/* tasks list */}
-          {isLoadingEpicsTasks && <LoadingEpicTasks />}
-          {tasksError && <TasksFetchErrorMsg />}
-          {!isLoadingEpicsTasks && !tasksError && tasks?.length && (
-            <EpicTasks tasks={tasks} />
-          )}
-          {!isLoadingEpicsTasks && !tasksError && !tasks?.length && (
+          {isLoadingEpic || isLoadingEpicsTasks ? (
+            <LoadingEpicTasks />
+          ) : tasksError ? (
+            <TasksFetchErrorMsg />
+          ) : !tasks?.length ? (
             <EmptyTasks epic={epic} />
+          ) : (
+            <>
+              {/* header */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-label-sm text-secondary lg:font-semibold lg:text-slate-dark lg:text-heading-6 lg:leading-7 lg:capitalize">
+                  Tasks
+                </h2>
+                {/* mobile badge */}
+                <Badge className="py-0.5 px-2 bg-surface-md rounded-xl lg:hidden">
+                  {tasks?.length} tasks
+                </Badge>
+                {/* desktop link */}
+                <LinkButton
+                  href={`/project/${projectId}/tasks/new?epic=${epic?.id}`}
+                  variant="ghost"
+                  className="p-0! hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
+                >
+                  <PlusIcon className="w-2.75" />
+                  Add task
+                </LinkButton>
+              </div>
+              {/* tasks list */}
+              <EpicTasks tasks={tasks} />
+            </>
           )}
         </div>
       </div>

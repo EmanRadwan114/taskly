@@ -1,17 +1,10 @@
 'use client';
 
-import React, { Ref } from 'react';
-import Select, {
-  Props as SelectProps,
-  GroupBase,
-  SelectInstance,
-} from 'react-select';
+import Select, { GroupBase, Props as SelectProps } from 'react-select';
 
 export interface SelectOption {
   value: string | number;
   label: string;
-  components?: Record<string, React.ComponentType<any>>;
-  isEditing?: boolean;
 }
 
 interface IProps extends Omit<
@@ -20,19 +13,11 @@ interface IProps extends Omit<
 > {
   variant?: 'default' | 'error';
   inputClassName?: string;
-  ref?: Ref<SelectInstance<SelectOption, false, GroupBase<SelectOption>>>;
-  isEditing?: boolean;
 }
 
 const SelectField = ({
   variant = 'default',
   inputClassName = '',
-  options,
-  className,
-  styles,
-  ref,
-  components,
-  isEditing = false,
   ...props
 }: IProps) => {
   const selectVariants = {
@@ -42,26 +27,31 @@ const SelectField = ({
       'bg-error-background text-error-dark focus-within:outline-error-dark focus-visible:outline-error-dark',
   };
 
-  const currentVariantClass = isEditing ? '' : selectVariants[variant];
-
   return (
     <div
-      className={`w-full flex justify-between items-center gap-0.5 rounded-sm focus-within:outline-1 focus-visible:outline-1 ${currentVariantClass} ${className || ''}`}
+      className={`w-full flex justify-between items-center gap-0.5 rounded-sm focus-within:outline-1 focus-visible:outline-1 ${selectVariants[variant]} ${props.className || ''}`}
     >
-      <Select<SelectOption, false, GroupBase<SelectOption>>
-        ref={ref}
-        options={options}
+      <Select
         className={`w-full ${inputClassName}`}
-        components={components}
         styles={{
+          container: (base) => ({
+            ...base,
+            width: '100%',
+            padding: '12px 16px',
+            borderRadius: '4px',
+            disabled: {
+              opacity: '0.6',
+              cursor: 'default',
+            },
+          }),
           control: (base) => ({
             ...base,
             backgroundColor: 'transparent',
             border: 'none',
             boxShadow: 'none',
             minHeight: 'none',
-            padding: '0px',
             borderRadius: '0px',
+            padding: '0px',
             cursor: 'pointer',
             '&:hover': {
               border: 'none',
@@ -73,8 +63,8 @@ const SelectField = ({
           }),
           valueContainer: (base) => ({
             ...base,
-            padding: isEditing ? '0px' : '14px 16px',
             margin: '0px',
+
             disabled: {
               opacity: '0.6',
               cursor: 'default',
@@ -106,12 +96,18 @@ const SelectField = ({
           }),
           indicatorSeparator: () => ({
             display: 'none',
+            padding: '0',
+          }),
+          indicatorsContainer: (base) => ({
+            ...base,
+            padding: '0',
           }),
           dropdownIndicator: (base) => ({
             ...base,
             color: 'var(--color-secondary-light)',
-            padding: '0px 16px 0px 0px',
+            padding: '0',
             cursor: 'pointer',
+            width: '16px',
             '&:hover': {
               color: 'var(--color-secondary)',
             },
@@ -148,7 +144,6 @@ const SelectField = ({
               backgroundColor: 'var(--color-primary-container, #0052cc)',
             },
           }),
-          ...styles,
         }}
         {...props}
       />

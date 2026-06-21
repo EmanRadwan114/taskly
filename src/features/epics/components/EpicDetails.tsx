@@ -22,7 +22,7 @@ import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
 
 interface IProps {
-  epic: IEpics;
+  epic: IEpics | undefined;
 }
 
 const EpicDetails: React.FC<IProps> = ({ epic }) => {
@@ -71,8 +71,8 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     }
   };
 
-  const userInitial = getNameInitials(epic?.created_by?.name!);
-  const formattedDeadline = formateDateString(epic?.deadline!, 'en-US');
+  const userInitial = getNameInitials(epic?.created_by?.name);
+  const formattedDeadline = formateDateString(epic?.deadline, 'en-US');
   const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
@@ -117,7 +117,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-6"
             control={control}
             name="title"
-            label={epic?.title}
+            label={epic?.title as string}
             placeholder="Enter title"
             className="bg-transparent!"
             isEditing
@@ -149,7 +149,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
           <FormField
             control={control}
             name="description"
-            label={epic?.description}
+            label={epic?.description as string}
             placeholder={`No description provided`}
             inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
             isTextArea

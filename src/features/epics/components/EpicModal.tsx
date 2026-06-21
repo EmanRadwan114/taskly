@@ -5,26 +5,33 @@ import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
 import EmptyTasks from '@/features/tasks/components/EmptyTasks';
 import Badge from '@/shared/components/ui/Badge';
-import { IEpics } from '../types/epics.types';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import EpicTasks from '@/features/tasks/components/EpicTasks';
 import { useGetEpicsTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
 import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
+import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
 
-interface IProps {
-  epic: IEpics;
-}
-
-const EpicModal: React.FC<IProps> = ({ epic }) => {
+const EpicModal = () => {
   const router = useRouter();
-  const { projectId } = useParams<{ projectId: string }>();
+  const { projectId, epicId } = useParams<{
+    projectId: string;
+    epicId: string;
+  }>();
+
+  const {
+    data: epicData,
+    isLoading: isLoadingEpic,
+    error: epicError,
+  } = useGetEpicByIdQuery({ projectId, epicId });
+  const epic = epicData?.response?.data[0];
 
   const {
     data: epicsTasksData,
     isLoading: isLoadingEpicsTasks,
-    error,
+    error: tasksError,
   } = useGetEpicsTasksQuery({
     epicId: epic?.id!,
   });
@@ -41,7 +48,9 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
     };
   }, []);
 
-  if (error) toast.error('Failed to fetch tasks');
+  if (epicError) toast.error('Failed to fetch epic');
+
+  if (isLoadingEpic) return <div>Loading...</div>;
 
   return (
     <div
@@ -78,11 +87,12 @@ const EpicModal: React.FC<IProps> = ({ epic }) => {
             </LinkButton>
           </div>
           {/* tasks list */}
-          {isLoadingEpicsTasks ? (
-            <LoadingEpicTasks />
-          ) : tasks?.length ? (
+          {isLoadingEpicsTasks && <LoadingEpicTasks />}
+          {tasksError && <TasksFetchErrorMsg />}
+          {!isLoadingEpicsTasks && !tasksError && tasks?.length && (
             <EpicTasks tasks={tasks} />
-          ) : (
+          )}
+          {!isLoadingEpicsTasks && !tasksError && !tasks?.length && (
             <EmptyTasks epic={epic} />
           )}
         </div>

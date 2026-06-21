@@ -38,7 +38,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
   const asideNavLinks = (
     <ul className="flex flex-col gap-1">
       {displayedSidebarLinks.map((link) => {
-        const isLinkActive = pathname === link.href;
+        const isLinkActive = pathname === link.href.split('?')[0];
         const Icon = link.icon;
         return (
           <li

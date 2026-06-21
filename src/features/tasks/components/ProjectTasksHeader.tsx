@@ -15,7 +15,7 @@ const ProjectTasksHeader: React.FC = ({}) => {
           Curating Project Alpha's production pipeline and milestones.
         </p>
       </div>
-      <div className="flex gap-3">
+      <div className="flex items-center gap-3">
         <Search placeholder="Search tasks..." />
         <TaskViewSelect />
         <FilterProjectTasks />

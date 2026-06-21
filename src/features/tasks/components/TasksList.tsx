@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 const TasksList: React.FC = ({}) => {
-  const params = useParams();
+  const { projectId } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
 
   const avatarBgColor = Math.round(Math.random() * 255) + 1;

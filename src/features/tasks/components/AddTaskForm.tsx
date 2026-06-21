@@ -15,11 +15,7 @@ import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 
-interface IProps {
-  selectedEpic?: IEpics;
-}
-
-const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
+const AddTaskForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -40,7 +36,7 @@ const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
     defaultValues: {
       title: '',
       description: '',
-      status: TaskStatusEnum.TODO,
+      status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
       epic_id: selectedEpic?.id || '',
@@ -67,7 +63,7 @@ const AddTaskForm: React.FC<IProps> = ({ selectedEpic }) => {
       reset({
         title: '',
         description: '',
-        status: TaskStatusEnum.TODO,
+        status: selectedStatus || TaskStatusEnum.TODO,
         assignee_id: '',
         due_date: '',
         epic_id: selectedEpic?.id || '',

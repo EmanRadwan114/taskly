@@ -12,13 +12,16 @@ import { useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
-import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
-const DisplayedEpics: React.FC = () => {
+interface IProps {
+  searchParams: { page: string };
+}
+
+const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams();
 
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page'));
+  const page = Number(searchParams.page);
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
@@ -29,11 +32,14 @@ const DisplayedEpics: React.FC = () => {
     data: epics,
     isLoading,
     isFetching,
-  } = useGetEpicsQuery({
-    limit,
-    offset,
-    projectId: projectId as string,
-  });
+  } = useGetPaginatedEpicsQuery(
+    {
+      limit,
+      offset,
+      projectId: projectId as string,
+    },
+    { skip: !projectId }
+  );
 
   const incomingEpics = epics?.response?.data || [];
   const meta = epics?.response?.meta;

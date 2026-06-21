@@ -20,6 +20,8 @@ export const useCreateAccount = () => {
 
   // effects
   useEffect(() => {
+    if (!state) return;
+
     if (state?.success) {
       toast.success(state.message);
       router.push('/project');
@@ -59,6 +61,8 @@ export const useLogin = (rememberMe: boolean) => {
 
   // effects
   useEffect(() => {
+    if (!state) return;
+
     if (state?.success) {
       toast.success(state.message);
       router.push('/project');
@@ -89,6 +93,8 @@ export const useLogout = () => {
 
   // effects
   useEffect(() => {
+    if (!state) return;
+
     if (state?.success) {
       router.push('/login');
       toast.success(state.message);

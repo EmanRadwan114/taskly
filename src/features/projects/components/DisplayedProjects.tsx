@@ -14,9 +14,12 @@ import { useSearchParams } from 'next/navigation';
 import LoadingProjects from './LoadingProjects';
 import { useGetProjectsQuery } from '@/shared/libs/store/redux-toolkit-query/projects-api';
 
-const DisplayedProjects: React.FC = () => {
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page'));
+interface IProps {
+  searchParams: { page: string };
+}
+
+const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
+  const page = Number(searchParams.page);
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
@@ -51,6 +54,7 @@ const DisplayedProjects: React.FC = () => {
 
   if (isLoading) return <LoadingProjects />;
   if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;
+
   return (
     <section className="flex flex-col gap-10 min-h-screen">
       {/* section header */}

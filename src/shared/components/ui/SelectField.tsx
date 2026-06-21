@@ -37,7 +37,7 @@ const SelectField = ({
           container: (base) => ({
             ...base,
             width: '100%',
-            padding: '12px 16px',
+            padding: '14px 16px',
             borderRadius: '4px',
             disabled: {
               opacity: '0.6',
@@ -64,7 +64,7 @@ const SelectField = ({
           valueContainer: (base) => ({
             ...base,
             margin: '0px',
-
+            padding: '0px',
             disabled: {
               opacity: '0.6',
               cursor: 'default',
@@ -74,6 +74,7 @@ const SelectField = ({
             ...base,
             color: 'inherit',
             margin: '0px',
+            padding: '0px',
           }),
           input: (base) => ({
             ...base,
@@ -130,7 +131,7 @@ const SelectField = ({
           }),
           option: (base, state) => ({
             ...base,
-            padding: '14px 16px',
+            padding: '8px 12px',
             backgroundColor: state.isSelected
               ? 'var(--color-primary, #003d9b)'
               : state.isFocused

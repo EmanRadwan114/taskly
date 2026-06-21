@@ -1,7 +1,15 @@
 import AddTaskForm from '@/features/tasks/components/AddTaskForm';
-import { Suspense } from 'react';
 
-export default async function Page() {
+interface IProps {
+  searchParams: Promise<{
+    status: string;
+    epic_id: string;
+  }>;
+}
+
+export default async function Page({ searchParams }: IProps) {
+  const params = await searchParams;
+
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
@@ -13,9 +21,7 @@ export default async function Page() {
           ecosystem.
         </p>
       </header>
-      <Suspense fallback={<div>Loading form...</div>}>
-        <AddTaskForm />
-      </Suspense>
+      <AddTaskForm searchParams={params} />
     </section>
   );
 }

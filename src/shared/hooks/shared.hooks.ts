@@ -143,7 +143,9 @@ export const useHandleError = ({ error }: { error: Error }) => {
 
 // ^ ------------------------ Use Fetch Members Hook -------------------------
 export const useFetchMembers = (projectId: string) => {
-  const { members, isFetched } = useAppSelector((state) => state.members);
+  const { members, isFetched, loading, error } = useAppSelector(
+    (state) => state.members
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -152,5 +154,5 @@ export const useFetchMembers = (projectId: string) => {
     }
   }, [projectId]);
 
-  return { members, isFetched };
+  return { members, isFetched, loading, error };
 };

@@ -6,34 +6,32 @@ import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { IEpics } from '@/features/epics/types/epics.types';
+import { useEffect } from 'react';
 import { useCreateTask } from '../hooks/tasks.hooks';
 import { taskSchema, TTaskInput } from '../validation/tasks.validation';
 import { TaskStatusEnum } from '../types/tasks.types';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
-import { useGetEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import LoadingAddTaskForm from './LoadingAddTaskForm';
+import { toast } from 'react-toastify';
+import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
-const AddTaskForm: React.FC = () => {
-  const router = useRouter();
+interface IProps {
+  searchParams: { status: string; epic: string };
+}
+
+const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams<{ projectId: string }>();
-  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const selectedStatus = searchParams.get('status') as TaskStatusEnum | null;
+  const selectedStatus = searchParams.status as TaskStatusEnum | null;
 
-  const selectedEpicId = searchParams.get('epic_id') || '';
-
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [accumulatedList, setAccumulatedList] = useState<IEpics[]>([]);
-
-  const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
+  const selectedEpicId = searchParams.epic || '';
 
   const {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors },
   } = useForm<TTaskInput>({
     resolver: zodResolver(taskSchema),
@@ -42,27 +40,31 @@ const AddTaskForm: React.FC = () => {
       title: '',
       description: '',
       status: selectedStatus || TaskStatusEnum.TODO,
-      status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
       epic_id: selectedEpicId,
     },
   });
 
-  const { onHandleCreateTask, isPending, taskState } = useCreateTask(
-    projectId as string
-  );
-
-  const { members } = useFetchMembers(projectId as string);
-
-  const { data: epics, isFetching } = useGetEpicsQuery({
-    limit,
-    offset,
+  const { onHandleCreateTask, isPending, taskState } = useCreateTask({
     projectId: projectId as string,
+    status: watch('status'),
+    epicId: watch('epic_id') || '',
   });
 
-  const incomingEpics = epics?.response?.data || [];
-  const meta = epics?.response?.meta;
+  const {
+    data: epicsResponse,
+    isError: epicsError,
+    isLoading: epicsLoading,
+  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
+
+  const epicsList = epicsResponse?.response?.data || [];
+
+  const {
+    members,
+    loading: membersLoading,
+    error: membersError,
+  } = useFetchMembers(projectId as string);
 
   useEffect(() => {
     if (taskState?.success) {
@@ -70,27 +72,12 @@ const AddTaskForm: React.FC = () => {
         title: '',
         description: '',
         status: selectedStatus || TaskStatusEnum.TODO,
-        status: selectedStatus || TaskStatusEnum.TODO,
         assignee_id: '',
         due_date: '',
         epic_id: selectedEpicId,
       });
     }
   }, [taskState, reset, selectedStatus, selectedEpicId]);
-
-  // fetch more epics when react to list bottom
-  useEffect(() => {
-    if (meta?.totalPages && currentPage < meta?.totalPages && !isFetching) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  }, [meta?.totalPages, isFetching, setCurrentPage]);
-
-  // add incoming epics to accumulated list
-  useEffect(() => {
-    if (incomingEpics.length > 0) {
-      setAccumulatedList((prev) => [...prev, ...incomingEpics]);
-    }
-  }, [incomingEpics]);
 
   // handlers
   const onSubmit = (data: TTaskInput) => {
@@ -149,11 +136,19 @@ const AddTaskForm: React.FC = () => {
       value: '',
       label: 'Select Epic...',
     },
-    ...(accumulatedList?.map((epic) => ({
+    ...(epicsList?.map((epic) => ({
       value: epic?.id,
       label: `${epic?.epic_id} - ${epic?.title?.length <= 100 ? epic?.title : `${epic?.title?.slice(0, 100)}...`}`,
     })) || []),
   ];
+
+  // easly return
+  if (membersLoading === 'pending' || epicsLoading)
+    return <LoadingAddTaskForm />;
+
+  if (membersError) toast.error('Failed to fetch members');
+
+  if (epicsError) toast.error('Failed to fetch epics');
 
   return (
     <form

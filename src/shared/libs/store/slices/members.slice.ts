@@ -27,7 +27,7 @@ interface IInitialState {
 }
 
 const membersSlice = createSlice({
-  name: 'project',
+  name: 'members',
   initialState: <IInitialState>{
     loading: 'pending',
     error: null,

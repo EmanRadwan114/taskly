@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import { TaskStatusEnum } from '../types/tasks.types';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
@@ -9,6 +7,7 @@ import { useGetProjectTasksByStatusQuery } from '@/shared/libs/store/redux-toolk
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
+import { useEffect } from 'react';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -17,9 +16,16 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const { projectId } = useParams();
 
   const { data, isFetching, isLoading, error } =
-    useGetProjectTasksByStatusQuery({ status, projectId: projectId as string });
+    useGetProjectTasksByStatusQuery(
+      { status, projectId: projectId as string },
+      { skip: !projectId || !status }
+    );
 
   const tasks = data?.response?.data || [];
+
+  useEffect(() => {
+    console.log(isFetching);
+  }, [tasks]);
 
   const statusColor: {
     [key: string]: {
@@ -29,14 +35,12 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   } = {
     [TaskStatusEnum.TODO]: {
       dotBackgroundColor: 'bg-accent-dark',
-      dotBackgroundColor: 'bg-accent-dark',
     },
     [TaskStatusEnum.IN_PROGRESS]: {
       dotBackgroundColor: 'bg-primary-container',
     },
     [TaskStatusEnum.BLOCKED]: {
       dotBackgroundColor: 'bg-error',
-      lengthClassName: 'bg-error-background! text-error',
       lengthClassName: 'bg-error-background! text-error',
     },
     [TaskStatusEnum.IN_REVIEW]: {
@@ -79,17 +83,15 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
             <span>{tasks?.length}</span>
           </div>
         </div>
-        <LinkButton
-          href={href}
-          className="border border-slate-lighter/30 border-dashed w-full! gap-2! p-4!"
-        >
-          <PlusIcon className="text-2.75 text-secondary" />
+        <LinkButton href={href} variant="ghost" className="w-fit! p-0.5!">
+          <PlusIcon className="w-2.75 text-secondary" />
         </LinkButton>
       </div>
       {/* add task link */}
       <LinkButton
         href={href}
-        className="border border-slate-lighter/30 border-dashed p-4! w-full! gap-2!"
+        variant="ghost"
+        className="border-2 border-slate-light/60 border-dashed p-4! w-full! gap-2! rounded-sm"
       >
         <PlusBorderIcon className="text-secondary/60 size-4.5" />
         <span className="uppercase text-secondary/60 font-bold text-body-sm letter-spacing-xl leading-4">

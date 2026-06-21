@@ -9,9 +9,13 @@ interface IProps {
 }
 
 const BoardTaskCard: React.FC<IProps> = ({ task }) => {
-  const isDueToday = new Date(task?.due_date) === new Date();
+  console.log(task?.due_date);
 
-  const isTaskDelayed = new Date(task?.due_date) < new Date();
+  const dueDate = new Date(task?.due_date);
+  const today = new Date();
+
+  const isDueToday = dueDate.getDate() === today.getDate();
+  const isTaskDelayed = dueDate < today;
 
   const formattedDueDate = formateDateString(task?.due_date, 'en-US', {
     month: 'short',
@@ -20,28 +24,34 @@ const BoardTaskCard: React.FC<IProps> = ({ task }) => {
 
   return (
     <div
-      className={`p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday ? 'border-s-2 border-s-primary' : ''} ${isTaskDelayed ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'}`}
+      className={`p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday && task?.due_date ? 'border-s-2 border-s-primary' : ''} ${isTaskDelayed && task?.due_date ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'}`}
     >
-      <h2 className="text-slate-dark font-medium leading-4.75">title</h2>
+      <h2 className="text-slate-dark font-medium leading-4.75">
+        {task?.title}
+      </h2>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          {isTaskDelayed ? (
+          {isTaskDelayed && task?.due_date ? (
             <WarningIcon className="w-2.25 text-error" />
           ) : (
-            <CalenderIcon className="w-2.25 text-secondary-light/80" />
+            <CalenderIcon
+              className={`w-2.25 ${isDueToday ? 'text-primary' : 'text-secondary-light/80'}`}
+            />
           )}
           <span
             className={`font-bold text-body-xs leading-3.75 ${isTaskDelayed ? 'text-error' : isDueToday ? 'text-primary' : 'text-secondary-light/80'}`}
           >
-            {isDueToday
-              ? 'Today'
-              : isTaskDelayed
-                ? 'Delayed'
-                : formattedDueDate}
+            {!task?.due_date
+              ? '--'
+              : isDueToday
+                ? 'Today'
+                : isTaskDelayed
+                  ? 'Delayed'
+                  : formattedDueDate}
           </span>
         </div>
         <UserAvatar
-          className={`border border-white size-6! pt-0.75 pb-1 rounded-full! ${isDueToday ? 'text-white! bg-primary-container!' : 'bg-surface-md! text-slate-dark!'}`}
+          className={`border border-white size-6! rounded-full! ms-auto ${isDueToday ? 'text-white! bg-primary-container!' : 'bg-surface-md! text-slate-dark!'}`}
           content="MT"
         />
       </div>

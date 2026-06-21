@@ -19,7 +19,7 @@ import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface IProps {
   epic: IEpics | undefined;
@@ -28,6 +28,12 @@ interface IProps {
 const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const { projectId } = useParams();
   const router = useRouter();
+  const previousValues = useRef({
+    title: epic?.title || '',
+    description: epic?.description || '',
+    assignee_id: epic?.assignee?.sub || '',
+    deadline: epic?.deadline || '',
+  });
 
   const { members } = useFetchMembers(projectId as string);
 
@@ -42,7 +48,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     mode: 'onBlur',
     defaultValues: {
       title: epic?.title,
-      description: epic?.description,
+      description: epic?.description || '',
       assignee_id: epic?.assignee?.sub || '',
       deadline: epic?.deadline,
     },
@@ -57,8 +63,10 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {
     const isFieldValid = await trigger(fieldName);
     const { isDirty: isFieldDirty } = getFieldState(fieldName);
+    const isValueChanged =
+      getValues(fieldName) !== previousValues.current[fieldName];
 
-    if (isFieldValid && isFieldDirty) {
+    if (isFieldValid && isFieldDirty && isValueChanged) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
           assignee_id: null,
@@ -68,6 +76,8 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
           [fieldName]: getValues(fieldName),
         });
       }
+      // update previous values if field is valid
+      previousValues.current[fieldName] = getValues(fieldName) || '';
     }
   };
 
@@ -114,15 +124,15 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
         {/* epic title */}
         <div className="flex justify-between items-start">
           <FormField
-            inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-6"
             control={control}
             name="title"
             label={epic?.title as string}
             placeholder="Enter title"
-            className="bg-transparent!"
             isEditing
             disabled={isPending}
             onBlur={(e) => handleUpdateEpic('title')}
+            inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-3"
+            className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none mb-6"
           />
 
           {/* close btn */}
@@ -151,12 +161,12 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             name="description"
             label={epic?.description as string}
             placeholder={`No description provided`}
-            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
             isTextArea
             isEditing
             disabled={isPending}
-            className="bg-transparent!"
             onBlur={(e) => handleUpdateEpic('description')}
+            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
+            className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
           />
         </div>
         {/* meta */}
@@ -190,7 +200,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                 name="assignee_id"
                 label={epic?.assignee?.name || 'Unassigned'}
                 placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle}`}
+                className={`bg-transparent! ${metaContentStyle} p-0!`}
                 isSelect
                 isEditing
                 disabled={isPending}

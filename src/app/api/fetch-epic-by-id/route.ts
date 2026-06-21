@@ -8,11 +8,11 @@ export async function GET(request: Request) {
     const projectId = url.searchParams.get('projectId');
     const epicId = url.searchParams.get('epicId');
 
-    const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`;
-
-    const response = await fetchWithAuthServer(endpointUrl);
-
-    return NextResponse.json({ response });
+    if (projectId && epicId) {
+      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`;
+      const response = await fetchWithAuthServer(endpointUrl);
+      return NextResponse.json({ response });
+    }
   } catch (error) {
     throw error;
   }

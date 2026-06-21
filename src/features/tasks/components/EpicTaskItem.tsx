@@ -26,7 +26,7 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
           </h3>
           <div className="flex items-center gap-1">
             <UserAvatar
-              className="size-6! bg-surface-dark rounded-xl text-label-xs text-secondary-light!"
+              className="size-6! bg-surface-dark text-label-xs text-secondary-light!"
               content={
                 task?.assignee?.name ? (
                   assigneeInitials

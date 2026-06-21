@@ -42,6 +42,7 @@ const AddTaskForm: React.FC = () => {
       title: '',
       description: '',
       status: selectedStatus || TaskStatusEnum.TODO,
+      status: selectedStatus || TaskStatusEnum.TODO,
       assignee_id: '',
       due_date: '',
       epic_id: selectedEpicId,
@@ -68,6 +69,7 @@ const AddTaskForm: React.FC = () => {
       reset({
         title: '',
         description: '',
+        status: selectedStatus || TaskStatusEnum.TODO,
         status: selectedStatus || TaskStatusEnum.TODO,
         assignee_id: '',
         due_date: '',

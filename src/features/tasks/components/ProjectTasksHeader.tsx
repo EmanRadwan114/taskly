@@ -1,10 +1,15 @@
+'use client';
+
 import Search from '@/shared/components/ui/Search';
 import TaskViewSelect from './TaskViewSelect';
 import FilterProjectTasks from './FilterProjectTasks';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
+import { useDispatch } from 'react-redux';
 
 const ProjectTasksHeader: React.FC = ({}) => {
+  const dispatch = useDispatch();
+
   const desktopView = (
     <header className="flex justify-between items-end">
       <div className="hidden lg:flex flex-col gap-1">

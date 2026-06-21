@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import { TaskStatusEnum } from '../types/tasks.types';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
@@ -27,12 +29,14 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   } = {
     [TaskStatusEnum.TODO]: {
       dotBackgroundColor: 'bg-accent-dark',
+      dotBackgroundColor: 'bg-accent-dark',
     },
     [TaskStatusEnum.IN_PROGRESS]: {
       dotBackgroundColor: 'bg-primary-container',
     },
     [TaskStatusEnum.BLOCKED]: {
       dotBackgroundColor: 'bg-error',
+      lengthClassName: 'bg-error-background! text-error',
       lengthClassName: 'bg-error-background! text-error',
     },
     [TaskStatusEnum.IN_REVIEW]: {

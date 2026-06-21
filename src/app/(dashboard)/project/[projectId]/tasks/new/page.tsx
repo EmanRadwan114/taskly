@@ -1,5 +1,4 @@
 import AddTaskForm from '@/features/tasks/components/AddTaskForm';
-import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 import { Suspense } from 'react';
 
 export default async function Page() {

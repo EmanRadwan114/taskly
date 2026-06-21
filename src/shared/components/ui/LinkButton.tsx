@@ -1,12 +1,10 @@
 import React from 'react';
-import Button from './Button';
 import Link from 'next/link';
 
 interface IProps {
   children: React.ReactNode;
   href: string;
   className?: string;
-  btnClassName?: string;
   variant?: 'primary' | 'secondary' | 'ghost' | 'tertiay';
 }
 
@@ -14,21 +12,23 @@ const LinkButton: React.FC<IProps> = ({
   children,
   href,
   className,
-  btnClassName,
   variant = 'primary',
 }) => {
+  const linkVariant = {
+    primary:
+      'text-white rounded-sm primary-gradient shadow-primary font-semibold',
+    secondary: 'text-primary [&>*]:text-primary font-semibold',
+    ghost: 'text-slate-md/60 font-medium',
+    tertiay: 'bg-surface-low text-primary rounded-sm font-semibold gap-2',
+  };
+
   return (
-    <Button
-      variant={variant}
-      className={`w-fit! p-0! font-medium! flex ${btnClassName}`}
+    <Link
+      href={href}
+      className={`px-6 py-3 text-body leading-5 flex items-center justify-center gap-1.75 capitalize cursor-pointer font-medium ${linkVariant[variant]} ${className}`}
     >
-      <Link
-        href={href}
-        className={`w-full h-full px-6 py-3 flex gap-1.75 items-center justify-center ${className}`}
-      >
-        {children}
-      </Link>
-    </Button>
+      {children}
+    </Link>
   );
 };
 

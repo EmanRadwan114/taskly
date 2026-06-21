@@ -3,7 +3,6 @@
 import { cookies } from 'next/headers';
 import { createProject, updateProject } from '../services/project.services';
 import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
-import { revalidatePath } from 'next/cache';
 
 // ^ ------------------------- Create Project Action ------------------------- //
 export const projectAction = async (
@@ -27,11 +26,8 @@ export const projectAction = async (
 
     if (!isEditMode) {
       await createProject({ data: values, accessToken });
-      revalidatePath('/project');
     } else {
       await updateProject({ data: values, accessToken, projectId });
-      revalidatePath(`/project/${projectId}/epics`);
-      revalidatePath(`/project`);
     }
 
     return {

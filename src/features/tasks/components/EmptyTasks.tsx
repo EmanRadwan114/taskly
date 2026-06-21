@@ -3,7 +3,7 @@ import EmptyTasksIcon from '@/assets/icons/no-tasks.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import { IEpics } from '@/features/epics/types/epics.types';
 
-const EmptyTasks: React.FC<{ epic: IEpics }> = ({ epic }) => {
+const EmptyTasks: React.FC<{ epic: IEpics | undefined }> = ({ epic }) => {
   return (
     <div className="rounded-lg p-12 border-2 border-dashed border-slate-light/30 bg-surface-low flex items-center justify-center">
       <div className="flex flex-col justify-center items-center gap-4">
@@ -14,9 +14,8 @@ const EmptyTasks: React.FC<{ epic: IEpics }> = ({ epic }) => {
           No tasks have been added to this epic yet
         </p>
         <LinkButton
-          href={`/project/${epic?.project_id}/tasks/new`}
-          btnClassName="rounded-sm"
-          className="px-4! py-1.5! lg:px-5! lg:py-2!"
+          href={`/project/${epic?.project_id}/tasks/new?epic=${epic?.id}`}
+          className="rounded-sm! px-4! py-1.5! lg:px-5! lg:py-2!"
         >
           <PlusIcon className="text-white w-2.75" />
           Add task

@@ -2,9 +2,13 @@ import { useActionState, useEffect, useTransition } from 'react';
 import { toast } from 'react-toastify';
 import { createTaskAction } from '../server-actions/tasks.actions';
 import { TTaskInput } from '../validation/tasks.validation';
+import { useAppDispatch } from '@/shared/libs/store/store';
+import { tasksApi } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 
 // ^ ---------------------------- Create Task Hook ------------------------- //
 export const useCreateTask = (projectId: string) => {
+  const dispatch = useAppDispatch();
+
   const action = createTaskAction.bind(null, projectId);
 
   const [state, formAction, isPending] = useActionState(action, null);
@@ -14,6 +18,9 @@ export const useCreateTask = (projectId: string) => {
   useEffect(() => {
     if (state?.success) {
       toast.success(state.message);
+      dispatch(
+        tasksApi.util.invalidateTags(['ProjectTasksByStatus', 'EpicsTasks'])
+      );
     } else {
       toast.error(state?.message);
     }

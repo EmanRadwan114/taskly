@@ -2,9 +2,13 @@ import { useActionState, useEffect, useTransition } from 'react';
 import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TProjectInput } from '../validation/project.validation';
+import { useAppDispatch } from '@/shared/libs/store/store';
+import { projectsApi } from '@/shared/libs/store/redux-toolkit-query/projects-api';
 
 // ^ ---------------------------- Create Project Hook ------------------------- //
 export const useSubmitProject = (projectId?: string) => {
+  const dispatch = useAppDispatch();
+
   const action = projectAction.bind(null, projectId);
 
   const [state, formAction, isPending] = useActionState(action, null);
@@ -14,6 +18,7 @@ export const useSubmitProject = (projectId?: string) => {
   useEffect(() => {
     if (state?.success) {
       toast.success(state.message);
+      dispatch(projectsApi.util.invalidateTags(['Projects']));
     } else {
       toast.error(state?.message);
     }

@@ -6,6 +6,7 @@ export const tasksApi = createApi({
   reducerPath: 'tasksApi',
   tagTypes: ['EpicsTasks', 'ProjectTasksByStatus'],
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  keepUnusedDataFor: 60 * 1, // 1 minute
   endpoints: (builder) => ({
     getEpicsTasks: builder.query<
       { response: { data: ITask[]; meta: IMetaFetchedData }; error: null },

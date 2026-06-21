@@ -1,4 +1,3 @@
-import Check from '@/assets/icons/check.svg';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
@@ -21,7 +20,6 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
   const desktopView = (
     <div className="hidden lg:flex p-4 justify-between items-center gap-4">
       <div className="flex gap-4 items-center">
-        <Check className="text-secondary-light size-5" />
         <div className="flex flex-col gap-1">
           <h3 className=" font-medium text-slate-dark text-body-lg leading-6">
             {task?.title}

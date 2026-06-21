@@ -2,7 +2,6 @@
 
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
-import { revalidatePath } from 'next/cache';
 import { createEpic, updateEpic } from '../services/epics.services';
 
 // ^ ------------------------- Create Epic Action ------------------------- //
@@ -46,8 +45,6 @@ export const createEpicAction = async (
 
     if (values.title && projectId) {
       await createEpic({ data: values, accessToken, projectId });
-      revalidatePath(`/project/${projectId}/epics`);
-      revalidatePath('/epics');
     }
 
     return {
@@ -90,15 +87,11 @@ export const updateEpicAction = async (
   else values.assignee_id = null;
   if (deadline) values.deadline = deadline;
 
-  console.log(values);
-
   try {
     if (!accessToken) return;
 
     if (epicId) {
       await updateEpic({ data: values, accessToken, epicId });
-      revalidatePath(`/project/${projectId}/epics/${epicId}`);
-      revalidatePath('/epics');
     }
 
     return {

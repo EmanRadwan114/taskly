@@ -1,5 +1,7 @@
 // ^ ------------------------ get user name initials ------------------------
-export const getNameInitials = (name: string) => {
+export const getNameInitials = (name: string | undefined) => {
+  if (!name) return '-';
+
   return name?.split(' ').length > 1
     ? name
         ?.split(' ')
@@ -11,7 +13,7 @@ export const getNameInitials = (name: string) => {
 
 // ^ ------------------------ formate date ------------------------
 export const formateDateString = (
-  date: string,
+  date: string | undefined,
   type: string = 'en-GB',
   options: {
     year?: 'numeric' | '2-digit' | undefined;
@@ -23,6 +25,8 @@ export const formateDateString = (
     day: 'numeric',
   }
 ) => {
+  if (!date) return '-';
+
   return new Date(date).toLocaleDateString(type, {
     year: options?.year,
     month: options?.month,

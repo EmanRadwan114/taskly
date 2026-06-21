@@ -10,6 +10,8 @@ import { epicsApi } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 
 // ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
+  const dispatch = useAppDispatch();
+
   const action = createEpicAction.bind(null, projectId);
 
   const [state, formAction, isPending] = useActionState(action, null);
@@ -19,6 +21,7 @@ export const useCreateEpic = (projectId: string) => {
   useEffect(() => {
     if (state?.success) {
       toast.success(state.message);
+      dispatch(epicsApi.util.invalidateTags(['Epics']));
     } else {
       toast.error(state?.message);
     }
@@ -54,6 +57,7 @@ export const useUpdateEpic = (projectId: string, epicId: string) => {
     if (state?.success) {
       toast.success(state.message);
       dispatch(epicsApi.util.invalidateTags(['Epics']));
+      dispatch(epicsApi.util.invalidateTags(['EpicBYID']));
     } else {
       toast.error(state?.message);
     }

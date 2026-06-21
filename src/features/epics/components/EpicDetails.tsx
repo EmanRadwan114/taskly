@@ -15,14 +15,14 @@ import EpicIdIcon from '@/assets/icons/epic-id.svg';
 import Label from '@/shared/components/ui/Label';
 import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
-import MembersOption from './MembersOption';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
+import { ReactNode } from 'react';
 
 interface IProps {
-  epic: IEpics;
+  epic: IEpics | undefined;
 }
 
 const EpicDetails: React.FC<IProps> = ({ epic }) => {
@@ -61,7 +61,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     if (isFieldValid && isFieldDirty) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
-          [fieldName]: null,
+          assignee_id: null,
         });
       } else {
         onHandleSubmitEpic({
@@ -71,24 +71,24 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     }
   };
 
-  const userInitial = getNameInitials(epic?.created_by?.name!);
-  const formattedDeadline = formateDateString(epic?.deadline!, 'en-US');
+  const userInitial = getNameInitials(epic?.created_by?.name);
+  const formattedDeadline = formateDateString(epic?.deadline, 'en-US');
   const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
   const metaContentStyle = `font-medium leading-5 text-body text-slate-dark`;
-  const membersDefaultValue = {
-    value: '',
-    label: 'Unassigned',
-    icon: (
-      <UserAvatar
-        className="bg-surface-dark text-slate-dark/80!"
-        content={<UnassignIcon className="w-3 text-secondary" />}
-      />
-    ),
-  };
+
   const membersOptions = [
-    membersDefaultValue,
+    {
+      value: '',
+      label: 'Unassigned',
+      icon: (
+        <UserAvatar
+          className="bg-surface-dark text-slate-dark/80!"
+          content={<UnassignIcon className="w-3 text-secondary" />}
+        />
+      ),
+    },
     ...(members?.map((member) => ({
       value: member?.user_id,
       label: member?.metadata?.name,
@@ -117,7 +117,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-6"
             control={control}
             name="title"
-            label={epic?.title}
+            label={epic?.title as string}
             placeholder="Enter title"
             className="bg-transparent!"
             isEditing
@@ -149,7 +149,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
           <FormField
             control={control}
             name="description"
-            label={epic?.description}
+            label={epic?.description as string}
             placeholder={`No description provided`}
             inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
             isTextArea
@@ -190,7 +190,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                 name="assignee_id"
                 label={epic?.assignee?.name || 'Unassigned'}
                 placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle} select-field`}
+                className={`bg-transparent! ${metaContentStyle}`}
                 isSelect
                 isEditing
                 disabled={isPending}
@@ -198,7 +198,18 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                   handleUpdateEpic('assignee_id');
                 }}
                 options={membersOptions}
-                customOptionComponents={{ Option: MembersOption }}
+                formatOptionLabel={({
+                  label,
+                  icon,
+                }: {
+                  label: string;
+                  icon: ReactNode;
+                }) => (
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    <span>{icon}</span>
+                    <span>{label}</span>
+                  </div>
+                )}
               />
             </div>
           </div>

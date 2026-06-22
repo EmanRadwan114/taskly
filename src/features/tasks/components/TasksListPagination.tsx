@@ -27,11 +27,11 @@ const TasksListPagination: React.FC<IProps> = ({
   if (!totalPages) return null;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-3/4 justify-end">
       {/* prev */}
       <Button
         variant="ghost"
-        className={`text-secondary!`}
+        className={`text-secondary! p-1! w-fit!`}
         onClick={() => handleCurrentPage(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -39,14 +39,14 @@ const TasksListPagination: React.FC<IProps> = ({
       </Button>
 
       {/*  pages */}
-      <span className="text-secondary text-body-sm font-medium leading-4">
+      <p className="text-secondary text-body-sm font-medium leading-4 ">
         Page {currentPage} of {totalPages}
-      </span>
+      </p>
 
       {/* next */}
       <Button
         variant="ghost"
-        className={`text-secondary!`}
+        className={`text-secondary! p-1! w-fit!`}
         onClick={() => handleCurrentPage(currentPage + 1)}
         disabled={currentPage === totalPages}
       >

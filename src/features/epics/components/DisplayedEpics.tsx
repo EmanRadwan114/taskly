@@ -58,7 +58,7 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading) return <LoadingEpics />;
+  if (isLoading || isFetching) return <LoadingEpics />;
   if (incomingEpics.length === 0 && !isLoading) return <EmptyEpics />;
 
   return (

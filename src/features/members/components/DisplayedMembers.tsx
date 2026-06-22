@@ -38,7 +38,7 @@ const DisplayedMembers: React.FC = ({}) => {
 
   // desktop members view
   const desktopMembersView = (
-    <Table>
+    <Table className="lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto overflow-hidden">
       <thead>
         <TableRow>
           <TableHead className="w-1/2">Member</TableHead>
@@ -47,11 +47,9 @@ const DisplayedMembers: React.FC = ({}) => {
         </TableRow>
       </thead>
       <tbody>
-        <TableRow className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
-          {members.map((member) => (
-            <MemberItem key={member?.member_id} member={member} />
-          ))}
-        </TableRow>
+        {members.map((member) => (
+          <MemberItem key={member?.member_id} member={member} />
+        ))}
       </tbody>
     </Table>
   );

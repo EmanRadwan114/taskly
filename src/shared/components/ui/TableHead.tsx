@@ -1,6 +1,6 @@
-import { HTMLAttributes } from 'react';
+import { ThHTMLAttributes } from 'react';
 
-interface Props extends HTMLAttributes<HTMLTableCellElement> {
+interface Props extends ThHTMLAttributes<HTMLTableCellElement> {
   children: React.ReactNode;
 }
 const TableHead: React.FC<Props> = ({ children, className, ...props }) => {

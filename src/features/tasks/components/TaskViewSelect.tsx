@@ -3,8 +3,21 @@
 import Select from 'react-select';
 import BoardIcon from '@/assets/icons/board.svg';
 import ListIcon from '@/assets/icons/list.svg';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const TaskViewSelect: React.FC = ({}) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const currentTasksView = searchParams.get('view');
+
+  const handleViewChange = (value: string) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('view', value);
+    const queryString = newSearchParams.toString();
+    router.push(`${pathname}?${queryString}`);
+  };
+
   const options = [
     {
       label: 'Board View',
@@ -17,13 +30,19 @@ const TaskViewSelect: React.FC = ({}) => {
       icon: <ListIcon className="text-primary w-2.75" />,
     },
   ];
+
   return (
     <Select
       options={options}
       className="w-44"
       classNamePrefix="custom"
       isSearchable={false}
-      defaultValue={options[0]}
+      value={options.find((option) => option.value === currentTasksView)}
+      onChange={(option) => {
+        if (option) {
+          handleViewChange(option.value);
+        }
+      }}
       components={{
         IndicatorSeparator: () => null,
       }}

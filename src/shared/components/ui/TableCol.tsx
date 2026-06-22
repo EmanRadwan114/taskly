@@ -1,12 +1,12 @@
-import { HTMLAttributes, ReactNode } from 'react';
+import { ReactNode, TdHTMLAttributes } from 'react';
 
-interface Props extends HTMLAttributes<HTMLTableCellElement> {
+interface Props extends TdHTMLAttributes<HTMLTableCellElement> {
   children: ReactNode;
 }
 
 const TableCol: React.FC<Props> = ({ children, className, ...props }) => {
   return (
-    <td {...props} className={`px-9 py-5 ${className}`}>
+    <td className={`px-9 py-5 ${className}`} {...props}>
       {children}
     </td>
   );

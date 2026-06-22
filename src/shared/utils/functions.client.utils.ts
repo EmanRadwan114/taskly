@@ -34,6 +34,12 @@ export const formateDateString = (
   });
 };
 
+// ^ --------------------------- formate task status ---------------------------
+export const formateTaskStatus = (status: string) => {
+  if (!status) return '-';
+  return status.replace(/_/g, ' ');
+};
+
 // ^ -------------------------- get date status --------------------------
 export const getDueDateStatus = (dueDate?: string) => {
   if (!dueDate) return { isDueToday: false, isDelayed: false, deadline: null };

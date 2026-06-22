@@ -52,7 +52,7 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading) return <LoadingProjects />;
+  if (isLoading || isFetching) return <LoadingProjects />;
   if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;
 
   return (

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const LIMIT = Number(url.searchParams.get('limit')) || FETCH_LIMIT;
     const OFFSET = Number(url.searchParams.get('offset')) || 0;
 
-    const endpointUrl = `rest/v1/rpc/get_projects?limit=${LIMIT}&offset=${OFFSET}`;
+    const endpointUrl = `rest/v1/rpc/get_projects?limit=${LIMIT}&offset=${OFFSET}&order=created_at.asc`;
 
     const isPaginated = true;
 

@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'react-toastify';
 import { createTaskAction } from '../server-actions/tasks.actions';
 import { TTaskInput } from '../validation/tasks.validation';
@@ -67,3 +67,16 @@ export const useCreateTask = ({
 
   return { onHandleCreateTask, isPending, taskState: state };
 };
+
+// ^ --------------------  Fetch Board Column Hook ---------------------
+export const useFetchBoardColumn = ()=>{
+const observerTarget = useRef<HTMLDivElement>(null);
+
+useEffect(()=>{
+  const target = observerTarget.current;
+
+  if(target){
+    const 
+  }
+},[])
+}

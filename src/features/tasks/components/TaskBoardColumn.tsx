@@ -8,6 +8,8 @@ import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import { useEffect } from 'react';
+import LoadingBoardColumn from './LoadingBoardColumn';
+import { toast } from 'react-toastify';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -26,6 +28,9 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   useEffect(() => {
     console.log(isFetching);
   }, [tasks]);
+
+  if (isLoading) return <LoadingBoardColumn />;
+  if (error) toast.error('Failed to fetch tasks');
 
   const statusColor: {
     [key: string]: {
@@ -91,7 +96,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
       <LinkButton
         href={href}
         variant="ghost"
-        className="border-2 border-slate-light/60 border-dashed p-4! w-full! gap-2! rounded-sm"
+        className="border-2 border-slate-light/40 border-dashed p-4! w-full! gap-2! rounded-sm"
       >
         <PlusBorderIcon className="text-secondary/60 size-4.5" />
         <span className="uppercase text-secondary/60 font-bold text-body-sm letter-spacing-xl leading-4">

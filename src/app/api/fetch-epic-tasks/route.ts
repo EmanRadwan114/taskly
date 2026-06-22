@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const epicId = url.searchParams.get('epicId');
 
     if (epicId) {
-      const tasksEndpoint = `rest/v1/project_tasks?epic_id=eq.${epicId}`;
+      const tasksEndpoint = `rest/v1/project_tasks?epic_id=eq.${epicId}&order=created_at.asc`;
       const response = await fetchWithAuthServer(tasksEndpoint);
       return NextResponse.json({ response });
     }

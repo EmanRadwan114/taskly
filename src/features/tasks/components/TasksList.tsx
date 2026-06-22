@@ -28,12 +28,13 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     data: tasksData,
     isLoading,
     error,
+    isFetching,
   } = useGetProjectTasksQuery(
     { projectId: projectId as string, limit, offset },
     { skip: !projectId }
   );
 
-  if (isLoading) return <LoadingTasksList />;
+  if (isLoading || isFetching) return <LoadingTasksList />;
   if (error) toast.error('Failed to fetch tasks');
 
   const tasks = tasksData?.response?.data || [];
@@ -44,12 +45,12 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   return (
     <div className="flex flex-col flex-1 w-full pb-6">
       <div className="overflow-x-auto w-full modal-container">
-        <Table className="min-w-200 shadow-none">
+        <Table className="min-w-250 shadow-none">
           <thead>
             <TableRow className="bg-surface-low/30 border-b border-slate-light/10">
               <TableHead className={`${thStyle} w-2/12`}>Task ID</TableHead>
               <TableHead className={`${thStyle} w-3/12`}>Title</TableHead>
-              <TableHead className={`${thStyle} w-2/12`}>Status</TableHead>
+              <TableHead className={`${thStyle} w-1/5`}>Status</TableHead>
               <TableHead className={`${thStyle} w-2/12`}>Due Dats</TableHead>
               <TableHead className={`${thStyle} w-3/12`}>Assignees</TableHead>
             </TableRow>

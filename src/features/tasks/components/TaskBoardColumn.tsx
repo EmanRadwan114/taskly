@@ -6,10 +6,10 @@ import BoardTaskCard from './BoardTaskCard';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
-import { useEffect } from 'react';
 import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
 import { useFetchBoardColumn } from '../hooks/tasks.hooks';
+import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -58,7 +58,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     },
   };
 
-  const displayedStatusTitle = status.replace(/_/g, ' ');
+  const displayedStatusTitle = formateTaskStatus(status);
 
   const href = status
     ? `/project/${projectId}/tasks/new?status=${status}`

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const status = url.searchParams.get('status');
 
     if (projectId && status) {
-      const tasksEndpoint = `rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}`;
+      const tasksEndpoint = `rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}&order=created_at.asc`;
       const response = await fetchWithAuthServer(tasksEndpoint);
       return NextResponse.json({ response });
     }

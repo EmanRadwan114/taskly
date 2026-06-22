@@ -7,7 +7,7 @@ import PlusIcon from '@/assets/icons/plus.svg';
 const ProjectTasksHeader: React.FC = ({}) => {
   const desktopView = (
     <header className="hidden lg:flex lg:flex-col xl:flex-row xl:justify-between xl:items-end gap-4">
-      <div className="hidden lg:flex flex-col gap-1">
+      <div className="hidden lg:flex flex-col gap-1.5">
         <h1 className="font-semibold text-slate-dark board-title">
           Active Workboard
         </h1>

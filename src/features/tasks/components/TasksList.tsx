@@ -9,6 +9,8 @@ import { useParams } from 'next/navigation';
 import { useGetProjectTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import TaskListItem from './TaskListItem';
+import LoadingTasksList from './LoadingTasksList';
+import { toast } from 'react-toastify';
 
 interface IProps {
   searchParams: { page: string };
@@ -30,6 +32,9 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     { projectId: projectId as string, limit, offset },
     { skip: !projectId }
   );
+
+  if (isLoading) return <LoadingTasksList />;
+  if (error) toast.error('Failed to fetch tasks');
 
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;

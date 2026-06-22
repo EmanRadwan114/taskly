@@ -8,6 +8,7 @@ import Button from '@/shared/components/ui/Button';
 import { useMobile } from '@/shared/hooks/shared.hooks';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
 import TableCol from '@/shared/components/ui/TableCol';
+import TableRow from '@/shared/components/ui/TableRow';
 
 interface IProps {
   member: IMember;
@@ -51,8 +52,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
 
   // desktop view
   const desktopView = (
-    <>
-      {/* member details */}
+    <TableRow className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
       <TableCol className="w-1/2">{memberInfo}</TableCol>
       {/* role */}
       <TableCol className="text-center w-1/4">
@@ -71,7 +71,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
           </Button>
         )}
       </TableCol>
-    </>
+    </TableRow>
   );
 
   // mobile view
@@ -90,7 +90,12 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
       </div>
     </div>
   );
-  return <>{isMobile ? mobileView : desktopView}</>;
+  return (
+    <>
+      {desktopView}
+      {mobileView}
+    </>
+  );
 };
 
 export default MemberItem;

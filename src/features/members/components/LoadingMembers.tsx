@@ -15,7 +15,7 @@ const LoadingMembers: React.FC = () => {
 
   // Desktop table view loader
   const desktopSkeletonView = (
-    <Table>
+    <Table className="lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto overflow-hidden">
       <thead>
         <TableRow>
           <TableHead className="w-1/2">Member</TableHead>

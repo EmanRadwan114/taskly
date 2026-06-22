@@ -1,17 +1,12 @@
-'use client';
-
 import Search from '@/shared/components/ui/Search';
 import TaskViewSelect from './TaskViewSelect';
 import FilterProjectTasks from './FilterProjectTasks';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
-import { useDispatch } from 'react-redux';
 
 const ProjectTasksHeader: React.FC = ({}) => {
-  const dispatch = useDispatch();
-
   const desktopView = (
-    <header className="flex justify-between items-end">
+    <header className="hidden lg:flex lg:flex-col xl:flex-row xl:justify-between xl:items-end gap-4">
       <div className="hidden lg:flex flex-col gap-1">
         <h1 className="font-semibold text-slate-dark board-title">
           Active Workboard
@@ -20,7 +15,7 @@ const ProjectTasksHeader: React.FC = ({}) => {
           Curating Project Alpha's production pipeline and milestones.
         </p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 lg:ms-auto">
         <Search placeholder="Search tasks..." />
         <TaskViewSelect />
         <FilterProjectTasks />

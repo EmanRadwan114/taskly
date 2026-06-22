@@ -37,10 +37,10 @@ const SelectField = ({
           container: (base) => ({
             ...base,
             width: '100%',
-            padding: '12px 16px',
+            padding: '14px 16px',
             borderRadius: '4px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -57,16 +57,16 @@ const SelectField = ({
               border: 'none',
             },
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
           valueContainer: (base) => ({
             ...base,
             margin: '0px',
-
+            padding: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -74,6 +74,7 @@ const SelectField = ({
             ...base,
             color: 'inherit',
             margin: '0px',
+            padding: '0px',
           }),
           input: (base) => ({
             ...base,
@@ -81,7 +82,7 @@ const SelectField = ({
             margin: '0px',
             padding: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -90,7 +91,7 @@ const SelectField = ({
             color: 'var(--color-secondary-light)',
             margin: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -112,7 +113,7 @@ const SelectField = ({
               color: 'var(--color-secondary)',
             },
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -130,7 +131,7 @@ const SelectField = ({
           }),
           option: (base, state) => ({
             ...base,
-            padding: '14px 16px',
+            padding: '8px 12px',
             backgroundColor: state.isSelected
               ? 'var(--color-primary, #003d9b)'
               : state.isFocused

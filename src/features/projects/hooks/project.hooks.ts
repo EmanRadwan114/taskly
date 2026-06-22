@@ -16,6 +16,8 @@ export const useSubmitProject = (projectId?: string) => {
 
   // effects
   useEffect(() => {
+    if (!state) return;
+
     if (state?.success) {
       toast.success(state.message);
       dispatch(projectsApi.util.invalidateTags(['Projects']));

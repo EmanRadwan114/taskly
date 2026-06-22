@@ -4,17 +4,24 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const epicsApi = createApi({
   reducerPath: 'epicsApi',
-  tagTypes: ['Epics', 'EpicBYID'],
+  tagTypes: ['PaginatedEpics', 'EpicBYID', 'AllEpics'],
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   keepUnusedDataFor: 60 * 1, // 1 minute
   endpoints: (builder) => ({
-    getEpics: builder.query<
+    getPaginatedEpics: builder.query<
       { response: { data: IEpics[]; meta: IMetaFetchedData }; error: null },
       { limit: number; offset: number; projectId: string }
     >({
       query: ({ limit, offset, projectId }) =>
-        `/fetch-epics?limit=${limit}&offset=${offset}&projectId=${projectId}`,
-      providesTags: ['Epics'],
+        `/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}`,
+      providesTags: ['PaginatedEpics'],
+    }),
+    getAllEpics: builder.query<
+      { response: { data: IEpics[]; meta: IMetaFetchedData }; error: null },
+      string
+    >({
+      query: (projectId) => `/fetch-all-epics?projectId=${projectId}`,
+      providesTags: ['AllEpics'],
     }),
     getEpicById: builder.query<
       { response: { data: IEpics[]; meta: IMetaFetchedData }; error: null },
@@ -27,4 +34,8 @@ export const epicsApi = createApi({
   }),
 });
 
-export const { useGetEpicsQuery, useGetEpicByIdQuery } = epicsApi;
+export const {
+  useGetPaginatedEpicsQuery,
+  useGetEpicByIdQuery,
+  useGetAllEpicsQuery,
+} = epicsApi;

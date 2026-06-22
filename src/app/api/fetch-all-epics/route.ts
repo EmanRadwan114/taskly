@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const epicId = url.searchParams.get('epicId');
+    const projectId = url.searchParams.get('projectId');
 
-    if (epicId) {
-      const tasksEndpoint = `rest/v1/project_tasks?epic_id=eq.${epicId}`;
-      const response = await fetchWithAuthServer(tasksEndpoint);
+    if (projectId) {
+      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&order=created_at.asc`;
+      const response = await fetchWithAuthServer(endpointUrl);
       return NextResponse.json({ response });
     }
   } catch (error) {

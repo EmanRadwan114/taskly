@@ -74,7 +74,7 @@ const TasksList: React.FC = ({}) => {
             <div className="flex items-center gap-3">
               <UserAvatar
                 content="JD"
-                className={`size-6.5! rounded-xl text-label font-bold`}
+                className={`size-6.5! text-label font-bold`}
                 style={{ backgroundColor: `#${avatarBgColor}` }}
               />
               <span className="text-slate-dark">John Dane</span>

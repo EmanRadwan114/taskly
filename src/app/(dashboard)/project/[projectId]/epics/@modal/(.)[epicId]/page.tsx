@@ -1,5 +1,5 @@
 import EpicModal from '@/features/epics/components/EpicModal';
 
-export default async function Page() {
+export default function Page() {
   return <EpicModal />;
 }

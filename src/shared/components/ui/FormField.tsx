@@ -10,7 +10,6 @@ import {
 import TextArea from './TextArea';
 import AlertIcon from '@/assets/icons/alert.svg';
 import SelectField, { SelectOption } from './SelectField';
-import { GroupBase, Props as SelectProps } from 'react-select';
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
@@ -31,9 +30,12 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   isEditing?: boolean;
   iconClassName?: string;
   inputClassName?: string;
-  formatOptionLabel?: (option: any, labelMeta: any) => ReactNode;
-  onChange?: (...args: any[]) => void;
-  onBlur?: (...args: any[]) => void;
+  formatOptionLabel?: (
+    option: { label: string; icon: ReactNode },
+    labelMeta: unknown
+  ) => ReactNode;
+  onChange?: (...args: unknown[]) => void;
+  onBlur?: (...args: unknown[]) => void;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -66,7 +68,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   const activeVariant = fieldState.error ? 'error' : variant;
 
-  const containerStyle = `bg-transparent focus-within:outline-0! focus-visible:outline-0! p-0!`;
+  const containerStyle = `bg-transparent focus:outline-0! focus-within:outline-0! focus-visible:outline-0! p-0!`;
 
   const inputStyle = `py-0! px-0!`;
 

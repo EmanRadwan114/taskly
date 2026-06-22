@@ -1,11 +1,10 @@
-import { Suspense } from 'react';
 import DisplayedEpics from '@/features/epics/components/DisplayedEpics';
-import LoadingEpics from '@/features/epics/components/LoadingEpics';
 
-export default function ProjectPage() {
-  return (
-    <Suspense fallback={<LoadingEpics />}>
-      <DisplayedEpics />
-    </Suspense>
-  );
+interface IProps {
+  searchParams: Promise<{ page: string }>;
+}
+
+export default async function ProjectPage({ searchParams }: IProps) {
+  const params = await searchParams;
+  return <DisplayedEpics searchParams={params} />;
 }

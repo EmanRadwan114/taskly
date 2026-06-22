@@ -76,25 +76,26 @@ export const useHandlePagination = <T extends { id: string | number }>({
   const searchParams = useSearchParams();
   const observerTarget = useRef<HTMLDivElement | null>(null);
 
-  const [hasMore, setHasMore] = useState(false);
+  const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
 
   const { isMobile } = useMobile(1024);
 
   const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
 
   useEffect(() => {
-    if (meta?.totalPages && currentPage >= meta.totalPages) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-  }, [currentPage, meta?.totalPages]);
+    if (!incomingData || incomingData.length === 0 || !isMobile) return;
 
-  useEffect(() => {
-    setAccumulatedList((prev) => [...prev, ...incomingData]);
+    setAccumulatedList((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
 
-    console.log(currentPage);
-  }, [incomingData]);
+      const newItemsOnly = incomingData.filter(
+        (item) => !existingIds.has(item.id)
+      );
+
+      if (newItemsOnly.length === 0) return prev;
+      return [...prev, ...newItemsOnly];
+    });
+  }, [incomingData, isMobile]);
 
   // Infinite Scroll Observer Configuration
   useEffect(() => {
@@ -105,14 +106,18 @@ export const useHandlePagination = <T extends { id: string | number }>({
       (entires) => {
         const entry = entires[0];
         if (entry.isIntersecting) {
+          if (target) observer.unobserve(target);
+
           setCurrentPage((prev) => prev + 1);
         }
       },
       { threshold: 0, rootMargin: '10px' }
     );
-
     observer.observe(target);
-    return () => observer.disconnect();
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
   }, [isMobile, hasMore, isFetching]);
 
   // Desktop Page Click Link Sync Handler
@@ -143,7 +148,9 @@ export const useHandleError = ({ error }: { error: Error }) => {
 
 // ^ ------------------------ Use Fetch Members Hook -------------------------
 export const useFetchMembers = (projectId: string) => {
-  const { members, isFetched } = useAppSelector((state) => state.members);
+  const { members, isFetched, loading, error } = useAppSelector(
+    (state) => state.members
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -152,5 +159,5 @@ export const useFetchMembers = (projectId: string) => {
     }
   }, [projectId]);
 
-  return { members, isFetched };
+  return { members, isFetched, loading, error };
 };

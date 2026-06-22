@@ -19,9 +19,11 @@ export const useCreateEpic = (projectId: string) => {
 
   // effects
   useEffect(() => {
+        if (!state) return;
+
     if (state?.success) {
       toast.success(state.message);
-      dispatch(epicsApi.util.invalidateTags(['Epics']));
+      dispatch(epicsApi.util.invalidateTags(['PaginatedEpics', 'AllEpics']));
     } else {
       toast.error(state?.message);
     }
@@ -54,10 +56,13 @@ export const useUpdateEpic = (projectId: string, epicId: string) => {
 
   // effects
   useEffect(() => {
+        if (!state) return;
+
     if (state?.success) {
       toast.success(state.message);
-      dispatch(epicsApi.util.invalidateTags(['Epics']));
-      dispatch(epicsApi.util.invalidateTags(['EpicBYID']));
+      dispatch(
+        epicsApi.util.invalidateTags(['PaginatedEpics', 'EpicBYID', 'AllEpics'])
+      );
     } else {
       toast.error(state?.message);
     }

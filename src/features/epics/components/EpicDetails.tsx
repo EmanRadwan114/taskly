@@ -19,7 +19,7 @@ import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface IProps {
   epic: IEpics | undefined;
@@ -28,6 +28,12 @@ interface IProps {
 const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const { projectId } = useParams();
   const router = useRouter();
+  const previousValues = useRef({
+    title: epic?.title || '',
+    description: epic?.description || '',
+    assignee_id: epic?.assignee?.sub || '',
+    deadline: epic?.deadline || '',
+  });
 
   const { members } = useFetchMembers(projectId as string);
 
@@ -42,7 +48,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     mode: 'onBlur',
     defaultValues: {
       title: epic?.title,
-      description: epic?.description,
+      description: epic?.description || '',
       assignee_id: epic?.assignee?.sub || '',
       deadline: epic?.deadline,
     },
@@ -58,7 +64,12 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     const isFieldValid = await trigger(fieldName);
     const { isDirty: isFieldDirty } = getFieldState(fieldName);
 
-    if (isFieldValid && isFieldDirty) {
+    const isValueChanged =
+      getValues(fieldName) !== previousValues.current[fieldName];
+
+    console.log(isFieldValid, isFieldDirty, isValueChanged);
+
+    if (isFieldValid && (isFieldDirty || isValueChanged)) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
           assignee_id: null,
@@ -68,6 +79,8 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
           [fieldName]: getValues(fieldName),
         });
       }
+      // update previous values if field is valid
+      previousValues.current[fieldName] = getValues(fieldName) || '';
     }
   };
 
@@ -76,7 +89,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
-  const metaContentStyle = `font-medium leading-5 text-body text-slate-dark`;
+  const metaContentStyle = `font-medium leading-5 text-body text-slate-dark focus:outline-0! focus-within:outline-0! focus-visible:outline-0!`;
 
   const membersOptions = [
     {
@@ -114,15 +127,15 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
         {/* epic title */}
         <div className="flex justify-between items-start">
           <FormField
-            inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-6"
             control={control}
             name="title"
             label={epic?.title as string}
             placeholder="Enter title"
-            className="bg-transparent!"
             isEditing
             disabled={isPending}
             onBlur={(e) => handleUpdateEpic('title')}
+            inputClassName="font-bold text-heading-5 leading-6 lg:text-heading-4 text-slate-dark lg:leading-8 capitalize mb-3"
+            className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none mb-6"
           />
 
           {/* close btn */}
@@ -151,12 +164,12 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             name="description"
             label={epic?.description as string}
             placeholder={`No description provided`}
-            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
             isTextArea
             isEditing
             disabled={isPending}
-            className="bg-transparent!"
             onBlur={(e) => handleUpdateEpic('description')}
+            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
+            className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
           />
         </div>
         {/* meta */}
@@ -184,34 +197,32 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             >
               assignee
             </Label>
-            <div className="flex items-center gap-2 w-full">
-              <FormField
-                control={control}
-                name="assignee_id"
-                label={epic?.assignee?.name || 'Unassigned'}
-                placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle}`}
-                isSelect
-                isEditing
-                disabled={isPending}
-                onChange={() => {
-                  handleUpdateEpic('assignee_id');
-                }}
-                options={membersOptions}
-                formatOptionLabel={({
-                  label,
-                  icon,
-                }: {
-                  label: string;
-                  icon: ReactNode;
-                }) => (
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    <span>{icon}</span>
-                    <span>{label}</span>
-                  </div>
-                )}
-              />
-            </div>
+            <FormField
+              control={control}
+              name="assignee_id"
+              label={epic?.assignee?.name || 'Unassigned'}
+              placeholder={`Assign an epic`}
+              className={`bg-transparent! ${metaContentStyle} p-0!`}
+              isSelect
+              isEditing
+              disabled={isPending}
+              onChange={() => {
+                handleUpdateEpic('assignee_id');
+              }}
+              options={membersOptions}
+              formatOptionLabel={({
+                label,
+                icon,
+              }: {
+                label: string;
+                icon: ReactNode;
+              }) => (
+                <div className="flex items-center gap-2 cursor-pointer ">
+                  <span>{icon}</span>
+                  <span>{label}</span>
+                </div>
+              )}
+            />
           </div>
           <div className="lg:hidden border-t border-t-slate-dark/30 col-span-2"></div>
           {/*3. deadline */}

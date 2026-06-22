@@ -8,7 +8,7 @@ import Badge from '@/shared/components/ui/Badge';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import EpicTasks from '@/features/tasks/components/EpicTasks';
-import { useGetEpicsTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { useGetEpicTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
 import LoadingEpicDetails from './LoadingEpicDetails';
 import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
@@ -26,18 +26,29 @@ const EpicModal = () => {
     data: epicData,
     isLoading: isLoadingEpic,
     error: epicError,
-  } = useGetEpicByIdQuery({ projectId, epicId });
+  } = useGetEpicByIdQuery(
+    { projectId, epicId },
+    { skip: !projectId || !epicId }
+  );
   const epic = epicData?.response?.data[0];
 
   const {
     data: epicsTasksData,
     isLoading: isLoadingEpicsTasks,
     error: tasksError,
-  } = useGetEpicsTasksQuery({
-    epicId: epic?.id!,
-  });
+    isFetching,
+  } = useGetEpicTasksQuery(
+    {
+      epicId: epic?.id as string,
+    },
+    { skip: !epic?.id }
+  );
 
   const tasks = epicsTasksData?.response?.data;
+
+  useEffect(() => {
+    console.log(isFetching);
+  }, [tasks]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -48,6 +59,7 @@ const EpicModal = () => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
   if (epicError) toast.error('Failed to fetch epic');
 
   return (
@@ -56,7 +68,7 @@ const EpicModal = () => {
       onClick={() => router.back()}
     >
       <div
-        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
+        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* modal content */}

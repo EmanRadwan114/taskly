@@ -1,9 +1,18 @@
-import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { toast } from 'react-toastify';
 import { createTaskAction } from '../server-actions/tasks.actions';
 import { TTaskInput } from '../validation/tasks.validation';
 import { useAppDispatch } from '@/shared/libs/store/store';
-import { tasksApi } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import {
+  tasksApi,
+  useGetProjectTasksByStatusQuery,
+} from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { TaskStatusEnum } from '../types/tasks.types';
 
 // ^ ---------------------------- Create Task Hook -------------------------
@@ -69,14 +78,51 @@ export const useCreateTask = ({
 };
 
 // ^ --------------------  Fetch Board Column Hook ---------------------
-export const useFetchBoardColumn = ()=>{
-const observerTarget = useRef<HTMLDivElement>(null);
+export const useFetchBoardColumn = ({
+  projectId,
+  status,
+}: {
+  projectId: string;
+  status: TaskStatusEnum;
+}) => {
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const [shouldFetched, setShouldFetched] = useState(false);
 
-useEffect(()=>{
-  const target = observerTarget.current;
+  const { data, isFetching, isLoading, error } =
+    useGetProjectTasksByStatusQuery(
+      { status, projectId },
+      { skip: !projectId || !status || !shouldFetched }
+    );
 
-  if(target){
-    const 
-  }
-},[])
-}
+  const tasks = data?.response?.data || [];
+
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target || !projectId || !status) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !shouldFetched) {
+          setShouldFetched(true);
+        }
+      },
+      { threshold: 0, rootMargin: '10px' }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [projectId, status, shouldFetched]);
+
+  return {
+    tasks,
+    isLoading,
+    isFetching,
+    error,
+    observerTarget,
+  };
+};

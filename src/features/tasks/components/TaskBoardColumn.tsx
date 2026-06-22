@@ -3,13 +3,13 @@
 import { TaskStatusEnum } from '../types/tasks.types';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
-import { useGetProjectTasksByStatusQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import { useEffect } from 'react';
 import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
+import { useFetchBoardColumn } from '../hooks/tasks.hooks';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -17,17 +17,10 @@ interface IProps {
 const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const { projectId } = useParams();
 
-  const { data, isFetching, isLoading, error } =
-    useGetProjectTasksByStatusQuery(
-      { status, projectId: projectId as string },
-      { skip: !projectId || !status }
-    );
-
-  const tasks = data?.response?.data || [];
-
-  useEffect(() => {
-    console.log(isFetching);
-  }, [tasks]);
+  const { tasks, isLoading, error, observerTarget } = useFetchBoardColumn({
+    projectId: projectId as string,
+    status,
+  });
 
   if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
@@ -72,7 +65,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     : `/project/${projectId}/tasks/new`;
 
   return (
-    <div className="flex flex-col gap-4 min-w-64">
+    <div className="flex flex-col gap-4 min-w-64" ref={observerTarget}>
       {/* status header */}
       <div className={`flex items-center justify-between gap-2`}>
         <div className="flex items-center gap-2">

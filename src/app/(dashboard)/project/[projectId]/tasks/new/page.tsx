@@ -3,7 +3,7 @@ import AddTaskForm from '@/features/tasks/components/AddTaskForm';
 interface IProps {
   searchParams: Promise<{
     status: string;
-    epic_id: string;
+    epic: string;
   }>;
 }
 

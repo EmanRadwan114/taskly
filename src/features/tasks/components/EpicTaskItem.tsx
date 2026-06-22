@@ -4,8 +4,10 @@ import Button from '@/shared/components/ui/Button';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
 import { ITask } from '../types/tasks.types';
+import AlertIcon from '@/assets/icons/alert.svg';
 import {
   formateDateString,
+  getDueDateStatus,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
 
@@ -14,6 +16,7 @@ interface Props {
 }
 
 const EpicTaskItem: React.FC<Props> = ({ task }) => {
+  const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
   const assigneeInitials = getNameInitials(task?.assignee?.name);
   const formatedDueDate = formateDateString(task?.due_date);
 
@@ -45,8 +48,21 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
         <span className="uppercase font-bold text-body-xs leading-3.75 text-slate-dark/40">
           Due date
         </span>
-        <span className="text-slate-dark/70 font-medium text-body-sm leading-4">
-          {formatedDueDate}
+        <span
+          className={`${isDelayed ? 'text-error' : isDueToday ? 'text-primary' : 'text-slate-dark/70'} font-medium text-body-sm leading-4 uppercase flex items-center gap-1`}
+        >
+          {isDelayed ? (
+            <AlertIcon className="w-3 text-error" />
+          ) : isDueToday ? (
+            <CalenderIcon className="w-2.5 text-primary" />
+          ) : null}
+          {!task?.due_date
+            ? '--'
+            : isDueToday
+              ? 'Today'
+              : isDelayed
+                ? 'Overdue'
+                : formatedDueDate}
         </span>
       </div>
     </div>
@@ -79,9 +95,24 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
           </span>
         </div>
         <div className="flex gap-1.5">
-          <CalenderIcon className="w-2.5 text-secondary/70" />
-          <span className="font-bold text-secondary/70 text-label leading-4 letter-spacing-sm">
-            {formatedDueDate}
+          {isDelayed ? (
+            <AlertIcon className="w-3 text-error" />
+          ) : isDueToday ? (
+            <CalenderIcon className="w-2.5 text-primary" />
+          ) : (
+            <CalenderIcon className="w-2.5 text-secondary/70" />
+          )}
+
+          <span
+            className={`${isDelayed ? 'text-error' : isDueToday ? 'text-primary' : 'text-secondary/70'} font-bold text-label leading-4 letter-spacing-sm`}
+          >
+            {!task?.due_date
+              ? '--'
+              : isDueToday
+                ? 'Today'
+                : isDelayed
+                  ? 'Overdue'
+                  : formatedDueDate}
           </span>
         </div>
       </div>

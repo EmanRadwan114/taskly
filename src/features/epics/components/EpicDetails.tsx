@@ -63,10 +63,13 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {
     const isFieldValid = await trigger(fieldName);
     const { isDirty: isFieldDirty } = getFieldState(fieldName);
+
     const isValueChanged =
       getValues(fieldName) !== previousValues.current[fieldName];
 
-    if (isFieldValid && isFieldDirty && isValueChanged) {
+    console.log(isFieldValid, isFieldDirty, isValueChanged);
+
+    if (isFieldValid && (isFieldDirty || isValueChanged)) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
           assignee_id: null,
@@ -86,7 +89,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
   const formattedCreatedDate = formateDateString(epic?.created_at, 'en-US');
 
   const metaLabelStyle = `text-label-sm text-secondary lg:text-slate-dark/40 lg:text-body-xs lg:leading-3.75 uppercase`;
-  const metaContentStyle = `font-medium leading-5 text-body text-slate-dark`;
+  const metaContentStyle = `font-medium leading-5 text-body text-slate-dark focus:outline-0! focus-within:outline-0! focus-visible:outline-0!`;
 
   const membersOptions = [
     {
@@ -194,34 +197,32 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             >
               assignee
             </Label>
-            <div className="flex items-center gap-2 w-full">
-              <FormField
-                control={control}
-                name="assignee_id"
-                label={epic?.assignee?.name || 'Unassigned'}
-                placeholder={`Assign an epic`}
-                className={`bg-transparent! ${metaContentStyle} p-0!`}
-                isSelect
-                isEditing
-                disabled={isPending}
-                onChange={() => {
-                  handleUpdateEpic('assignee_id');
-                }}
-                options={membersOptions}
-                formatOptionLabel={({
-                  label,
-                  icon,
-                }: {
-                  label: string;
-                  icon: ReactNode;
-                }) => (
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    <span>{icon}</span>
-                    <span>{label}</span>
-                  </div>
-                )}
-              />
-            </div>
+            <FormField
+              control={control}
+              name="assignee_id"
+              label={epic?.assignee?.name || 'Unassigned'}
+              placeholder={`Assign an epic`}
+              className={`bg-transparent! ${metaContentStyle} p-0!`}
+              isSelect
+              isEditing
+              disabled={isPending}
+              onChange={() => {
+                handleUpdateEpic('assignee_id');
+              }}
+              options={membersOptions}
+              formatOptionLabel={({
+                label,
+                icon,
+              }: {
+                label: string;
+                icon: ReactNode;
+              }) => (
+                <div className="flex items-center gap-2 cursor-pointer ">
+                  <span>{icon}</span>
+                  <span>{label}</span>
+                </div>
+              )}
+            />
           </div>
           <div className="lg:hidden border-t border-t-slate-dark/30 col-span-2"></div>
           {/*3. deadline */}

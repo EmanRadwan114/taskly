@@ -68,7 +68,7 @@ const EpicModal = () => {
       onClick={() => router.back()}
     >
       <div
-        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
+        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* modal content */}

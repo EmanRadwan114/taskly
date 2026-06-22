@@ -40,7 +40,7 @@ const SelectField = ({
             padding: '14px 16px',
             borderRadius: '4px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -57,7 +57,7 @@ const SelectField = ({
               border: 'none',
             },
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -66,7 +66,7 @@ const SelectField = ({
             margin: '0px',
             padding: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -82,7 +82,7 @@ const SelectField = ({
             margin: '0px',
             padding: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -91,7 +91,7 @@ const SelectField = ({
             color: 'var(--color-secondary-light)',
             margin: '0px',
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),
@@ -113,7 +113,7 @@ const SelectField = ({
               color: 'var(--color-secondary)',
             },
             disabled: {
-              opacity: '0.6',
+              opacity: '0.2',
               cursor: 'default',
             },
           }),

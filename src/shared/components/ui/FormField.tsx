@@ -68,7 +68,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
   const activeVariant = fieldState.error ? 'error' : variant;
 
-  const containerStyle = `bg-transparent focus-within:outline-0! focus-visible:outline-0! p-0!`;
+  const containerStyle = `bg-transparent focus:outline-0! focus-within:outline-0! focus-visible:outline-0! p-0!`;
 
   const inputStyle = `py-0! px-0!`;
 

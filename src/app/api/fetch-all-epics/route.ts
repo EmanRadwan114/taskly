@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const projectId = url.searchParams.get('projectId');
 
     if (projectId) {
-      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}`;
+      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&order=created_at.asc`;
       const response = await fetchWithAuthServer(endpointUrl);
       return NextResponse.json({ response });
     }

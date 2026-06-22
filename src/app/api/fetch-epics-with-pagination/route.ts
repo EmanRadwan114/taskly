@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const projectId = url.searchParams.get('projectId');
 
     if (projectId) {
-      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&limit=${LIMIT}&offset=${OFFSET}`;
+      const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&limit=${LIMIT}&offset=${OFFSET}&order=created_at.desc`;
       const isPaginated = true;
       const response = await fetchWithAuthServer(endpointUrl, isPaginated);
       return NextResponse.json({ response });

@@ -142,7 +142,7 @@
 }
 
 @utility light-gradient {
-  @apply bg-linear-[135deg] from-white to-surface-low from-5% lg:from-white lg:to-white;
+  @apply bg-linear-[135deg] from-white to-surface-low from-15% to-40% lg:from-white lg:to-white;
   color: var(--slate-dark);
 }
 

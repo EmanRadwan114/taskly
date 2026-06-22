@@ -34,6 +34,29 @@ export const formateDateString = (
   });
 };
 
+// ^ -------------------------- get date status --------------------------
+export const getDueDateStatus = (dueDate?: string) => {
+  if (!dueDate) return { isDueToday: false, isDelayed: false, deadline: null };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const deadline = new Date(dueDate);
+
+  if (deadline) {
+    deadline.setHours(0, 0, 0, 0);
+  }
+
+  const isDueToday = deadline.getTime() === today.getTime();
+  const isDelayed = deadline.getTime() < today.getTime();
+
+  return {
+    isDueToday,
+    isDelayed,
+    deadline,
+  };
+};
+
 // ^ ------------------------ get pagination buttons ------------------------
 export function getPaginationButtons(
   pagesList: number[],

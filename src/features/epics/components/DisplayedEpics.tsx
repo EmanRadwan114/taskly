@@ -4,23 +4,31 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import {
+  useDebounceSearch,
+  useHandlePagination,
+} from '@/shared/hooks/shared.hooks';
 import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
+import SearchStatus from '@/shared/components/ui/SearchStatus';
+import emptyEpicImg from '@/assets/imgs/empty-epics.png';
+import errorEpicImg from '@/assets/imgs/alert.png';
 
 interface IProps {
   searchParams: { page: string };
 }
 
 const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
+  const isFirstRender = useRef(true);
   const { projectId } = useParams();
+  const router = useRouter();
 
   const page = Number(searchParams.page);
 
@@ -29,15 +37,20 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
   const limit = FETCH_LIMIT;
   const offset = ((currentPage || 1) - 1) * limit;
 
+  const { debouncedSearchTerm, setSearchTerm, searchTerm } =
+    useDebounceSearch();
+
   const {
     data: epics,
     isLoading,
     isFetching,
+    error,
   } = useGetPaginatedEpicsQuery(
     {
       limit,
       offset,
       projectId: projectId as string,
+      searchTerm: debouncedSearchTerm,
     },
     { skip: !projectId }
   );
@@ -59,8 +72,22 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading || isFetching) return <LoadingEpics />;
-  if (incomingEpics.length === 0 && !isLoading) return <EmptyEpics />;
+  useEffect(() => {
+    // to prevent page change to 1 on mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setCurrentPage(1);
+    const newParsms = new URLSearchParams(searchParams);
+    newParsms.set('page', '1');
+    router.push(`/project/${projectId}/epics?${newParsms.toString()}`);
+  }, [debouncedSearchTerm]);
+
+  if (error && !debouncedSearchTerm) throw new Error('Failed to fetch epics');
+
+  if (incomingEpics?.length === 0 && !isLoading && !debouncedSearchTerm)
+    return <EmptyEpics />;
 
   return (
     <section className="flex flex-col min-h-screen">
@@ -71,7 +98,11 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
         </h1>
         <div className="lg:flex lg:gap-9 lg:items-start">
           {/* search */}
-          <Search placeholder="search epic..." />
+          <Search
+            placeholder="search epic..."
+            searchTerm={searchTerm}
+            onSetSearchTerm={setSearchTerm}
+          />
           {/* new epic btn on desktop*/}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
@@ -85,32 +116,50 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
           <FloatingLink href={`/project/${projectId}/epics/new`} />
         </div>
       </header>
-      {/* epic items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
-        {(isMobile ? accumulatedList : incomingEpics)?.map((epic) => (
-          <EpicItem epicItem={epic} key={epic?.id} />
-        ))}
-      </div>
 
-      {/* pagination with footer on desktop */}
-      <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
-        <p className="font-medium text-secondary text-body-sm">
-          Showing {incomingEpics?.length} of {meta?.totalCount} active epics
-        </p>
-        {meta?.totalPages && meta?.totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            handleCurrentPage={handleCurrentPage}
-            totalPages={meta?.totalPages}
-          />
-        )}
-      </footer>
-
-      {/* loadmore on mobile */}
-      {hasMore && !isFetching && (
-        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
-          Loading More...
-        </div>
+      {isLoading || isFetching ? (
+        <LoadingEpics />
+      ) : debouncedSearchTerm && incomingEpics?.length === 0 ? (
+        // empty search status
+        <SearchStatus
+          text="No epics found matching your search"
+          imgSrc={emptyEpicImg.src}
+          variant="empty"
+        />
+      ) : debouncedSearchTerm && error ? (
+        <SearchStatus
+          text="Failed to fetch epics"
+          imgSrc={errorEpicImg.src}
+          variant="error"
+        />
+      ) : (
+        <>
+          {/* list */}
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
+            {(isMobile ? accumulatedList : incomingEpics)?.map((epic) => (
+              <EpicItem epicItem={epic} key={epic?.id} />
+            ))}
+          </div>
+          {/* pagination with footer on desktop */}
+          <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+            <p className="font-medium text-secondary text-body-sm">
+              Showing {incomingEpics?.length} of {meta?.totalCount} active epics
+            </p>
+            {meta?.totalPages && meta?.totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                handleCurrentPage={handleCurrentPage}
+                totalPages={meta?.totalPages}
+              />
+            )}
+          </footer>
+          {/* loadmore on mobile */}
+          {hasMore && !isFetching && (
+            <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+              Loading More...
+            </div>
+          )}
+        </>
       )}
     </section>
   );

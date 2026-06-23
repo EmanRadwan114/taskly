@@ -19,7 +19,7 @@ export const useCreateEpic = (projectId: string) => {
 
   // effects
   useEffect(() => {
-        if (!state) return;
+    if (!state) return;
 
     if (state?.success) {
       toast.success(state.message);
@@ -56,7 +56,7 @@ export const useUpdateEpic = (projectId: string, epicId: string) => {
 
   // effects
   useEffect(() => {
-        if (!state) return;
+    if (!state) return;
 
     if (state?.success) {
       toast.success(state.message);
@@ -85,3 +85,4 @@ export const useUpdateEpic = (projectId: string, epicId: string) => {
 
   return { onHandleSubmitEpic, isPending, epicState: state };
 };
+

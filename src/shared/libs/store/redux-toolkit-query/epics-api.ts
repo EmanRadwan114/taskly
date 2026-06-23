@@ -10,10 +10,10 @@ export const epicsApi = createApi({
   endpoints: (builder) => ({
     getPaginatedEpics: builder.query<
       { response: { data: IEpics[]; meta: IMetaFetchedData }; error: null },
-      { limit: number; offset: number; projectId: string }
+      { limit: number; offset: number; projectId: string; searchTerm?: string }
     >({
-      query: ({ limit, offset, projectId }) =>
-        `/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}`,
+      query: ({ limit, offset, projectId, searchTerm }) =>
+        `/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}&searchTerm=${searchTerm}`,
       providesTags: ['PaginatedEpics'],
     }),
     getAllEpics: builder.query<

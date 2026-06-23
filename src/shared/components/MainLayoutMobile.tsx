@@ -38,9 +38,10 @@ const MainLayoutMobile: React.FC = () => {
               {displayedSidebarLinks.map((link) => {
                 const isLinkActive = pathname === link.href.split('?')[0];
                 const Icon = link.icon;
+                const href = link.mobileHref ?? link.href;
                 return (
                   <Link
-                    href={link.href}
+                    href={href}
                     className={` flex flex-col items-center justify-center text-center sm:p-1.5 hover:text-primary-container gap-1 group-hover:text-primary transition-all duration-300 ${isLinkActive ? 'text-primary-container' : 'text-slate-dark/70'} capitalize`}
                     key={link.id}
                   >

@@ -1,10 +1,14 @@
+'use client';
 import Search from '@/shared/components/ui/Search';
 import TaskViewSelect from './TaskViewSelect';
 import FilterProjectTasks from './FilterProjectTasks';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
+import { useParams } from 'next/navigation';
 
 const ProjectTasksHeader: React.FC = ({}) => {
+  const { projectId } = useParams();
+
   const desktopView = (
     <header className="hidden lg:flex lg:flex-col xl:flex-row xl:justify-between xl:items-end gap-4">
       <div className="hidden lg:flex flex-col gap-1.5">
@@ -28,9 +32,12 @@ const ProjectTasksHeader: React.FC = ({}) => {
       <h1 className="font-semibold text-slate-dark board-title">
         Active Workboard
       </h1>
-      <div className="lex flex-col gap-1">
+      <div className="flex flex-col gap-3">
         <Search placeholder="Search tasks..." />
-        <LinkButton href="" className="py-2! w-full font-semibold leading-5">
+        <LinkButton
+          href={`/project/${projectId}/tasks/new`}
+          className="py-2! w-full font-semibold leading-5"
+        >
           <PlusIcon className="text-white w-2" />
           Create Task
         </LinkButton>

@@ -40,6 +40,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
       {displayedSidebarLinks.map((link) => {
         const isLinkActive = pathname === link.href.split('?')[0];
         const Icon = link.icon;
+        const href = isMobileLayout ? link.mobileHref : link.href;
         return (
           <li
             key={link.id}
@@ -49,7 +50,7 @@ const Sidebar: React.FC<IProps> = ({ isOpen, setIsOpen }) => {
             }}
           >
             <Link
-              href={link.href}
+              href={href || link.href}
               className={`${isCollapsed ? 'w-fit' : 'w-full'} flex items-center gap-3 group-hover:text-primary transition-all duration-300 capitalize ${!isMobileLayout ? (isLinkActive ? 'text-primary' : 'text-slate-dark') : isLinkActive ? 'text-primary-container' : 'text-slate-dark/60'}`}
             >
               <span

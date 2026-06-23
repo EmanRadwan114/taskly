@@ -137,6 +137,21 @@ export const useHandlePagination = <T extends { id: string | number }>({
   };
 };
 
+// ^ ---------------------------- Debounce Search Hook ------------------------
+export const useDebounceSearch = (time = 400) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, time);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  return { debouncedSearchTerm, setSearchTerm, searchTerm };
+};
+
 // ^ ------------------------ Use Handle Error Hook -------------------------
 export const useHandleError = ({ error }: { error: Error }) => {
   useEffect(() => {

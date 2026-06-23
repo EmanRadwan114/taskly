@@ -3,19 +3,6 @@ import React from 'react';
 const LoadingEpics: React.FC = () => {
   return (
     <section className="flex flex-col gap-6">
-      {/* page header skeleton */}
-      <header className="lg:justify-between lg:items-center flex gap-4 flex-col lg:flex-row mb-5 lg:mb-10 animate-pulse">
-        {/* Title skeleton */}
-        <div className="h-10 bg-slate-200 rounded-md w-56 max-w-full" />
-
-        <div className="flex gap-4 lg:gap-9 lg:items-start flex-col lg:flex-row w-full lg:w-auto">
-          {/* search skeleton */}
-          <div className="h-12 bg-slate-200 rounded-md w-full lg:w-64" />
-          {/* new epic button skeleton */}
-          <div className="h-12 bg-slate-200 rounded-md w-32 hidden lg:block" />
-        </div>
-      </header>
-
       {/* Skeleton Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
         {Array.from({ length: 6 }).map((_, idx) => (

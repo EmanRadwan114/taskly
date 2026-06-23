@@ -8,10 +8,13 @@ import { useParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import {
+  useDebounceSearch,
+  useHandlePagination,
+} from '@/shared/hooks/shared.hooks';
 import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
 
@@ -29,6 +32,9 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
   const limit = FETCH_LIMIT;
   const offset = ((currentPage || 1) - 1) * limit;
 
+  const { debouncedSearchTerm, setSearchTerm, searchTerm } =
+    useDebounceSearch();
+
   const {
     data: epics,
     isLoading,
@@ -38,6 +44,7 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
       limit,
       offset,
       projectId: projectId as string,
+      searchTerm: debouncedSearchTerm,
     },
     { skip: !projectId }
   );
@@ -59,7 +66,10 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading || isFetching) return <LoadingEpics />;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchTerm]);
+
   if (incomingEpics.length === 0 && !isLoading) return <EmptyEpics />;
 
   return (
@@ -71,7 +81,11 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
         </h1>
         <div className="lg:flex lg:gap-9 lg:items-start">
           {/* search */}
-          <Search placeholder="search epic..." />
+          <Search
+            placeholder="search epic..."
+            searchTerm={searchTerm}
+            onSetSearchTerm={setSearchTerm}
+          />
           {/* new epic btn on desktop*/}
           <LinkButton
             href={`/project/${projectId}/epics/new`}
@@ -85,32 +99,37 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
           <FloatingLink href={`/project/${projectId}/epics/new`} />
         </div>
       </header>
-      {/* epic items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
-        {(isMobile ? accumulatedList : incomingEpics)?.map((epic) => (
-          <EpicItem epicItem={epic} key={epic?.id} />
-        ))}
-      </div>
 
-      {/* pagination with footer on desktop */}
-      <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
-        <p className="font-medium text-secondary text-body-sm">
-          Showing {incomingEpics?.length} of {meta?.totalCount} active epics
-        </p>
-        {meta?.totalPages && meta?.totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            handleCurrentPage={handleCurrentPage}
-            totalPages={meta?.totalPages}
-          />
-        )}
-      </footer>
-
-      {/* loadmore on mobile */}
-      {hasMore && !isFetching && (
-        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
-          Loading More...
-        </div>
+      {isLoading || isFetching ? (
+        <LoadingEpics />
+      ) : (
+        <>
+          {/* list */}
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
+            {(isMobile ? accumulatedList : incomingEpics)?.map((epic) => (
+              <EpicItem epicItem={epic} key={epic?.id} />
+            ))}
+          </div>
+          {/* pagination with footer on desktop */}
+          <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+            <p className="font-medium text-secondary text-body-sm">
+              Showing {incomingEpics?.length} of {meta?.totalCount} active epics
+            </p>
+            {meta?.totalPages && meta?.totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                handleCurrentPage={handleCurrentPage}
+                totalPages={meta?.totalPages}
+              />
+            )}
+          </footer>
+          {/* loadmore on mobile */}
+          {hasMore && !isFetching && (
+            <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+              Loading More...
+            </div>
+          )}
+        </>
       )}
     </section>
   );

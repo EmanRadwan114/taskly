@@ -11,6 +11,8 @@ import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import TaskListItem from './TaskListItem';
 import LoadingTasksList from './LoadingTasksList';
 import { toast } from 'react-toastify';
+import FloatingLink from '@/shared/components/ui/FloatingLink';
+import TaskMobileCard from './TaskMobileCard';
 
 interface IProps {
   searchParams: { page: string };
@@ -42,9 +44,10 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const thStyle = `text-secondary py-4! px-6! font-bold text-label letter-spacing-md`;
 
-  return (
-    <div className="flex flex-col flex-1 w-full pb-6">
+  const desktopView = (
+    <div className="hidden lg:flex lg:flex-col lg:flex-1 w-full pb-6">
       <div className="overflow-x-auto w-full modal-container">
+        {/* tasks list */}
         <Table className="min-w-250 shadow-none">
           <thead>
             <TableRow className="bg-surface-low/30 border-b border-slate-light/10">
@@ -56,12 +59,13 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
             </TableRow>
           </thead>
           <tbody>
-            {tasks.map((task) => (
+            {tasks?.map((task) => (
               <TaskListItem task={task} key={task?.id} />
             ))}
           </tbody>
         </Table>
       </div>
+      {/* pagination */}
       <div className="bg-surface-low/20! py-3! px-6!">
         <div className="flex justify-between items-center">
           <span className="text-secondary text-body-sm font-medium">
@@ -74,7 +78,24 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
           />
         </div>
       </div>
+      {/* add task link */}
+      <FloatingLink href={`/project/${projectId}/tasks/new`} />
     </div>
+  );
+
+  const mobileView = (
+    <div className="lg:hidden flex flex-col gap-3 ">
+      {tasks?.map((task) => (
+        <TaskMobileCard task={task} key={task?.id} />
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      {desktopView}
+      {mobileView}
+    </>
   );
 };
 

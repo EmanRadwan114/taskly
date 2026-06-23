@@ -12,6 +12,7 @@ export const getAsideLinks = (
   href: string;
   icon: string;
   protected: boolean;
+  mobileHref?: string;
 }[] => [
   {
     id: 1,
@@ -33,6 +34,7 @@ export const getAsideLinks = (
     href: `/project/${projectId}/tasks?view=board`,
     icon: TasksIcon,
     protected: true,
+    mobileHref: `/project/${projectId}/tasks`,
   },
   {
     id: 4,

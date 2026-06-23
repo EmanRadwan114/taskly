@@ -8,8 +8,8 @@ const LoadingTasksList: React.FC = () => {
   const thStyle = `text-secondary py-4! px-6! font-bold text-label letter-spacing-md`;
   const tdStyle = `py-4.5! px-6! text-body-sm leading-4`;
 
-  return (
-    <div className="flex flex-col flex-1 w-full pb-6 animate-pulse">
+  const desktopView = (
+    <div className="hidden lg:flex lg:flex-col lg:flex-1 w-full pb-6">
       <div className="overflow-x-auto w-full modal-container">
         <Table className="min-w-200 shadow-none">
           <thead>
@@ -68,6 +68,47 @@ const LoadingTasksList: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  const mobileView = (
+    <div className="lg:hidden flex flex-col gap-3">
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <div key={idx} className="bg-white flex flex-col gap-3 p-4 rounded-lg">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              {/* task id */}
+              <div className="h-4 bg-slate-200 rounded w-16" />
+              {/* status */}
+              <div className="h-6 bg-slate-200 rounded-xs w-20" />
+            </div>
+            {/* title */}
+            <div className="h-6 bg-slate-200 rounded w-3/4" />
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              {/* avatar */}
+              <div className="size-6.5 rounded-full bg-slate-200 shrink-0" />
+              {/* due date */}
+              <div className="flex flex-col gap-1">
+                <span className="text-secondary/70 font-bold text-label leading-4.25 uppercase">
+                  due date
+                </span>
+                <div className="h-4 bg-slate-200 rounded w-20" />
+              </div>
+            </div>
+            {/* button */}
+            <div className="size-6 bg-slate-200 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col flex-1 w-full pb-6 animate-pulse">
+      {desktopView}
+      {mobileView}
     </div>
   );
 };

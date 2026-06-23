@@ -11,6 +11,7 @@ import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import TaskListItem from './TaskListItem';
 import LoadingTasksList from './LoadingTasksList';
 import { toast } from 'react-toastify';
+import FloatingLink from '@/shared/components/ui/FloatingLink';
 
 interface IProps {
   searchParams: { page: string };
@@ -45,6 +46,7 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   return (
     <div className="flex flex-col flex-1 w-full pb-6">
       <div className="overflow-x-auto w-full modal-container">
+        {/* tasks list */}
         <Table className="min-w-250 shadow-none">
           <thead>
             <TableRow className="bg-surface-low/30 border-b border-slate-light/10">
@@ -62,6 +64,7 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
           </tbody>
         </Table>
       </div>
+      {/* pagination */}
       <div className="bg-surface-low/20! py-3! px-6!">
         <div className="flex justify-between items-center">
           <span className="text-secondary text-body-sm font-medium">
@@ -74,6 +77,8 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
           />
         </div>
       </div>
+      {/* add task link */}
+      <FloatingLink href={`/project/${projectId}/tasks/new`} />
     </div>
   );
 };

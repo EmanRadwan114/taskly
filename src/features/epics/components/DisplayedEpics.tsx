@@ -4,7 +4,7 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
@@ -13,6 +13,7 @@ import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import FloatingLink from '@/shared/components/ui/FloatingLink';
 
 interface IProps {
   searchParams: { page: string };
@@ -81,12 +82,7 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
           </LinkButton>
 
           {/* new epic btn on mobile */}
-          <LinkButton
-            href={`/project/${projectId}/epics/new`}
-            className="lg:hidden fixed bottom-20 inset-e-6 z-99 rounded-3! size-14! shadow-primary!"
-          >
-            <PlusIcon className="text-white size-3.5" />
-          </LinkButton>
+          <FloatingLink href={`/project/${projectId}/epics/new`} />
         </div>
       </header>
       {/* epic items */}

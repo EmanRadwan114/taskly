@@ -1,18 +1,16 @@
 'use client';
 
-import PlusIcon from '@/assets/icons/plus.svg';
 import ProjectCard from '@/features/projects/components/ProjectCard';
 import { IProject } from '@/features/projects/types/project.types';
 import Pagination from '@/shared/components/ui/Pagination';
 import ProjectsHeader from '@/features/projects/components/ProjectsHeader';
 import EmptyProjects from '@/features/projects/components/EmptyProjects';
-import LinkButton from '@/shared/components/ui/LinkButton';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import LoadingProjects from './LoadingProjects';
 import { useGetProjectsQuery } from '@/shared/libs/store/redux-toolkit-query/projects-api';
+import FloatingLink from '@/shared/components/ui/FloatingLink';
 
 interface IProps {
   searchParams: { page: string };
@@ -93,12 +91,7 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
       )}
 
       {/* mobile add project btn */}
-      <LinkButton
-        href={'/project/add'}
-        className="lg:hidden fixed bottom-20 inset-e-6 z-99 rounded-3! size-14!"
-      >
-        <PlusIcon className="text-white size-3.5" />
-      </LinkButton>
+      <FloatingLink href={'/project/add'} />
     </section>
   );
 };

@@ -50,7 +50,7 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading || isFetching) return <LoadingProjects />;
+  if (isLoading || (isFetching && !isMobile)) return <LoadingProjects />;
   if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;
 
   return (
@@ -84,9 +84,9 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
       </footer>
 
       {/* loadmore on mobile */}
-      {hasMore && !isFetching && (
+      {hasMore && (
         <div ref={observerTarget} className="mt-auto lg:hidden w-full">
-          Loading More...
+          {isFetching ? 'Loading More...' : ''}
         </div>
       )}
 

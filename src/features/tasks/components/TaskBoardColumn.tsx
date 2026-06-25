@@ -15,7 +15,6 @@ import {
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 import { useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   status: TaskStatusEnum;

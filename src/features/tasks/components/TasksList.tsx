@@ -4,7 +4,7 @@ import Table from '@/shared/components/ui/Table';
 import TableHead from '@/shared/components/ui/TableHead';
 import TableRow from '@/shared/components/ui/TableRow';
 import TasksListPagination from './TasksListPagination';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useGetProjectTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
@@ -42,6 +42,10 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
 
+  useEffect(() => {
+    console.log(currentPage);
+  }, [currentPage]);
+
   const {
     isMobile,
     hasMore,
@@ -56,7 +60,7 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading || isFetching) return <LoadingTasksList />;
+  if (isLoading || (isFetching && !isMobile)) return <LoadingTasksList />;
   if (error) toast.error('Failed to fetch tasks');
 
   const thStyle = `text-secondary py-4! px-6! font-bold text-label letter-spacing-md`;
@@ -109,9 +113,9 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
       ))}
 
       {/* loadmore on mobile */}
-      {hasMore && !isFetching && (
+      {hasMore && (
         <div ref={observerTarget} className="mt-auto lg:hidden w-full">
-          Loading More...
+          {isFetching ? 'Loading More...' : ''}
         </div>
       )}
     </div>

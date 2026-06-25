@@ -180,7 +180,6 @@ export const useFetchBoardColumn = ({
     observer.observe(target);
 
     return () => {
-      observer.unobserve(target);
       observer.disconnect();
     };
   }, [projectId, status, shouldFetched]);

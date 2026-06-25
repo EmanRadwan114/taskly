@@ -117,7 +117,7 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
         </div>
       </header>
 
-      {isLoading || isFetching ? (
+      {isLoading || (isFetching && !isMobile) ? (
         <LoadingEpics />
       ) : debouncedSearchTerm && incomingEpics?.length === 0 ? (
         // empty search status
@@ -154,9 +154,9 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
             )}
           </footer>
           {/* loadmore on mobile */}
-          {hasMore && !isFetching && (
+          {hasMore && (
             <div ref={observerTarget} className="mt-auto lg:hidden w-full">
-              Loading More...
+              {isFetching ? 'Loading More...' : ''}
             </div>
           )}
         </>

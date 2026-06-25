@@ -100,14 +100,12 @@ export const useHandlePagination = <T extends { id: string | number }>({
   // Infinite Scroll Observer Configuration
   useEffect(() => {
     const target = observerTarget.current;
-    if (!target || !isMobile || !hasMore || isFetching) return;
+    if (!target || !isMobile || !hasMore) return;
 
     const observer = new IntersectionObserver(
       (entires) => {
         const entry = entires[0];
-        if (entry.isIntersecting) {
-          if (target) observer.unobserve(target);
-
+        if (entry.isIntersecting && !isFetching) {
           setCurrentPage((prev) => prev + 1);
         }
       },
@@ -118,7 +116,7 @@ export const useHandlePagination = <T extends { id: string | number }>({
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [isMobile, hasMore, isFetching]);
+  }, [isMobile, hasMore]);
 
   // Desktop Page Click Link Sync Handler
   const handleCurrentPage = (page: number) => {

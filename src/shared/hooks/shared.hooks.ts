@@ -135,19 +135,45 @@ export const useHandlePagination = <T extends { id: string | number }>({
   };
 };
 
-// ^ ---------------------------- Debounce Search Hook ------------------------
-export const useDebounceSearch = (time = 400) => {
+//
+export const useHandleSearch = ({
+  setCurrentPage,
+  time = 400,
+}: {
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  time?: number;
+}) => {
+  const isFirstRender = useRef(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      console.log('hi');
+
       setDebouncedSearchTerm(searchTerm);
     }, time);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  return { debouncedSearchTerm, setSearchTerm, searchTerm };
+  useEffect(() => {
+    // to prevent page change to 1 on mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', '1');
+    newParams.set('search', debouncedSearchTerm);
+    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+  }, [debouncedSearchTerm]);
+
+  return { searchTerm, setSearchTerm, debouncedSearchTerm };
 };
 
 // ^ ------------------------ Use Handle Error Hook -------------------------

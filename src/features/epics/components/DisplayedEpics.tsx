@@ -12,8 +12,8 @@ import { useEffect, useRef, useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
 import {
-  useDebounceSearch,
   useHandlePagination,
+  useHandleSearch,
 } from '@/shared/hooks/shared.hooks';
 import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
@@ -26,9 +26,7 @@ interface IProps {
 }
 
 const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
-  const isFirstRender = useRef(true);
   const { projectId } = useParams();
-  const router = useRouter();
 
   const page = Number(searchParams.page);
 
@@ -37,8 +35,9 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
   const limit = FETCH_LIMIT;
   const offset = ((currentPage || 1) - 1) * limit;
 
-  const { debouncedSearchTerm, setSearchTerm, searchTerm } =
-    useDebounceSearch();
+  const { searchTerm, debouncedSearchTerm, setSearchTerm } = useHandleSearch({
+    setCurrentPage,
+  });
 
   const {
     data: epics,
@@ -71,18 +70,6 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
     setCurrentPage,
     currentPage,
   });
-
-  useEffect(() => {
-    // to prevent page change to 1 on mount
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    setCurrentPage(1);
-    const newParsms = new URLSearchParams(searchParams);
-    newParsms.set('page', '1');
-    router.push(`/project/${projectId}/epics?${newParsms.toString()}`);
-  }, [debouncedSearchTerm]);
 
   if (error && !debouncedSearchTerm) throw new Error('Failed to fetch epics');
 

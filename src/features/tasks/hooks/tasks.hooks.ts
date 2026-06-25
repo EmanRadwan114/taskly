@@ -13,7 +13,10 @@ import {
   tasksApi,
   useGetProjectTasksByStatusQuery,
 } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
-import { TaskStatusEnum } from '../types/tasks.types';
+import { ITask, TaskStatusEnum } from '../types/tasks.types';
+import { usePathname, useRouter } from 'next/navigation';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
 
 // ^ ---------------------------- Create Task Hook -------------------------
 export const useCreateTask = ({
@@ -77,24 +80,86 @@ export const useCreateTask = ({
   return { onHandleCreateTask, isPending, taskState: state };
 };
 
+// ^ ---------------------------- Handle Board Pagination Hook -------------------------
+export const useHandleBoardPagination = (params: {
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  tasks?: ITask[];
+  isFetching?: boolean;
+  meta?: IMetaFetchedData;
+}) => {
+  const { currentPage, setCurrentPage, tasks, isFetching, meta } = params;
+
+  const observerTarget = useRef<HTMLDivElement | null>(null);
+
+  const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
+
+  const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
+
+  useEffect(() => {
+    if (!tasks || tasks.length === 0) return;
+
+    setAccumulatedTasks((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+
+      const newItemsOnly = tasks.filter((item) => !existingIds.has(item.id));
+
+      if (newItemsOnly.length === 0) return prev;
+      return [...prev, ...newItemsOnly];
+    });
+  }, [tasks]);
+
+  // Infinite Scroll Observer Configuration
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entires) => {
+        const entry = entires[0];
+        if (entry.isIntersecting && !isFetching) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0, rootMargin: '10px' }
+    );
+    observer.observe(target);
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [hasMore]);
+
+  return {
+    hasMore,
+    observerTarget,
+    accumulatedTasks,
+  };
+};
+
 // ^ --------------------  Fetch Board Column Hook ---------------------
 export const useFetchBoardColumn = ({
   projectId,
   status,
+  limit,
+  offset,
 }: {
   projectId: string;
   status: TaskStatusEnum;
+  limit: number;
+  offset: number;
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [shouldFetched, setShouldFetched] = useState(false);
 
   const { data, isFetching, isLoading, error } =
     useGetProjectTasksByStatusQuery(
-      { status, projectId },
+      { status, projectId, limit, offset },
       { skip: !projectId || !status || !shouldFetched }
     );
 
   const tasks = data?.response?.data || [];
+  const tasksMeta = data?.response?.meta;
 
   useEffect(() => {
     const target = observerTarget.current;
@@ -107,19 +172,19 @@ export const useFetchBoardColumn = ({
           setShouldFetched(true);
         }
       },
-      { threshold: 0, rootMargin: '10px' }
+      { threshold: 0, rootMargin: '50px' }
     );
 
     observer.observe(target);
 
     return () => {
-      observer.unobserve(target);
       observer.disconnect();
     };
   }, [projectId, status, shouldFetched]);
 
   return {
     tasks,
+    tasksMeta,
     isLoading,
     isFetching,
     error,

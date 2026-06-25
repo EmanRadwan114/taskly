@@ -13,9 +13,9 @@ export default async function ProjectLayout({
 
   let projectItem: IProject | undefined;
   if (projectId) {
-    const response = await fetchWithAuthServer(
-      `rest/v1/projects?id=eq.${projectId}`
-    );
+    const response = await fetchWithAuthServer({
+      endpoint: `rest/v1/projects?id=eq.${projectId}`,
+    });
     projectItem = response?.data?.[0] as IProject;
   }
 

@@ -8,8 +8,13 @@ import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
-import { useFetchBoardColumn } from '../hooks/tasks.hooks';
+import {
+  useFetchBoardColumn,
+  useHandleBoardPagination,
+} from '../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
+import { useEffect, useState } from 'react';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -17,10 +22,39 @@ interface IProps {
 const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const { projectId } = useParams();
 
-  const { tasks, isLoading, error, observerTarget } = useFetchBoardColumn({
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 6;
+  const offset = (currentPage - 1) * limit;
+
+  const {
+    tasks,
+    tasksMeta,
+    isLoading,
+    error,
+    observerTarget: columnTarget,
+    isFetching,
+  } = useFetchBoardColumn({
     projectId: projectId as string,
     status,
+    limit,
+    offset,
   });
+
+  const {
+    accumulatedTasks,
+    observerTarget: paginationTarget,
+    hasMore,
+  } = useHandleBoardPagination({
+    currentPage,
+    setCurrentPage,
+    tasks,
+    isFetching,
+    meta: tasksMeta,
+  });
+
+  useEffect(() => {
+    console.log(currentPage, tasksMeta);
+  }, [currentPage, tasksMeta]);
 
   if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
@@ -65,7 +99,10 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     : `/project/${projectId}/tasks/new`;
 
   return (
-    <div className="flex flex-col gap-4 min-w-64" ref={observerTarget}>
+    <div
+      className="flex flex-col gap-4 min-w-64 min-h-screen"
+      ref={columnTarget}
+    >
       {/* status header */}
       <div className={`flex items-center justify-between gap-2`}>
         <div className="flex items-center gap-2">
@@ -78,7 +115,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
           <div
             className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${statusColor[status]?.lengthClassName}`}
           >
-            <span>{tasks?.length}</span>
+            <span>{tasksMeta?.totalCount}</span>
           </div>
         </div>
         <LinkButton href={href} variant="ghost" className="w-fit! p-0.5!">
@@ -97,9 +134,16 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
         </span>
       </LinkButton>
       {/* cards */}
-      {tasks.map((task) => (
+      {accumulatedTasks.map((task) => (
         <BoardTaskCard key={task.id} task={task} />
       ))}
+
+      {/* loadmore */}
+      {hasMore && (
+        <div ref={paginationTarget} className="mt-auto w-full">
+          {isFetching ? 'Loading More...' : ''}
+        </div>
+      )}
     </div>
   );
 };

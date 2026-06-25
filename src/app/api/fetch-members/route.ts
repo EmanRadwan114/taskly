@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
     if (projectId) {
       const endpointUrl = `rest/v1/get_project_members?project_id=eq.${projectId}`;
-      const response = await fetchWithAuthServer(endpointUrl);
+      const response = await fetchWithAuthServer({ endpoint: endpointUrl });
       return NextResponse.json({ response });
     }
   } catch (error) {

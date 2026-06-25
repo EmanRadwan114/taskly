@@ -4,8 +4,8 @@ import Table from '@/shared/components/ui/Table';
 import TableHead from '@/shared/components/ui/TableHead';
 import TableRow from '@/shared/components/ui/TableRow';
 import TasksListPagination from './TasksListPagination';
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useGetProjectTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import TaskListItem from './TaskListItem';
@@ -13,6 +13,8 @@ import LoadingTasksList from './LoadingTasksList';
 import { toast } from 'react-toastify';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
 import TaskMobileCard from './TaskMobileCard';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import { ITask } from '../types/tasks.types';
 
 interface IProps {
   searchParams: { page: string };
@@ -20,11 +22,13 @@ interface IProps {
 
 const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams();
+
   const page = Number(searchParams.page);
 
-  const [currentPage, setCurrentPage] = useState(page || 1);
+  const [currentPage, setCurrentPage] = useState<number>(page || 1);
+
   const limit = FETCH_LIMIT;
-  const offset = (currentPage - 1) * limit;
+  const offset = ((currentPage || 1) - 1) * limit;
 
   const {
     data: tasksData,
@@ -35,12 +39,29 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     { projectId: projectId as string, limit, offset },
     { skip: !projectId }
   );
-
-  if (isLoading || isFetching) return <LoadingTasksList />;
-  if (error) toast.error('Failed to fetch tasks');
-
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
+
+  useEffect(() => {
+    console.log(currentPage);
+  }, [currentPage]);
+
+  const {
+    isMobile,
+    hasMore,
+    observerTarget,
+    accumulatedList: accumulatedTasksList,
+    handleCurrentPage,
+  } = useHandlePagination<ITask>({
+    incomingData: tasks,
+    meta: tasksMeta,
+    isFetching,
+    setCurrentPage,
+    currentPage,
+  });
+
+  if (isLoading || (isFetching && !isMobile)) return <LoadingTasksList />;
+  if (error) toast.error('Failed to fetch tasks');
 
   const thStyle = `text-secondary py-4! px-6! font-bold text-label letter-spacing-md`;
 
@@ -71,11 +92,13 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
           <span className="text-secondary text-body-sm font-medium">
             Showing {tasks?.length} of {tasksMeta?.totalCount} tasks
           </span>
-          <TasksListPagination
-            currentPage={currentPage}
-            totalPages={tasksMeta?.totalPages || 1}
-            handleCurrentPage={(page) => setCurrentPage(page)}
-          />
+          {tasksMeta?.totalPages && tasksMeta?.totalPages > 1 && (
+            <TasksListPagination
+              currentPage={currentPage}
+              totalPages={tasksMeta?.totalPages || 1}
+              handleCurrentPage={handleCurrentPage}
+            />
+          )}
         </div>
       </div>
       {/* add task link */}
@@ -84,19 +107,21 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   );
 
   const mobileView = (
-    <div className="lg:hidden flex flex-col gap-3 ">
-      {tasks?.map((task) => (
+    <div className="lg:hidden flex flex-col gap-3 min-h-screen">
+      {accumulatedTasksList?.map((task) => (
         <TaskMobileCard task={task} key={task?.id} />
       ))}
+
+      {/* loadmore on mobile */}
+      {hasMore && (
+        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+          {isFetching ? 'Loading More...' : ''}
+        </div>
+      )}
     </div>
   );
 
-  return (
-    <>
-      {desktopView}
-      {mobileView}
-    </>
-  );
+  return <>{isMobile ? mobileView : desktopView}</>;
 };
 
 export default TasksList;

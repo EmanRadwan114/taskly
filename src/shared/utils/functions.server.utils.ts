@@ -16,11 +16,17 @@ import { toast } from 'react-toastify';
 import { IMetaFetchedData } from '../types/shared.types';
 
 //^ ------------------------ fetch for server components -------------------------
-export const fetchWithAuthServer = async (
-  endpoint: string,
-  isPaginated?: boolean,
-  options?: RequestInit
-) => {
+export const fetchWithAuthServer = async ({
+  endpoint,
+  isPaginated = false,
+  limit = FETCH_LIMIT,
+  options,
+}: {
+  endpoint: string;
+  isPaginated?: boolean;
+  limit?: number;
+  options?: RequestInit;
+}) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
@@ -93,7 +99,7 @@ export const fetchWithAuthServer = async (
       const totalCount = contentRange?.split('/')[1];
 
       result.totalCount = Number(totalCount);
-      result.totalPages = Math.ceil(Number(totalCount) / FETCH_LIMIT);
+      result.totalPages = Math.ceil(Number(totalCount) / limit);
     }
 
     return { data, meta: result };

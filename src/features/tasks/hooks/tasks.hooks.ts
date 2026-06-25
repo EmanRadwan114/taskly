@@ -143,18 +143,20 @@ export const useFetchBoardColumn = ({
   status,
   limit,
   offset,
+  searchTerm,
 }: {
   projectId: string;
   status: TaskStatusEnum;
   limit: number;
   offset: number;
+  searchTerm?: string;
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [shouldFetched, setShouldFetched] = useState(false);
 
   const { data, isFetching, isLoading, error } =
     useGetProjectTasksByStatusQuery(
-      { status, projectId, limit, offset },
+      { status, projectId, limit, offset, searchTerm },
       { skip: !projectId || !status || !shouldFetched }
     );
 

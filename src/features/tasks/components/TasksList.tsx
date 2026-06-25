@@ -13,8 +13,12 @@ import LoadingTasksList from './LoadingTasksList';
 import { toast } from 'react-toastify';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
 import TaskMobileCard from './TaskMobileCard';
-import { useHandlePagination } from '@/shared/hooks/shared.hooks';
+import {
+  useHandlePagination,
+  useHandleSearch,
+} from '@/shared/hooks/shared.hooks';
 import { ITask } from '../types/tasks.types';
+import ProjectTasksHeader from './ProjectTasksHeader';
 
 interface IProps {
   searchParams: { page: string };
@@ -30,21 +34,26 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const limit = FETCH_LIMIT;
   const offset = ((currentPage || 1) - 1) * limit;
 
+  const { searchTerm, debouncedSearchTerm, setSearchTerm } = useHandleSearch({
+    setCurrentPage,
+  });
+
   const {
     data: tasksData,
     isLoading,
     error,
     isFetching,
   } = useGetProjectTasksQuery(
-    { projectId: projectId as string, limit, offset },
+    {
+      projectId: projectId as string,
+      limit,
+      offset,
+      searchTerm: debouncedSearchTerm,
+    },
     { skip: !projectId }
   );
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
-
-  useEffect(() => {
-    console.log(currentPage);
-  }, [currentPage]);
 
   const {
     isMobile,
@@ -121,7 +130,15 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     </div>
   );
 
-  return <>{isMobile ? mobileView : desktopView}</>;
+  return (
+    <section className="flex flex-col gap-6">
+      <ProjectTasksHeader
+        searchTerm={searchTerm}
+        onSetSearchTerm={setSearchTerm}
+      />
+      {isMobile ? mobileView : desktopView}
+    </section>
+  );
 };
 
 export default TasksList;

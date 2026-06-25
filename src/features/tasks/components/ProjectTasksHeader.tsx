@@ -6,7 +6,14 @@ import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
 import { useParams } from 'next/navigation';
 
-const ProjectTasksHeader: React.FC = ({}) => {
+interface IProps {
+  searchTerm: string;
+  onSetSearchTerm: (searchTerm: string) => void;
+}
+const ProjectTasksHeader: React.FC<IProps> = ({
+  searchTerm,
+  onSetSearchTerm,
+}) => {
   const { projectId } = useParams();
 
   const desktopView = (
@@ -20,7 +27,11 @@ const ProjectTasksHeader: React.FC = ({}) => {
         </p>
       </div>
       <div className="flex items-center gap-3 lg:ms-auto">
-        <Search placeholder="Search tasks..." />
+        <Search
+          placeholder="Search tasks..."
+          searchTerm={searchTerm}
+          onSetSearchTerm={onSetSearchTerm}
+        />
         <TaskViewSelect />
         <FilterProjectTasks />
       </div>
@@ -33,7 +44,11 @@ const ProjectTasksHeader: React.FC = ({}) => {
         Active Workboard
       </h1>
       <div className="flex flex-col gap-3">
-        <Search placeholder="Search tasks..." />
+        <Search
+          placeholder="Search tasks..."
+          searchTerm={searchTerm}
+          onSetSearchTerm={onSetSearchTerm}
+        />
         <LinkButton
           href={`/project/${projectId}/tasks/new`}
           className="py-2! w-full font-semibold leading-5"

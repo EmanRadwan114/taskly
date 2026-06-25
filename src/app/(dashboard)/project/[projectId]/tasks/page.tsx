@@ -8,12 +8,11 @@ interface Props {
 export default async function Page({ searchParams }: Props) {
   const params = await searchParams;
   return (
-    <section className="flex flex-col gap-6">
-      <ProjectTasksHeader />
+    <>
       {params?.view === 'board' && <TasksBoard />}
       {(params?.view === 'list' || !params?.view) && (
         <TasksList searchParams={params} />
       )}
-    </section>
+    </>
   );
 }

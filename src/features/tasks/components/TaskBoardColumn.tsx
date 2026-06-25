@@ -14,12 +14,16 @@ import {
 } from '../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 import { useEffect, useState } from 'react';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import TasksScrollError from './TasksScrollError';
 
 interface IProps {
   status: TaskStatusEnum;
+  searchTerm: string;
 }
-const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
+const TaskBoardColumn: React.FC<IProps> = ({
+  status,
+  searchTerm: debouncedSearchTerm,
+}) => {
   const { projectId } = useParams();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +42,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     status,
     limit,
     offset,
+    searchTerm: debouncedSearchTerm,
   });
 
   const {
@@ -52,9 +57,10 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     meta: tasksMeta,
   });
 
+  // Reset to page 1 whenever the search term changes
   useEffect(() => {
-    console.log(currentPage, tasksMeta);
-  }, [currentPage, tasksMeta]);
+    setCurrentPage(1);
+  }, [debouncedSearchTerm]);
 
   if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
@@ -140,10 +146,16 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
 
       {/* loadmore */}
       {hasMore && (
-        <div ref={paginationTarget} className="mt-auto w-full">
+        <div
+          ref={paginationTarget}
+          className="mt-auto w-full flex items-center justify-center"
+        >
           {isFetching ? 'Loading More...' : ''}
         </div>
       )}
+
+      {/* error retry */}
+      {error && <TasksScrollError status={status} />}
     </div>
   );
 };

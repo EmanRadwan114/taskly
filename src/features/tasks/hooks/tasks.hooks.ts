@@ -99,6 +99,12 @@ export const useHandleBoardPagination = (params: {
   useEffect(() => {
     if (!tasks || tasks.length === 0) return;
 
+    // reset after search
+    if (currentPage === 1) {
+      setAccumulatedTasks(tasks);
+      return;
+    }
+
     setAccumulatedTasks((prev) => {
       const existingIds = new Set(prev.map((item) => item.id));
 
@@ -121,7 +127,7 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '10px' }
+      { threshold: 0, rootMargin: '50px' }
     );
     observer.observe(target);
     return () => {

@@ -83,7 +83,13 @@ export const useHandlePagination = <T extends { id: string | number }>({
   const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
 
   useEffect(() => {
-    if (!incomingData || incomingData.length === 0 || !isMobile) return;
+    if (!incomingData || !isMobile) return;
+
+    //reset after search
+    if (currentPage === 1) {
+      setAccumulatedList(incomingData);
+      return;
+    }
 
     setAccumulatedList((prev) => {
       const existingIds = new Set(prev.map((item) => item.id));
@@ -109,7 +115,7 @@ export const useHandlePagination = <T extends { id: string | number }>({
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '10px' }
+      { threshold: 0, rootMargin: '50px' }
     );
     observer.observe(target);
     return () => {
@@ -135,18 +141,21 @@ export const useHandlePagination = <T extends { id: string | number }>({
   };
 };
 
-//
+// ^ ------------------------ Use Handle Search Hook -------------------------
 export const useHandleSearch = ({
   setCurrentPage,
   time = 400,
+  isSetPageParam = true,
 }: {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   time?: number;
+  isSetPageParam?: boolean;
 }) => {
   const isFirstRender = useRef(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { isMobile } = useMobile(1024);
 
   const searchTermParam = searchParams.get('search') || '';
 
@@ -168,10 +177,12 @@ export const useHandleSearch = ({
     }
     setCurrentPage(1);
     const newParams = new URLSearchParams(searchParams);
-    newParams.set('page', '1');
     newParams.set('search', debouncedSearchTerm);
+    if (!isMobile && isSetPageParam) {
+      newParams.set('page', '1');
+    }
     router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, isSetPageParam, isMobile]);
 
   return { searchTerm, setSearchTerm, debouncedSearchTerm };
 };

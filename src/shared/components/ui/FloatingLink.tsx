@@ -10,7 +10,7 @@ interface IProps {
 
 const FloatingLink: React.FC<IProps> = ({
   href,
-  icon = <PlusIcon className="text-white size-3.5" />,
+  icon = <PlusIcon className="text-white size-4.5" />,
   className,
   position,
 }) => {

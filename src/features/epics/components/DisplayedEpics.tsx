@@ -142,7 +142,10 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
           </footer>
           {/* loadmore on mobile */}
           {hasMore && (
-            <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+            <div
+              ref={observerTarget}
+              className="mt-auto lg:hidden w-full flex items-center justify-center"
+            >
               {isFetching ? 'Loading More...' : ''}
             </div>
           )}

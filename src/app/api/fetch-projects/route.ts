@@ -12,7 +12,10 @@ export async function GET(request: Request) {
 
     const isPaginated = true;
 
-    const response = await fetchWithAuthServer(endpointUrl, isPaginated);
+    const response = await fetchWithAuthServer({
+      endpoint: endpointUrl,
+      isPaginated,
+    });
 
     return NextResponse.json({ response });
   } catch (error) {

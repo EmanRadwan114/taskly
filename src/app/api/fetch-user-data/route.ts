@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const endpointUrl = `auth/v1/user`;
 
-    const response = await fetchWithAuthServer(endpointUrl);
+    const response = await fetchWithAuthServer({ endpoint: endpointUrl });
 
     return NextResponse.json({ response });
   } catch (error) {

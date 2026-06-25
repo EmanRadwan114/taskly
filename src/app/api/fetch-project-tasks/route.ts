@@ -12,7 +12,10 @@ export async function GET(request: Request) {
     if (projectId) {
       const endpointUrl = `rest/v1/project_tasks?project_id=eq.${projectId}&limit=${LIMIT}&offset=${OFFSET}&order=created_at.asc`;
       const isPaginated = true;
-      const response = await fetchWithAuthServer(endpointUrl, isPaginated);
+      const response = await fetchWithAuthServer({
+        endpoint: endpointUrl,
+        isPaginated,
+      });
       return NextResponse.json({ response });
     }
   } catch (error) {

@@ -112,14 +112,12 @@ export const useHandleBoardPagination = (params: {
   // Infinite Scroll Observer Configuration
   useEffect(() => {
     const target = observerTarget.current;
-    if (!target || !hasMore || isFetching) return;
+    if (!target || !hasMore) return;
 
     const observer = new IntersectionObserver(
       (entires) => {
         const entry = entires[0];
-        if (entry.isIntersecting) {
-          if (target) observer.unobserve(target);
-
+        if (entry.isIntersecting && !isFetching) {
           setCurrentPage((prev) => prev + 1);
         }
       },
@@ -130,12 +128,12 @@ export const useHandleBoardPagination = (params: {
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [hasMore, isFetching]);
+  }, [hasMore]);
 
   return {
-    accumulatedTasks,
-    observerTarget,
     hasMore,
+    observerTarget,
+    accumulatedTasks,
   };
 };
 
@@ -174,7 +172,7 @@ export const useFetchBoardColumn = ({
           setShouldFetched(true);
         }
       },
-      { threshold: 0, rootMargin: '10px' }
+      { threshold: 0, rootMargin: '50px' }
     );
 
     observer.observe(target);

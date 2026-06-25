@@ -13,19 +13,17 @@ import {
   useHandleBoardPagination,
 } from '../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 
 interface IProps {
   status: TaskStatusEnum;
-  searchParams: { page: string };
 }
-const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
+const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
   const { projectId } = useParams();
-  const page = Number(searchParams.page);
 
-  const [currentPage, setCurrentPage] = useState(page || 1);
-  const limit = FETCH_LIMIT;
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 6;
   const offset = (currentPage - 1) * limit;
 
   const {
@@ -53,6 +51,10 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
     isFetching,
     meta: tasksMeta,
   });
+
+  useEffect(() => {
+    console.log(currentPage, tasksMeta);
+  }, [currentPage, tasksMeta]);
 
   if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
@@ -113,7 +115,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
           <div
             className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${statusColor[status]?.lengthClassName}`}
           >
-            <span>{tasks?.length}</span>
+            <span>{tasksMeta?.totalCount}</span>
           </div>
         </div>
         <LinkButton href={href} variant="ghost" className="w-fit! p-0.5!">
@@ -136,10 +138,10 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
         <BoardTaskCard key={task.id} task={task} />
       ))}
 
-      {/* pagination item */}
-      {hasMore && !isFetching && (
-        <div ref={paginationTarget} className="mt-auto lg:hidden w-full">
-          Loading More...
+      {/* loadmore */}
+      {hasMore && (
+        <div ref={paginationTarget} className="mt-auto w-full">
+          {isFetching ? 'Loading More...' : ''}
         </div>
       )}
     </div>

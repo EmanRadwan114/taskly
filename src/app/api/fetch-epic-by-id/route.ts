@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
     if (projectId && epicId) {
       const endpointUrl = `rest/v1/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`;
-      const response = await fetchWithAuthServer(endpointUrl);
+      const response = await fetchWithAuthServer({ endpoint: endpointUrl });
       return NextResponse.json({ response });
     }
   } catch (error) {

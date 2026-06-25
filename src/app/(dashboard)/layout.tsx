@@ -17,7 +17,7 @@ export default async function DashboardLayout({
           <header>
             <Navbar />
           </header>
-          <main className="p-9 flex flex-col relative">{children}</main>
+          <main className="p-9 flex flex-col">{children}</main>
         </div>
       </div>
 

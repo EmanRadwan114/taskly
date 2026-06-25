@@ -148,13 +148,13 @@ export const useHandleSearch = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchTermParam = searchParams.get('search') || '';
+
+  const [searchTerm, setSearchTerm] = useState(searchTermParam);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('hi');
-
       setDebouncedSearchTerm(searchTerm);
     }, time);
     return () => clearTimeout(timer);

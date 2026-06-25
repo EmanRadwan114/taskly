@@ -80,91 +80,64 @@ export const useCreateTask = ({
   return { onHandleCreateTask, isPending, taskState: state };
 };
 
-// // ^ ---------------------------- Handle Tasks List Pagination Hook -------------------------
-// export const useHandleListPagination = (searchParams: { page: string }) => {
-//   const router = useRouter();
-//   const pathname = usePathname();
+// ^ ---------------------------- Handle Board Pagination Hook -------------------------
+export const useHandleBoardPagination = (params: {
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  tasks?: ITask[];
+  isFetching?: boolean;
+  meta?: IMetaFetchedData;
+}) => {
+  const { currentPage, setCurrentPage, tasks, isFetching, meta } = params;
 
-//   const page = Number(searchParams.page);
+  const observerTarget = useRef<HTMLDivElement | null>(null);
 
-//   const [currentPage, setCurrentPage] = useState(page || 1);
-//   const limit = FETCH_LIMIT;
-//   const offset = (currentPage - 1) * limit;
+  const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
 
-//   const handleListPagination = (page: number) => {
-//     setCurrentPage(page);
-//     const newSearchParams = new URLSearchParams(searchParams.toString());
-//     newSearchParams.set('page', page.toString());
-//     router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
-//   };
+  const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
 
-//   return { limit, offset, currentPage, handleListPagination };
-// };
+  useEffect(() => {
+    if (!tasks || tasks.length === 0) return;
 
-// // ^ ---------------------------- Handle Board Pagination Hook -------------------------
-// export const useHandleBoardPagination = (
-//   searchParams: { page: string },
-//   limit: number,
-//   offset: number,
-//   tasks?: ITask[],
-//   isFetching?: boolean,
-//   meta?: IMetaFetchedData
-// ) => {
-//   const page = Number(searchParams.page);
-//   const observerTarget = useRef<HTMLDivElement | null>(null);
+    setAccumulatedTasks((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
 
-//   const [currentPage, setCurrentPage] = useState(page || 1);
+      const newItemsOnly = tasks.filter((item) => !existingIds.has(item.id));
 
-//   const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
+      if (newItemsOnly.length === 0) return prev;
+      return [...prev, ...newItemsOnly];
+    });
+  }, [tasks]);
 
-//   const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
+  // Infinite Scroll Observer Configuration
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target || !hasMore || isFetching) return;
 
-//   useEffect(() => {
-//     if (!tasks || tasks.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entires) => {
+        const entry = entires[0];
+        if (entry.isIntersecting) {
+          if (target) observer.unobserve(target);
 
-//     setAccumulatedTasks((prev) => {
-//       const existingIds = new Set(prev.map((item) => item.id));
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0, rootMargin: '10px' }
+    );
+    observer.observe(target);
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [hasMore, isFetching]);
 
-//       const newItemsOnly = tasks.filter((item) => !existingIds.has(item.id));
-
-//       if (newItemsOnly.length === 0) return prev;
-//       return [...prev, ...newItemsOnly];
-//     });
-//   }, [tasks]);
-
-//   // Infinite Scroll Observer Configuration
-//   useEffect(() => {
-//     const target = observerTarget.current;
-//     if (!target || !hasMore || isFetching) return;
-
-//     const observer = new IntersectionObserver(
-//       (entires) => {
-//         const entry = entires[0];
-//         if (entry.isIntersecting) {
-//           if (target) observer.unobserve(target);
-
-//           setCurrentPage((prev) => prev + 1);
-//         }
-//       },
-//       { threshold: 0, rootMargin: '10px' }
-//     );
-//     observer.observe(target);
-//     return () => {
-//       if (target) observer.unobserve(target);
-//       observer.disconnect();
-//     };
-//   }, [hasMore, isFetching]);
-
-//   return {
-//     limit,
-//     offset,
-//     currentPage,
-//     setCurrentPage,
-//     accumulatedTasks,
-//     observerTarget,
-//     hasMore,
-//   };
-// };
+  return {
+    accumulatedTasks,
+    observerTarget,
+    hasMore,
+  };
+};
 
 // ^ --------------------  Fetch Board Column Hook ---------------------
 export const useFetchBoardColumn = ({
@@ -188,6 +161,7 @@ export const useFetchBoardColumn = ({
     );
 
   const tasks = data?.response?.data || [];
+  const tasksMeta = data?.response?.meta;
 
   useEffect(() => {
     const target = observerTarget.current;
@@ -213,6 +187,7 @@ export const useFetchBoardColumn = ({
 
   return {
     tasks,
+    tasksMeta,
     isLoading,
     isFetching,
     error,

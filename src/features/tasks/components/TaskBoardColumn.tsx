@@ -8,7 +8,10 @@ import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
-import { useFetchBoardColumn } from '../hooks/tasks.hooks';
+import {
+  useFetchBoardColumn,
+  useHandleBoardPagination,
+} from '../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 import { useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
@@ -26,11 +29,30 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
   const limit = FETCH_LIMIT;
   const offset = (currentPage - 1) * limit;
 
-  const { tasks, isLoading, error, observerTarget } = useFetchBoardColumn({
+  const {
+    tasks,
+    tasksMeta,
+    isLoading,
+    error,
+    observerTarget: columnTarget,
+    isFetching,
+  } = useFetchBoardColumn({
     projectId: projectId as string,
     status,
     limit,
     offset,
+  });
+
+  const {
+    accumulatedTasks,
+    observerTarget: paginationTarget,
+    hasMore,
+  } = useHandleBoardPagination({
+    currentPage,
+    setCurrentPage,
+    tasks,
+    isFetching,
+    meta: tasksMeta,
   });
 
   if (isLoading) return <LoadingBoardColumn />;
@@ -78,7 +100,7 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
   return (
     <div
       className="flex flex-col gap-4 min-w-64 min-h-screen"
-      ref={observerTarget}
+      ref={columnTarget}
     >
       {/* status header */}
       <div className={`flex items-center justify-between gap-2`}>
@@ -111,16 +133,16 @@ const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
         </span>
       </LinkButton>
       {/* cards */}
-      {tasks.map((task) => (
+      {accumulatedTasks.map((task) => (
         <BoardTaskCard key={task.id} task={task} />
       ))}
 
       {/* pagination item */}
-      {/* {hasMore && !isFetching && (
-        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+      {hasMore && !isFetching && (
+        <div ref={paginationTarget} className="mt-auto lg:hidden w-full">
           Loading More...
         </div>
-      )} */}
+      )}
     </div>
   );
 };

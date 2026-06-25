@@ -6,9 +6,11 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const projectId = url.searchParams.get('projectId');
     const status = url.searchParams.get('status');
+    const limit = url.searchParams.get('limit');
+    const offset = url.searchParams.get('offset');
 
     if (projectId && status) {
-      const tasksEndpoint = `rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}&order=created_at.asc`;
+      const tasksEndpoint = `rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}&limit=${limit}&offset=${offset}&order=created_at.asc`;
       const response = await fetchWithAuthServer(tasksEndpoint);
       return NextResponse.json({ response });
     }

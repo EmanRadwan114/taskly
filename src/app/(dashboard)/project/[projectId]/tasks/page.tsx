@@ -10,7 +10,7 @@ export default async function Page({ searchParams }: Props) {
   return (
     <section className="flex flex-col gap-6">
       <ProjectTasksHeader />
-      {params?.view === 'board' && <TasksBoard />}
+      {params?.view === 'board' && <TasksBoard searchParams={params} />}
       {(params?.view === 'list' || !params?.view) && (
         <TasksList searchParams={params} />
       )}

@@ -20,10 +20,15 @@ export const tasksApi = createApi({
     }),
     getProjectTasksByStatus: builder.query<
       { response: { data: ITask[]; meta: IMetaFetchedData }; error: null },
-      { projectId: string; status: TaskStatusEnum }
+      {
+        projectId: string;
+        status: TaskStatusEnum;
+        limit: number;
+        offset: number;
+      }
     >({
-      query: ({ projectId, status }) =>
-        `/fetch-project-tasks-by-status?projectId=${projectId}&status=${status}`,
+      query: ({ projectId, status, limit, offset }) =>
+        `/fetch-project-tasks-by-status?projectId=${projectId}&status=${status}&limit=${limit}&offset=${offset}`,
       providesTags: (result, error, args) => [
         { type: 'ProjectTasksByStatus', id: args.status },
       ],

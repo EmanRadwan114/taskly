@@ -10,16 +10,27 @@ import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
 import { useFetchBoardColumn } from '../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
+import { useState } from 'react';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
+import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   status: TaskStatusEnum;
+  searchParams: { page: string };
 }
-const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
+const TaskBoardColumn: React.FC<IProps> = ({ status, searchParams }) => {
   const { projectId } = useParams();
+  const page = Number(searchParams.page);
+
+  const [currentPage, setCurrentPage] = useState(page || 1);
+  const limit = FETCH_LIMIT;
+  const offset = (currentPage - 1) * limit;
 
   const { tasks, isLoading, error, observerTarget } = useFetchBoardColumn({
     projectId: projectId as string,
     status,
+    limit,
+    offset,
   });
 
   if (isLoading) return <LoadingBoardColumn />;
@@ -65,7 +76,10 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     : `/project/${projectId}/tasks/new`;
 
   return (
-    <div className="flex flex-col gap-4 min-w-64" ref={observerTarget}>
+    <div
+      className="flex flex-col gap-4 min-w-64 min-h-screen"
+      ref={observerTarget}
+    >
       {/* status header */}
       <div className={`flex items-center justify-between gap-2`}>
         <div className="flex items-center gap-2">
@@ -100,6 +114,13 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
       {tasks.map((task) => (
         <BoardTaskCard key={task.id} task={task} />
       ))}
+
+      {/* pagination item */}
+      {/* {hasMore && !isFetching && (
+        <div ref={observerTarget} className="mt-auto lg:hidden w-full">
+          Loading More...
+        </div>
+      )} */}
     </div>
   );
 };

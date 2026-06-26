@@ -24,15 +24,17 @@ import emptyImg from '@/assets/imgs/empty-epics.png';
 import errorImg from '@/assets/imgs/alert.png';
 import EmptyProjectTasks from './EmptyProjectTasks';
 import TasksScrollError from './TasksScrollError';
+import TaskDetailsModal from './TaskDetailsModal';
 
 interface IProps {
-  searchParams: { page: string };
+  searchParams: { page: string; task_id: string };
 }
 
 const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams();
 
   const page = Number(searchParams.page);
+  const taskIdParam = searchParams.task_id;
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
@@ -166,13 +168,16 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   );
 
   return (
-    <section className="flex flex-col gap-6">
-      <ProjectTasksHeader
-        searchTerm={searchTerm}
-        onSetSearchTerm={setSearchTerm}
-      />
-      {isMobile ? mobileView : desktopView}
-    </section>
+    <>
+      <section className="flex flex-col gap-6">
+        <ProjectTasksHeader
+          searchTerm={searchTerm}
+          onSetSearchTerm={setSearchTerm}
+        />
+        {isMobile ? mobileView : desktopView}
+      </section>
+      {taskIdParam && <TaskDetailsModal />}
+    </>
   );
 };
 

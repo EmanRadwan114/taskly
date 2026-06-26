@@ -1,3 +1,5 @@
+'use client';
+
 import TableRow from '@/shared/components/ui/TableRow';
 import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import TableCol from '@/shared/components/ui/TableCol';
@@ -12,12 +14,15 @@ import {
 } from '@/shared/utils/functions.client.utils';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
 import { statusBadgeStyle } from '../utils/tasks.utils';
+import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask;
 }
 
 const TaskListItem: React.FC<IProps> = ({ task }) => {
+  const { handleRouteToTaskDetails } = useNavToTaskDetails(task);
+
   const taskStatus = task?.status;
   const displayedTaskStatus = formateTaskStatus(taskStatus);
   const assigneeName = task?.assignee?.name;
@@ -28,7 +33,11 @@ const TaskListItem: React.FC<IProps> = ({ task }) => {
   const tdStyle = `py-4.5! px-6! text-body-sm leading-4`;
 
   return (
-    <TableRow key={task?.id} className="bg-white border-b border-b-surface-low">
+    <TableRow
+      key={task?.id}
+      className="bg-white border-b border-b-surface-low"
+      onClick={handleRouteToTaskDetails}
+    >
       {/* task id */}
       <TableCol className={`${tdStyle}`}>
         <span className="uppercase text-primary">{task?.task_id}</span>

@@ -1,3 +1,5 @@
+'use client';
+
 import UserAvatar from '@/shared/components/ui/UserAvatar';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
@@ -10,18 +12,24 @@ import {
   getDueDateStatus,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
+import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
 
 interface Props {
   task: ITask;
 }
 
 const EpicTaskItem: React.FC<Props> = ({ task }) => {
+  const { handleRouteToTaskDetails } = useNavToTaskDetails(task);
+
   const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
   const assigneeInitials = getNameInitials(task?.assignee?.name);
   const formatedDueDate = formateDateString(task?.due_date);
 
   const desktopView = (
-    <div className="hidden lg:flex p-4 justify-between items-center gap-4">
+    <div
+      className="hidden lg:flex p-4 justify-between items-center gap-4"
+      onClick={handleRouteToTaskDetails}
+    >
       <div className="flex gap-4 items-center">
         <div className="flex flex-col gap-1">
           <h3 className=" font-medium text-slate-dark text-body-lg leading-6">
@@ -69,7 +77,10 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
   );
 
   const mobileView = (
-    <div className="border border-slate-lighter shadow-primary p-4 rounded-lg flex lg:hidden flex-col gap-2">
+    <div
+      className="border border-slate-lighter shadow-primary p-4 rounded-lg flex lg:hidden flex-col gap-2"
+      onClick={handleRouteToTaskDetails}
+    >
       <div className="flex justify-between items-start ">
         <h3 className="text-slate-dark font-semibold text-body leading-5">
           {task?.title}

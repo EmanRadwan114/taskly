@@ -15,15 +15,17 @@ import FloatingLink from '@/shared/components/ui/FloatingLink';
 import TaskMobileCard from './TaskMobileCard';
 import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import { ITask } from '../types/tasks.types';
+import TaskDetailsModal from './TaskDetailsModal';
 
 interface IProps {
-  searchParams: { page: string };
+  searchParams: { page: string; task_id: string };
 }
 
 const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams();
 
   const page = Number(searchParams.page);
+  const taskIdParam = searchParams.task_id;
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
@@ -41,10 +43,6 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   );
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
-
-  useEffect(() => {
-    console.log(currentPage);
-  }, [currentPage]);
 
   const {
     isMobile,
@@ -121,7 +119,12 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     </div>
   );
 
-  return <>{isMobile ? mobileView : desktopView}</>;
+  return (
+    <>
+      {isMobile ? mobileView : desktopView}
+      {taskIdParam && <TaskDetailsModal />}
+    </>
+  );
 };
 
 export default TasksList;

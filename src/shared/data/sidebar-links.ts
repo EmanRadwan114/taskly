@@ -34,7 +34,7 @@ export const getAsideLinks = (
     href: `/project/${projectId}/tasks?view=board`,
     icon: TasksIcon,
     protected: true,
-    mobileHref: `/project/${projectId}/tasks`,
+    mobileHref: `/project/${projectId}/tasks?view=list`,
   },
   {
     id: 4,

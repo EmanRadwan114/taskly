@@ -5,7 +5,7 @@ import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
 import EmptyTasks from '@/features/tasks/components/EmptyTasks';
 import Badge from '@/shared/components/ui/Badge';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import EpicTasks from '@/features/tasks/components/EpicTasks';
 import { useGetEpicTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
@@ -14,6 +14,7 @@ import LoadingEpicDetails from './LoadingEpicDetails';
 import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
 import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
+import TaskDetailsModal from '@/features/tasks/components/TaskDetailsModal';
 
 const EpicModal = () => {
   const router = useRouter();
@@ -21,6 +22,8 @@ const EpicModal = () => {
     projectId: string;
     epicId: string;
   }>();
+
+  const isTaskDetailsModalOpen = !!useSearchParams().get('task_id') || false;
 
   const {
     data: epicData,
@@ -36,7 +39,6 @@ const EpicModal = () => {
     data: epicsTasksData,
     isLoading: isLoadingEpicsTasks,
     error: tasksError,
-    isFetching,
   } = useGetEpicTasksQuery(
     {
       epicId: epic?.id as string,
@@ -45,10 +47,6 @@ const EpicModal = () => {
   );
 
   const tasks = epicsTasksData?.response?.data;
-
-  useEffect(() => {
-    console.log(isFetching);
-  }, [tasks]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -106,6 +104,8 @@ const EpicModal = () => {
               </div>
               {/* tasks list */}
               <EpicTasks tasks={tasks} />
+
+              {!!isTaskDetailsModalOpen && <TaskDetailsModal />}
             </>
           )}
         </div>

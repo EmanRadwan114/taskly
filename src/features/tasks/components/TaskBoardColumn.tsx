@@ -52,10 +52,6 @@ const TaskBoardColumn: React.FC<IProps> = ({ status }) => {
     meta: tasksMeta,
   });
 
-  useEffect(() => {
-    console.log(currentPage, tasksMeta);
-  }, [currentPage, tasksMeta]);
-
   if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
 

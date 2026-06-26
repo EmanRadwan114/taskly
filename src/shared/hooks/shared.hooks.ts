@@ -5,6 +5,7 @@ import { IUseHandlePagination } from '../types/shared.types';
 import { log } from 'console';
 import { useAppDispatch, useAppSelector } from '../libs/store/store';
 import { fetchMembers } from '../libs/store/slices/members.slice';
+import { ITask } from '@/features/tasks/types/tasks.types';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -148,6 +149,21 @@ export const useDebounceSearch = (time = 400) => {
   }, [searchTerm]);
 
   return { debouncedSearchTerm, setSearchTerm, searchTerm };
+};
+
+// ^ ------------------------ Use Nav To Task Details Hook ------------------------
+export const useNavToTaskDetails = (task: ITask) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleRouteToTaskDetails = () => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('task_id', task?.id);
+    router.push(`${pathname}?${newSearchParams.toString()}`);
+  };
+
+  return { handleRouteToTaskDetails };
 };
 
 // ^ ------------------------ Use Handle Error Hook -------------------------

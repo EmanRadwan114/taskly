@@ -1,3 +1,5 @@
+'use client';
+
 import CalenderIcon from '@/assets/icons/calender.svg';
 import { ITask } from '../types/tasks.types';
 import WarningIcon from '@/assets/icons/warning.svg';
@@ -6,12 +8,14 @@ import {
   formateDateString,
   getDueDateStatus,
 } from '@/shared/utils/functions.client.utils';
+import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask;
 }
 
 const BoardTaskCard: React.FC<IProps> = ({ task }) => {
+  const { handleRouteToTaskDetails } = useNavToTaskDetails(task);
   const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
 
   const formattedDueDate = formateDateString(task?.due_date, 'en-US', {
@@ -22,6 +26,7 @@ const BoardTaskCard: React.FC<IProps> = ({ task }) => {
   return (
     <div
       className={`p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday && task?.due_date ? 'border-s-2 border-s-primary' : ''} ${isDelayed && task?.due_date ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'}`}
+      onClick={handleRouteToTaskDetails}
     >
       <h2 className="text-slate-dark font-medium leading-4.75">
         {task?.title}

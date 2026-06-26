@@ -4,8 +4,8 @@ import SearchIcon from '@/assets/icons/Search.svg';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   inputClassName?: string;
-  searchTerm?: string;
-  onSetSearchTerm?: (searchTerm: string) => void;
+  searchTerm: string;
+  onSetSearchTerm: (searchTerm: string) => void;
 }
 
 const Search: React.FC<IProps> = ({

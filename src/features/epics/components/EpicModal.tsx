@@ -3,7 +3,7 @@
 import EpicDetails from './EpicDetails';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
-import EmptyTasks from '@/features/tasks/components/EmptyTasks';
+import EmptyEpicTasks from '@/features/tasks/components/EmptyEpicTasks';
 import Badge from '@/shared/components/ui/Badge';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -80,7 +80,7 @@ const EpicModal = () => {
           ) : tasksError ? (
             <TasksFetchErrorMsg />
           ) : !tasks?.length ? (
-            <EmptyTasks epic={epic} />
+            <EmptyEpicTasks />
           ) : (
             <>
               {/* header */}

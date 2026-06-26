@@ -1,9 +1,12 @@
+'use client';
+
 import LinkButton from '@/shared/components/ui/LinkButton';
 import EmptyTasksIcon from '@/assets/icons/no-tasks.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
-import { IEpics } from '@/features/epics/types/epics.types';
+import { useParams } from 'next/navigation';
 
-const EmptyTasks: React.FC<{ epic: IEpics | undefined }> = ({ epic }) => {
+const EmptyEpicTasks: React.FC = () => {
+  const { projectId, epicId } = useParams();
   return (
     <div className="rounded-lg p-12 border-2 border-dashed border-slate-light/30 bg-surface-low flex items-center justify-center">
       <div className="flex flex-col justify-center items-center gap-4">
@@ -14,7 +17,7 @@ const EmptyTasks: React.FC<{ epic: IEpics | undefined }> = ({ epic }) => {
           No tasks have been added to this epic yet
         </p>
         <LinkButton
-          href={`/project/${epic?.project_id}/tasks/new?epic=${epic?.id}`}
+          href={`/project/${projectId}/tasks/new?epic=${epicId}`}
           className="rounded-sm! px-4! py-1.5! lg:px-5! lg:py-2!"
         >
           <PlusIcon className="text-white w-2.75" />
@@ -25,4 +28,4 @@ const EmptyTasks: React.FC<{ epic: IEpics | undefined }> = ({ epic }) => {
   );
 };
 
-export default EmptyTasks;
+export default EmptyEpicTasks;

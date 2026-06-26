@@ -14,6 +14,7 @@ const TaskViewSelect: React.FC = ({}) => {
   const handleViewChange = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.set('view', value);
+    newSearchParams.delete('page');
     const queryString = newSearchParams.toString();
     router.push(`${pathname}?${queryString}`);
   };

@@ -99,6 +99,12 @@ export const useHandleBoardPagination = (params: {
   useEffect(() => {
     if (!tasks || tasks.length === 0) return;
 
+    // reset after search
+    if (currentPage === 1) {
+      setAccumulatedTasks(tasks);
+      return;
+    }
+
     setAccumulatedTasks((prev) => {
       const existingIds = new Set(prev.map((item) => item.id));
 
@@ -121,7 +127,7 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '10px' }
+      { threshold: 0, rootMargin: '50px' }
     );
     observer.observe(target);
     return () => {
@@ -143,18 +149,20 @@ export const useFetchBoardColumn = ({
   status,
   limit,
   offset,
+  searchTerm,
 }: {
   projectId: string;
   status: TaskStatusEnum;
   limit: number;
   offset: number;
+  searchTerm?: string;
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [shouldFetched, setShouldFetched] = useState(false);
 
   const { data, isFetching, isLoading, error } =
     useGetProjectTasksByStatusQuery(
-      { status, projectId, limit, offset },
+      { status, projectId, limit, offset, searchTerm },
       { skip: !projectId || !status || !shouldFetched }
     );
 

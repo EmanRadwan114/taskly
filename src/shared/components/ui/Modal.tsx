@@ -13,22 +13,31 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
     setIsMounted(true);
 
     return () => {
       setIsMounted(false);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.style.overflow = 'hidden';
+
+    const handleCloseModal = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleCloseModal);
+
+    return () => {
+      document.removeEventListener('keydown', handleCloseModal);
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   if (!isOpen || !isMounted) return null;
 

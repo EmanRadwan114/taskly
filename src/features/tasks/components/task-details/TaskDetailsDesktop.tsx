@@ -18,6 +18,10 @@ import { useForm } from 'react-hook-form';
 import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SelectOption } from '@/shared/components/ui/SelectField';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import Check from '@/assets/icons/check.svg';
 
 interface IProps {
   task: ITask | undefined;
@@ -32,7 +36,15 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   membersOptions,
   statusOptions,
 }) => {
+  const [sharedLink, setSharedLink] = useState('');
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
+
+  const isBoardView = searchParams.get('view') === 'board';
+  const formatedCreatedAt = formateDateString(task?.created_at);
 
   const {
     control,
@@ -56,7 +68,24 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
 
   const taskStatus = watch('status');
 
-  const formatedCreatedAt = formateDateString(task?.created_at);
+  useEffect(() => {
+    setSharedLink(window.location.href);
+  }, [pathname, searchParams]);
+
+  // handlers
+  const handleSharedLinkCopy = async () => {
+    if (!sharedLink) return;
+    try {
+      await navigator.clipboard.writeText(sharedLink);
+      setIsLinkCopied(true);
+
+      setTimeout(() => {
+        setIsLinkCopied(false);
+      }, 2000);
+    } catch (error) {
+      toast.error('Failed to copy link');
+    }
+  };
 
   // style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;
@@ -130,21 +159,35 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
               className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
             />
           </div>
-          {/* link */}
           <div className="mt-auto flex justify-between items-center bg-surface-low px-8 py-3">
-            <div className="flex gap-2 items-center">
-              <LinkIcon className="size-3.75 text-secondary" />
-              <span className="font-medium leading-5 text-secondary">
-                copy link
-              </span>
+            {/* task sharable link */}
+            {!isBoardView && (
+              <Button
+                variant="ghost"
+                className={`flex gap-2 items-center w-fit! p-0! ${isLinkCopied ? 'text-green-dark!' : ''}`}
+                onClick={handleSharedLinkCopy}
+                disabled={isLinkCopied}
+              >
+                {isLinkCopied ? (
+                  <Check className="size-3.5 text-success-text" />
+                ) : (
+                  <LinkIcon className="size-3.75 text-secondary" />
+                )}
+                <span className={`${inputContentStyle}`}>
+                  {isLinkCopied ? 'Link copied' : 'copy link'}
+                </span>
+              </Button>
+            )}
+            {/* close modal button */}
+            <div className="text-end">
+              <Button
+                variant="ghost"
+                className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit!"
+                onClick={handleCloseTaskDetails}
+              >
+                close
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit!"
-              onClick={handleCloseTaskDetails}
-            >
-              close
-            </Button>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import Badge from '@/shared/components/ui/Badge';
 import Modal from '@/shared/components/ui/Modal';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import LayersIcon from '@/assets/icons/layers.svg';
 import LinkIcon from '@/assets/icons/link.svg';
@@ -12,19 +12,85 @@ import { taskStatusOptions } from '../data/tasks.data';
 import { statusBadgeStyle } from '../utils/tasks.utils';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
 import Button from '@/shared/components/ui/Button';
+import { useGetTaskByIdQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import {
+  formateDateString,
+  getNameInitials,
+} from '@/shared/utils/functions.client.utils';
+import { useFetchMembers } from '@/shared/hooks/shared.hooks';
+import UnassignIcon from '@/assets/icons/unassigned.svg';
 
 const TaskDetailsModal: React.FC = ({}) => {
+  const { projectId } = useParams();
   const taskId = useSearchParams().get('task_id');
   const [isOpen, setIsOpen] = useState(!!taskId);
 
+  const {
+    data: taskData,
+    isLoading,
+    error,
+  } = useGetTaskByIdQuery(
+    { projectId: projectId as string, taskId: taskId as string },
+    { skip: !projectId || !taskId }
+  );
+
+  const {
+    data: epicsResponse,
+    isError: epicsError,
+    isLoading: epicsLoading,
+  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
+
+  const { members } = useFetchMembers(projectId as string);
+
+  const task = taskData?.response?.data?.[0];
+  const epicsList = epicsResponse?.response?.data || [];
+
+  // formated task details
+  const assigneeInitials = getNameInitials(task?.assignee?.name);
+  const formatedDueDate = formateDateString(task?.due_date);
+  const formatedCreatedAt = formateDateString(task?.created_at);
+
+  // handlers
   const closeModal = () => setIsOpen(false);
 
+  // select options
   const statusOptions = taskStatusOptions;
+  const epicsOptions = epicsList?.map((epic) =>
+    task?.epic_id === epic.epic_id
+      ? { value: '', label: 'Select an epic...' }
+      : { value: epic.epic_id, label: epic.title }
+  );
 
+  const membersOptions = [
+    {
+      value: '',
+      label: 'Unassigned',
+      icon: (
+        <UserAvatar
+          className="size-7 text-slate-dark text-label"
+          content={<UnassignIcon className="w-3 text-secondary" />}
+        />
+      ),
+    },
+    ...(members?.map((member) => ({
+      value: member?.user_id,
+      label: member?.metadata,
+      icon: (
+        <UserAvatar
+          className="size-7 text-slate-dark text-label"
+          content={getNameInitials(member?.metadata?.name)}
+        />
+      ),
+    })) || []),
+  ];
+
+  // style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;
   const inputContentStyle = `font-medium text-secondary leading-5 focus:outline-0! focus-within:outline-0! focus-visible:outline-0!`;
   const dateLabelStyle = `text-secondary text-body-sm leading-4`;
 
+  // views
   const desktopView = (
     <div className="hidden lg:flex flex-col">
       {/* left side */}
@@ -33,16 +99,16 @@ const TaskDetailsModal: React.FC = ({}) => {
           <div className="flex gap-3">
             {/* task id */}
             <Badge className="bg-slate-high py-0.5 px-2 rounded-xs text-primary">
-              Task-125
+              {task?.task_id}
             </Badge>
             {/* epic */}
             <div className="flex items-center gap-1.5">
               <LayersIcon className="text-secondary w-3" />
               <FormField
                 // control={control}
-                name="assignee_id"
+                name="epic_id"
                 // label={epic?.assignee?.name || 'Unassigned'}
-                label=""
+                label="epic_id"
                 placeholder={`Assign an epic`}
                 className={`bg-transparent! ${inputContentStyle} p-0!`}
                 isSelect
@@ -51,6 +117,7 @@ const TaskDetailsModal: React.FC = ({}) => {
                 onChange={() => {
                   // handleUpdateEpic('assignee_id');
                 }}
+                options={epicsOptions}
               />
             </div>
           </div>
@@ -58,7 +125,7 @@ const TaskDetailsModal: React.FC = ({}) => {
           <FormField
             // control={control}
             name="title"
-            label=""
+            label="title"
             // label={epic?.title as string}
             placeholder="Enter title"
             isEditing
@@ -75,7 +142,7 @@ const TaskDetailsModal: React.FC = ({}) => {
             // control={control}
             name="description"
             // label={epic?.description as string}
-            label=""
+            label="description"
             placeholder={`No description provided`}
             isTextArea
             isEditing
@@ -110,10 +177,9 @@ const TaskDetailsModal: React.FC = ({}) => {
 
           <FormField
             // control={control}
-            name="assignee_id"
+            name="status"
             // label={epic?.assignee?.name || 'Unassigned'}
-            label=""
-            placeholder={`Assign an epic`}
+            label="status"
             className={`bg-transparent! ${inputContentStyle} p-0! ${statusBadgeStyle[status]}`}
             isSelect
             isEditing
@@ -134,7 +200,6 @@ const TaskDetailsModal: React.FC = ({}) => {
             name="assignee_id"
             // label={epic?.assignee?.name || 'Unassigned'}
             label=""
-            placeholder={`Assign an epic`}
             className={`bg-transparent! ${inputContentStyle} p-0!`}
             isSelect
             isEditing
@@ -142,19 +207,20 @@ const TaskDetailsModal: React.FC = ({}) => {
             onChange={() => {
               // handleUpdateEpic('assignee_id');
             }}
-            // options={statusOptions}
-            formatOptionLabel={({ label }) => (
+            options={membersOptions}
+            formatOptionLabel={({ label, icon }) => (
               <div className="flex items-center gap-3 bg-white p-2 rounded-lg shadow-primary">
-                <UserAvatar
-                  content="hi"
-                  className="size-7 text-slate-dark text-label"
-                />
-                <div className="">
-                  <span className="font-semibold text-slate-dark leading-5"></span>
-                  <span className="text-secondary text-body-xs leading-3.75">
-                    {label}
-                  </span>
-                </div>
+                {icon}
+                {typeof label !== 'string' && (
+                  <div className="">
+                    <span className="font-semibold text-slate-dark leading-5">
+                      {label?.name}
+                    </span>
+                    <span className="text-secondary text-body-xs leading-3.75">
+                      {label?.job_title}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           />
@@ -172,8 +238,7 @@ const TaskDetailsModal: React.FC = ({}) => {
             // control={control}
             type="date"
             name="deadline"
-            // label={formattedDeadline}
-            label=""
+            label={formatedDueDate}
             inputClassName={`${inputContentStyle} text-slate-dark w-full`}
             className="gap-2! bg-transparent! items-center date relative"
             placeholder="YYYY-MM-DD"
@@ -197,8 +262,7 @@ const TaskDetailsModal: React.FC = ({}) => {
             // control={control}
             type="date"
             name="deadline"
-            // label={formattedDeadline}
-            label=""
+            label={formatedCreatedAt}
             inputClassName={`${inputContentStyle} text-slate-dark w-full`}
             className="gap-2! bg-transparent! items-center date relative"
             placeholder="YYYY-MM-DD"

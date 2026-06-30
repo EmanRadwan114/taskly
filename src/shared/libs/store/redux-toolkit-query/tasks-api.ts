@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const tasksApi = createApi({
   reducerPath: 'tasksApi',
-  tagTypes: ['EpicTasks', 'ProjectTasksByStatus', 'ProjectTasks'],
+  tagTypes: ['EpicTasks', 'ProjectTasksByStatus', 'ProjectTasks', 'TaskById'],
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   keepUnusedDataFor: 60 * 1, // 1 minute
   endpoints: (builder) => ({
@@ -44,6 +44,16 @@ export const tasksApi = createApi({
         { type: 'ProjectTasks', id: args.projectId },
       ],
     }),
+    getTaskById: builder.query<
+      { response: { data: ITask[]; meta: IMetaFetchedData }; error: null },
+      { projectId: string; taskId: string }
+    >({
+      query: ({ projectId, taskId }) =>
+        `/fetch-task-by-id?projectId=${projectId}&taskId=${taskId}`,
+      providesTags: (result, error, args) => [
+        { type: 'TaskById', id: args.taskId },
+      ],
+    }),
   }),
 });
 
@@ -51,4 +61,5 @@ export const {
   useGetEpicTasksQuery,
   useGetProjectTasksByStatusQuery,
   useGetProjectTasksQuery,
+  useGetTaskByIdQuery,
 } = tasksApi;

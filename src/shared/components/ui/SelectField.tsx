@@ -4,7 +4,7 @@ import Select, { GroupBase, Props as SelectProps } from 'react-select';
 
 export interface SelectOption {
   value: string | number;
-  label: string;
+  label: string | Record<string, string | boolean | number>;
 }
 
 interface IProps extends Omit<

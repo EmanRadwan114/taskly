@@ -31,7 +31,10 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   iconClassName?: string;
   inputClassName?: string;
   formatOptionLabel?: (
-    option: { label: string; icon: ReactNode },
+    option: {
+      label: string | Record<string, string | boolean | number>;
+      icon: ReactNode;
+    },
     labelMeta: unknown
   ) => ReactNode;
   onChange?: (...args: unknown[]) => void;

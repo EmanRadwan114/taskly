@@ -18,7 +18,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
       'defaultValue' | 'name' | 'value' | 'onChange' | 'onBlur'
     >,
     Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
-  label: string;
+  label?: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
   containerClassName?: string;
@@ -30,13 +30,13 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   isEditing?: boolean;
   iconClassName?: string;
   inputClassName?: string;
-  formatOptionLabel?: (
-    option: {
-      label: string | Record<string, string | boolean | number>;
-      icon: ReactNode;
-    },
-    labelMeta: unknown
-  ) => ReactNode;
+  formatOptionLabel?: ({
+    label,
+    icon,
+  }: {
+    label: string | Record<string, string | boolean | number>;
+    icon: ReactNode;
+  }) => ReactNode;
   onChange?: (...args: unknown[]) => void;
   onBlur?: (...args: unknown[]) => void;
 }
@@ -79,7 +79,6 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     <div className={`flex flex-col gap-1.5 w-full ${containerClassName}`}>
       {isTextArea && (
         <TextArea
-          id={label}
           variant={activeVariant}
           disabled={disabled}
           {...field}
@@ -99,7 +98,6 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
       {isSelect && (
         <SelectField
-          id={label}
           variant={activeVariant}
           isDisabled={disabled}
           options={options}
@@ -122,7 +120,6 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
 
       {!isSelect && !isTextArea && (
         <Input
-          id={label}
           variant={activeVariant}
           disabled={disabled}
           {...field}

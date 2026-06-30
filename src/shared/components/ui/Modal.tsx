@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface IProps {
   children: React.ReactNode;
@@ -9,6 +10,8 @@ interface IProps {
 }
 
 const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -19,9 +22,21 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setIsMounted(true);
 
-  return (
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
+  if (!isOpen || !isMounted) return null;
+
+  const targetNode = document.getElementById('modal-root');
+
+  if (!targetNode) return null;
+
+  return createPortal(
     <section
       className={`fixed inset-s-0 inset-e-0 top-0 bottom-0 z-1000 h-screen bg-slate-dark/20 flex items-center justify-center`}
       onClick={onClose}
@@ -32,7 +47,8 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
       >
         {children}
       </div>
-    </section>
+    </section>,
+    targetNode
   );
 };
 

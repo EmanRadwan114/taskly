@@ -29,6 +29,7 @@ export default function RootLayout({
         <StoreProvider>
           <GlobalNetworkGuard />
           <GlobalLayout />
+          <div id="modal-root"></div>
 
           {children}
         </StoreProvider>

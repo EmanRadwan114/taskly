@@ -1,4 +1,4 @@
-import AddTaskForm from '@/features/tasks/components/AddTaskForm';
+import AddTaskForm from '@/features/tasks/components/add-task/AddTaskForm';
 
 interface IProps {
   searchParams: Promise<{

@@ -1,4 +1,3 @@
-import ProjectTasksHeader from '@/features/tasks/components/ProjectTasksHeader';
 import TasksBoard from '@/features/tasks/components/board-view/TasksBoard';
 import TasksList from '@/features/tasks/components/list-view/TasksList';
 

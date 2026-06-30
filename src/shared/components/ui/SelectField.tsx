@@ -4,7 +4,7 @@ import Select, { GroupBase, Props as SelectProps } from 'react-select';
 
 export interface SelectOption {
   value: string | number;
-  label: string;
+  label: string | Record<string, string | boolean | number>;
 }
 
 interface IProps extends Omit<
@@ -124,6 +124,7 @@ const SelectField = ({
             border: '1px solid var(--color-slate-light, #c3c6d6)',
             boxShadow: 'var(--app-shadow)',
             borderRadius: '2px',
+            minWidth: '250px',
           }),
           menuList: (base) => ({
             ...base,
@@ -143,6 +144,7 @@ const SelectField = ({
             cursor: 'pointer',
             '&:active': {
               backgroundColor: 'var(--color-primary-container, #0052cc)',
+              color: '#ffffff',
             },
           }),
         }}

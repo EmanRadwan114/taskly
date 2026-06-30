@@ -67,8 +67,6 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     const isValueChanged =
       getValues(fieldName) !== previousValues.current[fieldName];
 
-    console.log(isFieldValid, isFieldDirty, isValueChanged);
-
     if (isFieldValid && (isFieldDirty || isValueChanged)) {
       if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
         onHandleSubmitEpic({
@@ -210,16 +208,10 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
                 handleUpdateEpic('assignee_id');
               }}
               options={membersOptions}
-              formatOptionLabel={({
-                label,
-                icon,
-              }: {
-                label: string;
-                icon: ReactNode;
-              }) => (
+              formatOptionLabel={({ label, icon }) => (
                 <div className="flex items-center gap-2 cursor-pointer ">
                   <span>{icon}</span>
-                  <span>{label}</span>
+                  <span>{label as string}</span>
                 </div>
               )}
             />

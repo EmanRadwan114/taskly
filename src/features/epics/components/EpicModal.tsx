@@ -3,18 +3,18 @@
 import EpicDetails from './EpicDetails';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import PlusIcon from '@/assets/icons/plus.svg';
-import EmptyEpicTasks from '@/features/tasks/components/EmptyEpicTasks';
+import EmptyEpicTasks from '@/features/epics/components/EmptyEpicTasks';
 import Badge from '@/shared/components/ui/Badge';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import EpicTasks from '@/features/tasks/components/EpicTasks';
+import EpicTasks from '@/features/epics/components/EpicTasks';
 import { useGetEpicTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
 import LoadingEpicDetails from './LoadingEpicDetails';
-import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
+import LoadingEpicTasks from '@/features/epics/components/LoadingEpicTasks';
 import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
-import TaskDetailsModal from '@/features/tasks/components/TaskDetailsModal';
+import TaskDetailsModal from '@/features/tasks/components/task-details/TaskDetailsModal';
 
 const EpicModal = () => {
   const router = useRouter();
@@ -23,7 +23,7 @@ const EpicModal = () => {
     epicId: string;
   }>();
 
-  const isTaskDetailsModalOpen = !!useSearchParams().get('task_id') || false;
+  const isTaskDetailsModalOpen = !!useSearchParams().get('task_id');
 
   const {
     data: epicData,
@@ -66,7 +66,7 @@ const EpicModal = () => {
       onClick={() => router.back()}
     >
       <div
-        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] modal-container relative flex flex-col gap-5 lg:gap-8"
+        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] scroll relative flex flex-col gap-5 lg:gap-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* modal content */}

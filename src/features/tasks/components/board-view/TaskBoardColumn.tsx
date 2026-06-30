@@ -1,6 +1,6 @@
 'use client';
 
-import { TaskStatusEnum } from '../types/tasks.types';
+import { TaskStatusEnum } from '../../types/tasks.types';
 import { useParams } from 'next/navigation';
 import BoardTaskCard from './BoardTaskCard';
 import LinkButton from '@/shared/components/ui/LinkButton';
@@ -11,10 +11,10 @@ import { toast } from 'react-toastify';
 import {
   useFetchBoardColumn,
   useHandleBoardPagination,
-} from '../hooks/tasks.hooks';
+} from '../../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 import { useEffect, useState } from 'react';
-import TasksScrollError from './TasksScrollError';
+import TasksScrollError from '../TasksScrollError';
 
 interface IProps {
   status: TaskStatusEnum;

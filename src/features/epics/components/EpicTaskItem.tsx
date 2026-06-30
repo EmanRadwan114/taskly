@@ -5,21 +5,21 @@ import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
-import { ITask } from '../types/tasks.types';
 import AlertIcon from '@/assets/icons/alert.svg';
 import {
   formateDateString,
   getDueDateStatus,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
+import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
+import { ITask } from '@/features/tasks/types/tasks.types';
 
 interface Props {
   task: ITask;
 }
 
 const EpicTaskItem: React.FC<Props> = ({ task }) => {
-  const { handleRouteToTaskDetails } = useNavToTaskDetails(task);
+  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
 
   const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
   const assigneeInitials = getNameInitials(task?.assignee?.name);
@@ -27,8 +27,8 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
 
   const desktopView = (
     <div
-      className="hidden lg:flex p-4 justify-between items-center gap-4"
-      onClick={handleRouteToTaskDetails}
+      className="hidden lg:flex p-4 justify-between items-center gap-4 cursor-pointer"
+      onClick={handleNavToTaskDetails}
     >
       <div className="flex gap-4 items-center">
         <div className="flex flex-col gap-1">
@@ -78,8 +78,8 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
 
   const mobileView = (
     <div
-      className="border border-slate-lighter shadow-primary p-4 rounded-lg flex lg:hidden flex-col gap-2"
-      onClick={handleRouteToTaskDetails}
+      className="border border-slate-lighter shadow-primary p-4 rounded-lg flex lg:hidden flex-col gap-2 cursor-pointer"
+      onClick={handleNavToTaskDetails}
     >
       <div className="flex justify-between items-start ">
         <h3 className="text-slate-dark font-semibold text-body leading-5">

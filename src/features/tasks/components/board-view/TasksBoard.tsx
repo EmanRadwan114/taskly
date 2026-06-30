@@ -1,11 +1,11 @@
 'use client';
 
 import TaskBoardColumn from './TaskBoardColumn';
-import { TaskStatusEnum } from '../types/tasks.types';
-import ProjectTasksHeader from './ProjectTasksHeader';
+import { TaskStatusEnum } from '../../types/tasks.types';
+import ProjectTasksHeader from '../ProjectTasksHeader';
 import { useState } from 'react';
 import { useHandleSearch } from '@/shared/hooks/shared.hooks';
-import TaskDetailsModal from './TaskDetailsModal';
+import TaskDetailsModal from '../task-details/TaskDetailsModal';
 
 interface Props {
   searchParams: { task_id: string };
@@ -29,7 +29,7 @@ const TasksBoard: React.FC<Props> = ({ searchParams }) => {
           searchTerm={searchTerm}
           onSetSearchTerm={setSearchTerm}
         />
-        <div className="hidden lg:flex gap-6 w-full overflow-x-auto modal-container pb-4">
+        <div className="hidden lg:flex gap-6 w-full overflow-x-auto scroll pb-4">
           {statusList.map((status) => (
             <TaskBoardColumn
               key={status}

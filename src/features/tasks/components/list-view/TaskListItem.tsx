@@ -1,7 +1,6 @@
 'use client';
 
 import TableRow from '@/shared/components/ui/TableRow';
-import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import TableCol from '@/shared/components/ui/TableCol';
 import Badge from '@/shared/components/ui/Badge';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
@@ -13,15 +12,16 @@ import {
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
-import { statusBadgeStyle } from '../utils/tasks.utils';
-import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
+import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
+import { ITask } from '../../types/tasks.types';
+import { statusBadgeStyle } from '../../utils/tasks.utils';
 
 interface IProps {
   task: ITask;
 }
 
 const TaskListItem: React.FC<IProps> = ({ task }) => {
-  const { handleRouteToTaskDetails } = useNavToTaskDetails(task);
+  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
 
   const taskStatus = task?.status;
   const displayedTaskStatus = formateTaskStatus(taskStatus);
@@ -35,8 +35,8 @@ const TaskListItem: React.FC<IProps> = ({ task }) => {
   return (
     <TableRow
       key={task?.id}
-      className="bg-white border-b border-b-surface-low"
-      onClick={handleRouteToTaskDetails}
+      className="bg-white border-b border-b-surface-low cursor-pointer"
+      onClick={handleNavToTaskDetails}
     >
       {/* task id */}
       <TableCol className={`${tdStyle}`}>

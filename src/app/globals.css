@@ -197,34 +197,34 @@ input[type='checkbox']:checked {
 }
 
 /* scrollbar style */
-.modal-container {
+.scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--slate-lighter) transparent;
 }
 
-.modal-container.is-scrolling {
+.scroll.is-scrolling {
   scrollbar-width: thin;
 }
 
-.modal-container::-webkit-scrollbar {
+.scroll::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-container::-webkit-scrollbar-track,
-.modal-container::-webkit-scrollbar-thumb {
+.scroll::-webkit-scrollbar-track,
+.scroll::-webkit-scrollbar-thumb {
   background: transparent;
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
-.modal-container.is-scrolling::-webkit-scrollbar-track {
+.scroll.is-scrolling::-webkit-scrollbar-track {
   background: transparent;
 }
-.modal-container.is-scrolling::-webkit-scrollbar-thumb {
+.scroll.is-scrolling::-webkit-scrollbar-thumb {
   background: var(--slate-light);
 }
 
-.modal-container::-webkit-scrollbar-button {
+.scroll::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;

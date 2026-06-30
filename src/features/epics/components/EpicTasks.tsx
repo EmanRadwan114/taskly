@@ -1,4 +1,4 @@
-import { ITask } from '../types/tasks.types';
+import { ITask } from '../../tasks/types/tasks.types';
 import EpicTaskItem from './EpicTaskItem';
 
 interface Props {

@@ -10,7 +10,7 @@ const LoadingTasksList: React.FC = () => {
 
   const desktopView = (
     <div className="hidden lg:flex lg:flex-col lg:flex-1 w-full pb-6">
-      <div className="overflow-x-auto w-full modal-container">
+      <div className="overflow-x-auto w-full scroll">
         <Table className="min-w-200 shadow-none">
           <thead>
             <TableRow className="bg-surface-low/30 border-b border-slate-light/10">
@@ -23,7 +23,10 @@ const LoadingTasksList: React.FC = () => {
           </thead>
           <tbody>
             {Array.from({ length: 5 }).map((_, idx) => (
-              <TableRow key={idx} className="bg-white border-b border-b-surface-low">
+              <TableRow
+                key={idx}
+                className="bg-white border-b border-b-surface-low"
+              >
                 {/* task id */}
                 <TableCol className={`${tdStyle} w-1/8`}>
                   <div className="h-4 bg-slate-200 rounded w-16" />

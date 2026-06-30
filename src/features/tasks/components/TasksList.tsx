@@ -101,7 +101,7 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
         />
       ) : (
         <>
-          <div className="overflow-x-auto w-full modal-container">
+          <div className="overflow-x-auto w-full scroll">
             {/* tasks list */}
             <Table className="min-w-250 shadow-none">
               <thead>

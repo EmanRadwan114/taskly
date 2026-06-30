@@ -5,7 +5,6 @@ import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
-import { ITask } from '../types/tasks.types';
 import AlertIcon from '@/assets/icons/alert.svg';
 import {
   formateDateString,
@@ -13,6 +12,7 @@ import {
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
 import { useNavToTaskDetails } from '@/shared/hooks/shared.hooks';
+import { ITask } from '@/features/tasks/types/tasks.types';
 
 interface Props {
   task: ITask;

@@ -14,6 +14,7 @@ import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import LoadingAddTaskForm from './LoadingAddTaskForm';
 import { toast } from 'react-toastify';
 import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import { taskStatusOptions } from '../data/tasks.data';
 
 interface IProps {
   searchParams: { status: string; epic: string };
@@ -96,40 +97,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
     })) || []),
   ];
 
-  const statusOptions = [
-    {
-      value: TaskStatusEnum.TODO,
-      label: 'To Do',
-    },
-    {
-      value: TaskStatusEnum.IN_PROGRESS,
-      label: 'In Progress',
-    },
-    {
-      value: TaskStatusEnum.BLOCKED,
-      label: 'Blocked',
-    },
-    {
-      value: TaskStatusEnum.IN_REVIEW,
-      label: 'In Review',
-    },
-    {
-      value: TaskStatusEnum.READY_FOR_QA,
-      label: 'Ready For QA',
-    },
-    {
-      value: TaskStatusEnum.READY_FOR_PRODUCTION,
-      label: 'Ready For Production',
-    },
-    {
-      value: TaskStatusEnum.REOPENED,
-      label: 'Reopened',
-    },
-    {
-      value: TaskStatusEnum.DONE,
-      label: 'Done',
-    },
-  ];
+  const statusOptions = taskStatusOptions;
 
   const epicsOptions = [
     {

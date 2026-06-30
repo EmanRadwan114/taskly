@@ -29,7 +29,7 @@ const TasksBoard: React.FC<Props> = ({ searchParams }) => {
           searchTerm={searchTerm}
           onSetSearchTerm={setSearchTerm}
         />
-        <div className="hidden lg:flex gap-6 w-full overflow-x-auto modal-container pb-4">
+        <div className="hidden lg:flex gap-6 w-full overflow-x-auto scroll pb-4">
           {statusList.map((status) => (
             <TaskBoardColumn
               key={status}

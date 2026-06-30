@@ -23,11 +23,11 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
 
   return (
     <section
-      className="fixed inset-s-0 inset-e-0 top-0 bottom-0 z-1000 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
+      className={`fixed inset-s-0 inset-e-0 top-0 bottom-0 z-1000 h-screen bg-slate-dark/20 flex items-center justify-center`}
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] scroll ${className}`}
+        className={`sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto scroll flex flex-col p-4 lg:p-8 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

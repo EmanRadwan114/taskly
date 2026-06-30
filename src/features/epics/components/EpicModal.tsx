@@ -11,10 +11,10 @@ import EpicTasks from '@/features/epics/components/EpicTasks';
 import { useGetEpicTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { toast } from 'react-toastify';
 import LoadingEpicDetails from './LoadingEpicDetails';
-import LoadingEpicTasks from '@/features/tasks/components/LoadingEpicTasks';
+import LoadingEpicTasks from '@/features/epics/components/LoadingEpicTasks';
 import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
-import TaskDetailsModal from '@/features/tasks/components/TaskDetailsModal';
+import TaskDetailsModal from '@/features/tasks/components/task-details/TaskDetailsModal';
 
 const EpicModal = () => {
   const router = useRouter();
@@ -23,7 +23,7 @@ const EpicModal = () => {
     epicId: string;
   }>();
 
-  const isTaskDetailsModalOpen = !!useSearchParams().get('task_id') || false;
+  const isTaskDetailsModalOpen = !!useSearchParams().get('task_id');
 
   const {
     data: epicData,

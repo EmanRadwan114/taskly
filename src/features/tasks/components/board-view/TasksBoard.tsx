@@ -1,11 +1,11 @@
 'use client';
 
 import TaskBoardColumn from './TaskBoardColumn';
-import { TaskStatusEnum } from '../types/tasks.types';
-import ProjectTasksHeader from './ProjectTasksHeader';
+import { TaskStatusEnum } from '../../types/tasks.types';
+import ProjectTasksHeader from '../ProjectTasksHeader';
 import { useState } from 'react';
 import { useHandleSearch } from '@/shared/hooks/shared.hooks';
-import TaskDetailsModal from './TaskDetailsModal';
+import TaskDetailsModal from '../task-details/TaskDetailsModal';
 
 interface Props {
   searchParams: { task_id: string };

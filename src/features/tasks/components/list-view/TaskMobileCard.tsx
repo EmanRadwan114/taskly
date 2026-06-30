@@ -1,6 +1,5 @@
+'use client';
 import Badge from '@/shared/components/ui/Badge';
-import { ITask } from '../types/tasks.types';
-import { statusBadgeStyle } from '../utils/tasks.utils';
 import {
   formateDateString,
   formateTaskStatus,
@@ -10,12 +9,17 @@ import UserAvatar from '@/shared/components/ui/UserAvatar';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
 import Button from '@/shared/components/ui/Button';
 import DotsIcon from '@/assets/icons/dots.svg';
+import { ITask } from '../../types/tasks.types';
+import { statusBadgeStyle } from '../../utils/tasks.utils';
+import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask;
 }
 
 const TaskMobileCard: React.FC<IProps> = ({ task }) => {
+  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
+
   const taskStatus = task?.status;
   const displayedTaskStatus = formateTaskStatus(taskStatus);
   const assigneeName = task?.assignee?.name;
@@ -25,7 +29,10 @@ const TaskMobileCard: React.FC<IProps> = ({ task }) => {
   const avatarBgColor = Math.round(Math.random() * 255) + 1;
 
   return (
-    <div className="bg-white flex flex-col gap-3 p-4 rounded-lg">
+    <div
+      className="bg-white flex flex-col gap-3 p-4 rounded-lg cursor-pointer"
+      onClick={handleNavToTaskDetails}
+    >
       <div>
         <div className="flex justify-between items-center">
           {/* task id */}

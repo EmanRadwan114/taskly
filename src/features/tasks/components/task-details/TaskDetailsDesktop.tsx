@@ -1,68 +1,38 @@
 'use client';
 
 import Badge from '@/shared/components/ui/Badge';
-import Modal from '@/shared/components/ui/Modal';
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
-import { useState } from 'react';
 import LayersIcon from '@/assets/icons/layers.svg';
-import LinkIcon from '@/assets/icons/link.svg';
 import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
-import { taskStatusOptions } from '../data/tasks.data';
-import { statusBadgeStyle } from '../utils/tasks.utils';
-import UserAvatar from '@/shared/components/ui/UserAvatar';
+import LinkIcon from '@/assets/icons/link.svg';
 import Button from '@/shared/components/ui/Button';
-import { useGetTaskByIdQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
-import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
+import { ITask, TaskStatusEnum } from '../../types/tasks.types';
+import { statusBadgeStyle } from '../../utils/tasks.utils';
+import UserAvatar from '@/shared/components/ui/UserAvatar';
 import {
   formateDateString,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import { useFetchMembers } from '@/shared/hooks/shared.hooks';
-import UnassignIcon from '@/assets/icons/unassigned.svg';
+import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { useForm } from 'react-hook-form';
-import { taskSchema, TTaskInput } from '../validation/tasks.validation';
+import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TaskStatusEnum } from '../types/tasks.types';
+import { SelectOption } from '@/shared/components/ui/SelectField';
 
-const TaskDetailsModal: React.FC = ({}) => {
-  const { projectId } = useParams();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+interface IProps {
+  task: ITask | undefined;
+  statusOptions: SelectOption[];
+  epicsOptions: SelectOption[];
+  membersOptions: SelectOption[];
+}
 
-  const taskId = searchParams.get('task_id');
-  const isOpen = !!taskId;
-
-  const {
-    data: taskData,
-    isLoading,
-    error,
-  } = useGetTaskByIdQuery(
-    { projectId: projectId as string, taskId: taskId as string },
-    { skip: !projectId || !taskId }
-  );
-
-  const {
-    data: epicsResponse,
-    isError: epicsError,
-    isLoading: epicsLoading,
-  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
-
-  const { members } = useFetchMembers(projectId as string);
-
-  const task = taskData?.response?.data?.[0];
-  const epicsList = epicsResponse?.response?.data || [];
-
-  // formated task details
-  const assigneeInitials = getNameInitials(task?.assignee?.name);
-  const formatedDueDate = formateDateString(task?.due_date);
-  const formatedCreatedAt = formateDateString(task?.created_at);
+const TaskDetailsDesktop: React.FC<IProps> = ({
+  task,
+  epicsOptions,
+  membersOptions,
+  statusOptions,
+}) => {
+  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
 
   const {
     control,
@@ -84,61 +54,18 @@ const TaskDetailsModal: React.FC = ({}) => {
     },
   });
 
-  // watchers
   const taskStatus = watch('status');
 
-  // handlers
-  const closeModal = () => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete('task_id');
-    router.push(`${pathname}?${newParams.toString()}`);
-  };
-
-  // select options
-  const statusOptions = taskStatusOptions;
-
-  const epicsOptions = [
-    {
-      value: '',
-      label: 'Select an epic...',
-    },
-    ...epicsList?.map((epic) => ({
-      value: epic.epic_id,
-      label: `${epic?.epic_id} (${epic?.title})`,
-    })),
-  ];
-
-  const membersOptions = [
-    {
-      value: '',
-      label: { name: 'Unassigned' },
-      icon: (
-        <UserAvatar
-          className="size-7 bg-surface-md text-slate-dark! text-label"
-          content={<UnassignIcon className="w-3 text-slate-dark" />}
-        />
-      ),
-    },
-    ...(members?.map((member) => ({
-      value: member?.user_id,
-      label: member?.metadata,
-      icon: (
-        <UserAvatar
-          className="size-7 bg-surface-md text-slate-dark! text-label"
-          content={getNameInitials(member?.metadata?.name)}
-        />
-      ),
-    })) || []),
-  ];
+  const formatedCreatedAt = formateDateString(task?.created_at);
 
   // style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;
   const inputContentStyle = `font-medium text-secondary leading-5 focus:outline-0! focus-within:outline-0! focus-visible:outline-0!`;
   const dateLabelStyle = `text-secondary! text-body-sm! leading-4! capitalize! font-normal!`;
 
-  // views
-  const desktopView = (
-    <div className="hidden lg:flex min-h-[80vh]">
+  //   view
+  return (
+    <form className="hidden lg:flex min-h-[80vh] bg-white rounded-lg">
       {/* left side */}
       <div className="w-2/3">
         <div className="flex flex-col min-h-full">
@@ -214,7 +141,7 @@ const TaskDetailsModal: React.FC = ({}) => {
             <Button
               variant="ghost"
               className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit!"
-              onClick={closeModal}
+              onClick={handleCloseTaskDetails}
             >
               close
             </Button>
@@ -339,21 +266,8 @@ const TaskDetailsModal: React.FC = ({}) => {
           </div>
         </div>
       </div>
-    </div>
-  );
-
-  const mobileView = <div></div>;
-
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={closeModal}
-      className="sm:w-full lg:w-3/4 xl:w-2/3"
-    >
-      {desktopView}
-      {mobileView}
-    </Modal>
+    </form>
   );
 };
 
-export default TaskDetailsModal;
+export default TaskDetailsDesktop;

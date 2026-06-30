@@ -17,14 +17,14 @@ import {
   useHandlePagination,
   useHandleSearch,
 } from '@/shared/hooks/shared.hooks';
-import { ITask } from '../types/tasks.types';
-import ProjectTasksHeader from './ProjectTasksHeader';
+import { ITask } from '../../types/tasks.types';
+import ProjectTasksHeader from '../ProjectTasksHeader';
 import SearchStatus from '@/shared/components/ui/SearchStatus';
 import emptyImg from '@/assets/imgs/empty-epics.png';
 import errorImg from '@/assets/imgs/alert.png';
 import EmptyProjectTasks from './EmptyProjectTasks';
-import TasksScrollError from './TasksScrollError';
-import TaskDetailsModal from './TaskDetailsModal';
+import TasksScrollError from '../TasksScrollError';
+import TaskDetailsModal from '../task-details/TaskDetailsModal';
 
 interface IProps {
   searchParams: { page: string; task_id: string };

@@ -225,19 +225,6 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     due_date: task?.due_date || '',
   });
 
-  useEffect(() => {
-    if (task) {
-      previousValues.current = {
-        title: task.title || '',
-        status: task.status || TaskStatusEnum.TODO,
-        description: task.description || '',
-        assignee_id: task.assignee?.id || null,
-        epic_id: task.epic?.id || null,
-        due_date: task.due_date || '',
-      };
-    }
-  }, [task]);
-
   const {
     control,
     getValues,
@@ -260,22 +247,90 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
   });
 
   const taskStatus = watch('status');
+
   const updateTaskActionWithId = updateTaskAction.bind(null, task?.id);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (formData: FormData) => updateTaskActionWithId(formData),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.tasks.projectTasksByStatus],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.tasks.epicTasks],
+      });
+
+      const currentStatus = getValues('status') || TaskStatusEnum.TODO;
+      const oldStatus = previousValues.current.status;
+      const currentEpicId = getValues('epic_id') || null;
+      const oldEpicId = previousValues.current.epic_id;
+
+      const oldStatusCache = queryClient.getQueryData([
+        queryKeys.tasks.projectTasksByStatus,
+        oldStatus,
+      ]);
+      const newStatusCache = queryClient.getQueryData([
+        queryKeys.tasks.projectTasksByStatus,
+        currentStatus,
+      ]);
+      const oldEpicTasksCache = queryClient.getQueryData([
+        queryKeys.tasks.epicTasks,
+        oldEpicId,
+      ]);
+      const newEpicTasksCache = queryClient.getQueryData([
+        queryKeys.tasks.epicTasks,
+        currentEpicId,
+      ]);
+
+      if (oldStatus !== currentStatus) {
+        // Remove item from old column cache array
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksByStatus, oldStatus],
+          (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
+        );
+        // add item to the new column cache array
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          (old: ITask[]) => {
+            const optimisticTask = {
+              ...task,
+              status: currentStatus,
+            };
+            return old ? [...old, optimisticTask] : [optimisticTask];
+          }
+        );
+      }
+
+      if (oldEpicId !== currentEpicId) {
+        // Remove item from old epic cache array
+        queryClient.setQueryData(
+          [queryKeys.tasks.epicTasks, oldEpicId],
+          (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
+        );
+        // add item to the new epic cache array
+        queryClient.setQueryData(
+          [queryKeys.tasks.epicTasks, currentEpicId],
+          (old: ITask[]) => {
+            const optimisticTask = {
+              ...task,
+              epic_id: currentEpicId,
+            };
+            return old ? [...old, optimisticTask] : [optimisticTask];
+          }
+        );
+      }
+
+      return {
+        oldStatusCache,
+        newStatusCache,
+        oldEpicTasksCache,
+        newEpicTasksCache,
+      };
+    },
     onSuccess: (response) => {
       if (!response.success) {
         toast.error(response.message || 'Failed to update task.');
-
-        reset({
-          title: previousValues.current.title,
-          status: previousValues.current.status,
-          description: previousValues.current.description,
-          assignee_id: previousValues.current.assignee_id || '',
-          epic_id: previousValues.current.epic_id || '',
-          due_date: previousValues.current.due_date,
-        });
+        reset(previousValues.current);
         return;
       }
 
@@ -333,17 +388,34 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         due_date: getValues('due_date') || '',
       };
     },
-    onError: (error) => {
+    onError: (error, _, context) => {
       toast.error(error.message || 'Failed to update task');
 
-      reset({
-        title: previousValues.current.title,
-        status: previousValues.current.status,
-        description: previousValues.current.description,
-        assignee_id: previousValues.current.assignee_id || '',
-        epic_id: previousValues.current.epic_id || '',
-        due_date: previousValues.current.due_date,
-      });
+      const currentStatus = getValues('status') || TaskStatusEnum.TODO;
+      const oldStatus = previousValues.current.status;
+      const currentEpicId = getValues('epic_id') || null;
+      const oldEpicId = previousValues.current.epic_id;
+
+      if (context) {
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksByStatus, oldStatus],
+          context.oldStatusCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          context.newStatusCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.epicTasks, oldEpicId],
+          context.oldEpicTasksCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.epicTasks, currentEpicId],
+          context.newEpicTasksCache
+        );
+      }
+
+      reset(previousValues.current);
     },
   });
 

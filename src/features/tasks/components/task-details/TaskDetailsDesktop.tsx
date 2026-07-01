@@ -106,7 +106,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
       ) : !task ? (
         <TaskNotFound />
       ) : (
-        <form className="flex">
+        <form className="flex" onSubmit={(e) => e.preventDefault()}>
           {/* left side */}
           <div className="w-2/3">
             <div className="flex flex-col min-h-full">

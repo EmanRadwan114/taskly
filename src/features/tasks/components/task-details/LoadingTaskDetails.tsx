@@ -124,7 +124,9 @@ const LoadingTaskDetails: React.FC = () => {
         <div className="grid grid-cols-2 gap-3">
           {/* Assignee skeleton */}
           <div className="flex flex-col gap-1.5 p-4 rounded-lg bg-surface-low">
-            <span className="text-label-sm text-secondary uppercase font-bold">Assignee</span>
+            <span className="text-label-sm text-secondary uppercase font-bold">
+              Assignee
+            </span>
             <div className="flex items-center gap-3 mt-1">
               <div className="size-6 rounded-full bg-slate-200 shrink-0" />
               <div className="h-4 bg-slate-200 rounded w-16" />
@@ -132,7 +134,9 @@ const LoadingTaskDetails: React.FC = () => {
           </div>
           {/* Due date skeleton */}
           <div className="flex flex-col gap-1.5 p-4 rounded-lg bg-surface-low">
-            <span className="text-label-sm text-secondary uppercase font-bold">due date</span>
+            <span className="text-label-sm text-secondary uppercase font-bold">
+              due date
+            </span>
             <div className="flex items-center gap-2 mt-1">
               <div className="size-4 bg-slate-200 rounded shrink-0" />
               <div className="h-4 bg-slate-200 rounded w-20" />
@@ -155,7 +159,9 @@ const LoadingTaskDetails: React.FC = () => {
 
         {/* Description skeleton */}
         <div className="flex flex-col gap-3">
-          <span className="text-label-sm text-secondary uppercase font-bold">Description</span>
+          <span className="text-label-sm text-secondary uppercase font-bold">
+            Description
+          </span>
           <div className="bg-white p-5 rounded-lg border border-slate-light/10 shadow-primary flex flex-col gap-2 h-24">
             <div className="h-3 bg-slate-200 rounded w-full" />
             <div className="h-3 bg-slate-200 rounded w-5/6" />
@@ -167,7 +173,7 @@ const LoadingTaskDetails: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col flex-1 w-full animate-pulse">
+    <div className="flex flex-col flex-1 w-full">
       {isMobile ? mobileView : desktopView}
     </div>
   );

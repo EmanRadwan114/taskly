@@ -64,6 +64,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
 
   const formatedCreatedAt = formateDateString(task?.created_at);
 
+  // handlers
+  const onSubmit = () => {};
+
   //   style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;
   const inputContentStyle = `font-medium text-secondary leading-5 focus:outline-0! focus-within:outline-0! focus-visible:outline-0!`;
@@ -71,13 +74,13 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   //   view
   return (
     <div className="rounded-t-3xl pb-8 border-t border-t-white/40 bg-background max-h-[70vh] self-end lg:hidden">
-      <div className="mx-auto bg-slate-light/50 w-10 h-1 rounded-xl py-4"></div>
+      <div className="mx-auto bg-slate-light/50 w-10 h-1 rounded-xl my-4"></div>
       {isError ? (
         <FetchDataErrorMsg />
       ) : !task ? (
         <TaskNotFound />
       ) : (
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className="flex flex-col gap-8 min-h-full px-6">
             <div className="flex flex-col gap-4">
               <header className="flex flex-col gap-4">

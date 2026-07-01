@@ -47,7 +47,7 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
 
   return createPortal(
     <section
-      className={`fixed inset-s-0 inset-e-0 top-0 bottom-0 z-1000 h-screen bg-slate-dark/20 flex items-center justify-center`}
+      className={`fixed inset-s-0 inset-e-0 top-0 bottom-0 z-1000 h-screen bg-slate-dark/20 flex items-center justify-center backdrop-blur-xs`}
       onClick={onClose}
     >
       <div

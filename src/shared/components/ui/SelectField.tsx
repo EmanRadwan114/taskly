@@ -124,7 +124,7 @@ const SelectField = ({
             border: '1px solid var(--color-slate-light, #c3c6d6)',
             boxShadow: 'var(--app-shadow)',
             borderRadius: '2px',
-            minWidth: '250px',
+            minWidth: '150px',
           }),
           menuList: (base) => ({
             ...base,

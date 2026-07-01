@@ -106,7 +106,7 @@ const TaskBoardColumn: React.FC<IProps> = ({
 
   return (
     <div
-      className="flex flex-col gap-4 min-w-64 min-h-screen"
+      className="flex flex-col gap-4 min-w-64 max-h-full overflow-x-auto scroll"
       ref={columnTarget}
     >
       {/* status header */}

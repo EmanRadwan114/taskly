@@ -134,7 +134,7 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0, rootMargin: '100px' }
     );
     observer.observe(target);
     return () => {
@@ -187,7 +187,7 @@ export const useFetchBoardColumn = ({
           setShouldFetched(true);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0, rootMargin: '100px' }
     );
 
     observer.observe(target);

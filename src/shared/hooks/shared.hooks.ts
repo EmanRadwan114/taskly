@@ -119,7 +119,7 @@ export const useHandlePagination = <T extends { id: string | number }>({
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0, rootMargin: '100px' }
     );
     observer.observe(target);
     return () => {

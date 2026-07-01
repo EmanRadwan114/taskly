@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { toast } from 'react-toastify';
 import { createTaskAction } from '../server-actions/tasks.actions';
-import { TTaskInput } from '../validation/tasks.validation';
+import { taskSchema, TTaskInput } from '../validation/tasks.validation';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import {
   tasksApi,
@@ -17,6 +17,8 @@ import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import { usePathname, useRouter } from 'next/navigation';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // ^ ---------------------------- Create Task Hook -------------------------
 export const useCreateTask = ({
@@ -36,8 +38,6 @@ export const useCreateTask = ({
   const [_, startTransition] = useTransition();
 
   const inValidateTasksQueries = () => {
-    console.log(epicId, status);
-
     if (status)
       dispatch(
         tasksApi.util.invalidateTags([
@@ -200,5 +200,69 @@ export const useFetchBoardColumn = ({
     isFetching,
     error,
     observerTarget,
+  };
+};
+
+// ^ -----
+export const useUpdateTaskDetails = (task: ITask | undefined) => {
+  const previousValues = useRef({
+    title: task?.title || '',
+    status: task?.status,
+    description: task?.description || '',
+    assignee_id: task?.assignee?.id || null,
+    epic_id: task?.epic?.id || null,
+    due_date: task?.due_date || '',
+  });
+
+  const {
+    control,
+    getValues,
+    watch,
+    trigger,
+    getFieldState,
+    formState: { errors },
+  } = useForm<TTaskInput>({
+    resolver: zodResolver(taskSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      title: task?.title || '',
+      status: task?.status || TaskStatusEnum.TODO,
+      description: task?.description || '',
+      assignee_id: task?.assignee?.id || '',
+      epic_id: task?.epic_id || '',
+      due_date: task?.due_date || '',
+    },
+  });
+
+  const taskStatus = watch('status');
+
+  // handlers
+  const handleUpdateTaskDetails = async (fieldName: keyof TTaskInput) => {
+    const isFieldValid = await trigger(fieldName);
+    const { isDirty: isFieldDirty } = getFieldState(fieldName);
+
+    const isValueChanged =
+      getValues(fieldName) !== previousValues.current[fieldName];
+
+    if (isFieldValid && (isFieldDirty || isValueChanged)) {
+      if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
+        onHandleSubmitTaskDetails({
+          assignee_id: null,
+        });
+      } else {
+        onHandleSubmitTaskDetails({
+          [fieldName]: getValues(fieldName),
+        });
+      }
+      // update previous values if field is valid
+      previousValues.current[fieldName] = getValues(fieldName) || '';
+    }
+  };
+
+  return {
+    handleUpdateTaskDetails,
+    control,
+    errors,
+    taskStatusWatcher: taskStatus,
   };
 };

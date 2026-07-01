@@ -22,6 +22,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 import TaskNotFound from './TaskNotFound';
+import { useUpdateTaskDetails } from '../../hooks/tasks.hooks';
 
 interface IProps {
   task: ITask | undefined;
@@ -39,28 +40,8 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   isError,
 }) => {
   const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-
-  const {
-    control,
-    getValues,
-    watch,
-    trigger,
-    getFieldState,
-    formState: { errors },
-  } = useForm<TTaskInput>({
-    resolver: zodResolver(taskSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      title: task?.title || '',
-      status: task?.status || TaskStatusEnum.TODO,
-      description: task?.description || '',
-      assignee_id: task?.assignee?.id || '',
-      epic_id: task?.epic_id || '',
-      due_date: task?.due_date || '',
-    },
-  });
-
-  const taskStatus = watch('status');
+  const { control, errors, taskStatusWatcher, handleUpdateTaskDetails } =
+    useUpdateTaskDetails(task);
 
   const formatedCreatedAt = formateDateString(task?.created_at);
 
@@ -118,7 +99,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     name="status"
                     id="status"
                     className={`${inputContentStyle} bg-transparent! p-0!`}
-                    containerClassName={`py-1! px-3! rounded-xl ${statusBadgeStyle[taskStatus as TaskStatusEnum]} `}
+                    containerClassName={`py-1! px-3! rounded-xl ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]} `}
                     isSelect
                     isEditing
                     // disabled={isPending}

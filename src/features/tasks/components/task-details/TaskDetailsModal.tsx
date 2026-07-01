@@ -16,7 +16,6 @@ import UnassignIcon from '@/assets/icons/unassigned.svg';
 import TaskDetailsDesktop from './TaskDetailsDesktop';
 import TaskDetailsMobile from './TaskDetailsMobile';
 import LoadingTaskDetails from './LoadingTaskDetails';
-import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -46,8 +45,6 @@ const TaskDetailsModal: React.FC = ({}) => {
 
   const task = taskData?.response?.data?.[0];
   const epicsList = epicsResponse?.response?.data || [];
-
-  // handlers
 
   // select options
   const statusOptions = taskStatusOptions;

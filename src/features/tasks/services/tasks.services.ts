@@ -63,7 +63,9 @@ export const fetchTaskById = async ({
   taskId: string;
 }) => {
   try {
-    const response = await fetch(`/api/task/${projectId}/${taskId}`);
+    const response = await fetch(
+      `/api/fetch-task-by-id?projectId=${projectId}&taskId=${taskId}`
+    );
 
     const result = await response.json();
     if (response.status !== 200) {

@@ -57,7 +57,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
     <div className="rounded-t-3xl pb-8 border-t border-t-white/40 bg-background max-h-[70vh] self-end lg:hidden">
       <div className="mx-auto bg-slate-light/50 w-10 h-1 rounded-xl my-4"></div>
       {isError ? (
-        <FetchDataErrorMsg />
+        <FetchDataErrorMsg message="Failed to fetch task" />
       ) : !task ? (
         <TaskNotFound />
       ) : (
@@ -235,7 +235,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   onBlur={() => {
                     handleUpdateTaskDetails('description');
                   }}
-                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-10 text-body-sm"
+                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-6 text-body-sm"
                   className=""
                 />
               </div>

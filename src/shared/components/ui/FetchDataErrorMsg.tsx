@@ -4,10 +4,12 @@ interface FetchDataErrorMsgProps {
   message?: string;
 }
 
-const FetchDataErrorMsg: React.FC<FetchDataErrorMsgProps> = ({ message }) => {
+const FetchDataErrorMsg: React.FC<FetchDataErrorMsgProps> = ({
+  message = 'Failed to fetch data',
+}) => {
   return (
-    <div className="flex items-center justify-center gap-2 text-error-dark py-4 text-body-sm">
-      <WarningIcon className="w-4 h-4" />
+    <div className="flex flex-col items-center justify-center gap-2 text-error-dark py-4 text-heading-5 font-medium w-full">
+      <WarningIcon className="size-16" />
       <p>{message}</p>
     </div>
   );

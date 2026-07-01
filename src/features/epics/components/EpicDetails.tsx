@@ -163,7 +163,7 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
             isEditing
             disabled={isPending}
             onBlur={(e) => handleUpdateEpic('description')}
-            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-10"
+            inputClassName="text-secondary text-body leading-5 lg:text-slate-dark/80 lg:text-body-lg lg:leading-6.5 resize-none min-h-6"
             className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
           />
         </div>

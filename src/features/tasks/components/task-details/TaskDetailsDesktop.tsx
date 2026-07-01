@@ -86,7 +86,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   return (
     <div className="hidden lg:flex min-h-[80vh] bg-white rounded-lg">
       {isError ? (
-        <FetchDataErrorMsg />
+        <FetchDataErrorMsg message="Failed to fetch task" />
       ) : !task ? (
         <TaskNotFound />
       ) : (
@@ -151,7 +151,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   isEditing
                   disabled={isPending}
                   onBlur={(e) => handleUpdateTaskDetails('description')}
-                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-10"
+                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-6"
                   className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
                 />
               </div>

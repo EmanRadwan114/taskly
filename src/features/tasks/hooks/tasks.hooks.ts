@@ -22,6 +22,12 @@ import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 
 // ^ ---------------------------- Create Task Hook -------------------------
 export const useCreateTask = ({
@@ -208,6 +214,8 @@ export const useFetchBoardColumn = ({
 
 // ^ ----------------------  Update Task Details Hook  --------------------------
 export const useUpdateTaskDetails = (task: ITask | undefined) => {
+  const queryClient = useQueryClient();
+
   const previousValues = useRef({
     title: task?.title || '',
     status: task?.status || TaskStatusEnum.TODO,
@@ -217,10 +225,18 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     due_date: task?.due_date || '',
   });
 
-  const action = updateTaskAction.bind(null, task?.id);
-
-  const [state, formAction, isPending] = useActionState(action, null);
-  const [_, startTransition] = useTransition();
+  useEffect(() => {
+    if (task) {
+      previousValues.current = {
+        title: task.title || '',
+        status: task.status || TaskStatusEnum.TODO,
+        description: task.description || '',
+        assignee_id: task.assignee?.id || null,
+        epic_id: task.epic?.id || null,
+        due_date: task.due_date || '',
+      };
+    }
+  }, [task]);
 
   const {
     control,
@@ -228,6 +244,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     watch,
     trigger,
     getFieldState,
+    reset,
     formState: { errors },
   } = useForm<TTaskInput>({
     resolver: zodResolver(taskSchema),
@@ -237,31 +254,78 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       status: task?.status || TaskStatusEnum.TODO,
       description: task?.description || '',
       assignee_id: task?.assignee?.id || '',
-      epic_id: task?.epic_id || '',
+      epic_id: task?.epic?.id || '',
       due_date: task?.due_date || '',
     },
   });
 
   const taskStatus = watch('status');
+  const updateTaskActionWithId = updateTaskAction.bind(null, task?.id);
 
-  useEffect(() => {
-    if (!state) return;
-    if (state.success) {
-      toast.success(state.message);
-    } else {
-      toast.error(state.message);
-    }
-  }, [state]);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (formData: FormData) => updateTaskActionWithId(formData),
+    onSuccess: (response) => {
+      if (!response.success) return;
 
-  // handlers
+      // Invalidate specific task detail view
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.taskById, task?.id],
+      });
+
+      // invalidate cache of old & new epic/status if epic/status change
+      // or invalidate only selected epic tasks / selected status tasks if epic/status same
+      const currentStatus = getValues('status') || TaskStatusEnum.TODO;
+      const oldStatus = previousValues.current.status;
+      const currentEpicId = getValues('epic_id') || null;
+      const oldEpicId = previousValues.current.epic_id;
+
+      if (oldStatus !== currentStatus) {
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.tasks.projectTasksByStatus, oldStatus],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.tasks.projectTasksByStatus, currentStatus],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.tasks.projectTasksByStatus, currentStatus],
+        });
+      }
+
+      if (oldEpicId !== currentEpicId) {
+        if (oldEpicId) {
+          queryClient.invalidateQueries({
+            queryKey: [queryKeys.tasks.epicTasks, oldEpicId],
+          });
+        }
+        if (currentEpicId) {
+          queryClient.invalidateQueries({
+            queryKey: [queryKeys.tasks.epicTasks, currentEpicId],
+          });
+        }
+      } else if (currentEpicId) {
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.tasks.epicTasks, currentEpicId],
+        });
+      }
+
+      // update old values
+      previousValues.current = {
+        title: getValues('title') || '',
+        status: currentStatus,
+        description: getValues('description') || '',
+        assignee_id: getValues('assignee_id') || null,
+        epic_id: currentEpicId,
+        due_date: getValues('due_date') || '',
+      };
+    },
+  });
+
+  // Handlers
   const handleUpdateAction = (fieldName: keyof TTaskInput) => {
     const formData = new FormData();
-
     formData.append(fieldName, getValues(fieldName) || '');
-
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
   const handleUpdateTaskDetails = async (fieldName: keyof TTaskInput) => {
@@ -273,14 +337,6 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
     if (isFieldValid && (isFieldDirty || isValueChanged)) {
       handleUpdateAction(fieldName);
-
-      // update previous values if field is valid
-      if (fieldName === 'status') {
-        previousValues.current[fieldName] =
-          getValues(fieldName) || TaskStatusEnum.TODO;
-      } else {
-        previousValues.current[fieldName] = getValues(fieldName) || '';
-      }
     }
   };
 

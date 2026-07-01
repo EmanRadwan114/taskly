@@ -62,7 +62,6 @@ export const createTaskAction = async (
 // ^ ------------------------- Update Task Action ------------------------- //
 export const updateTaskAction = async (
   task_id: string | undefined,
-  _: unknown,
   formData: FormData
 ) => {
   // get access token

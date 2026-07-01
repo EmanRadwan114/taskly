@@ -13,8 +13,8 @@ import { toast } from 'react-toastify';
 import LoadingEpicDetails from './LoadingEpicDetails';
 import LoadingEpicTasks from '@/features/epics/components/LoadingEpicTasks';
 import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
-import TasksFetchErrorMsg from '@/features/tasks/components/TasksFetchErrorMsg';
 import TaskDetailsModal from '@/features/tasks/components/task-details/TaskDetailsModal';
+import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 
 const EpicModal = () => {
   const router = useRouter();
@@ -78,7 +78,7 @@ const EpicModal = () => {
           {isLoadingEpic || isLoadingEpicsTasks ? (
             <LoadingEpicTasks />
           ) : tasksError ? (
-            <TasksFetchErrorMsg />
+            <FetchDataErrorMsg message="Failed to fetch tasks" />
           ) : !tasks?.length ? (
             <EmptyEpicTasks />
           ) : (

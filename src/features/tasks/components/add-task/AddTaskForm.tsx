@@ -7,14 +7,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { useCreateTask } from '../hooks/tasks.hooks';
-import { taskSchema, TTaskInput } from '../validation/tasks.validation';
-import { TaskStatusEnum } from '../types/tasks.types';
+
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import LoadingAddTaskForm from './LoadingAddTaskForm';
 import { toast } from 'react-toastify';
 import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
-import { taskStatusOptions } from '../data/tasks.data';
+import { TaskStatusEnum } from '../../types/tasks.types';
+import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
+import { useCreateTask } from '../../hooks/tasks.hooks';
+import { taskStatusOptions } from '../../data/tasks.data';
 
 interface IProps {
   searchParams: { status: string; epic: string };

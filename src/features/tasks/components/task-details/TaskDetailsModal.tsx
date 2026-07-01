@@ -15,6 +15,8 @@ import {
 import UnassignIcon from '@/assets/icons/unassigned.svg';
 import TaskDetailsDesktop from './TaskDetailsDesktop';
 import TaskDetailsMobile from './TaskDetailsMobile';
+import LoadingTaskDetails from './LoadingTaskDetails';
+import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -27,8 +29,8 @@ const TaskDetailsModal: React.FC = ({}) => {
 
   const {
     data: taskData,
-    isLoading,
-    error,
+    isLoading: isTaskLoading,
+    error: taskError,
   } = useGetTaskByIdQuery(
     { projectId: projectId as string, taskId: taskId as string },
     { skip: !projectId || !taskId }
@@ -37,7 +39,7 @@ const TaskDetailsModal: React.FC = ({}) => {
   const {
     data: epicsResponse,
     isError: epicsError,
-    isLoading: epicsLoading,
+    isLoading: isEpicsLoading,
   } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
 
   const { members } = useFetchMembers(projectId as string);
@@ -90,12 +92,15 @@ const TaskDetailsModal: React.FC = ({}) => {
       onClose={handleCloseTaskDetails}
       className="sm:w-full lg:w-3/4 xl:w-2/3 p-0! lg:p-8! self-end"
     >
-      {isMobile ? (
+      {isTaskLoading || isEpicsLoading ? (
+        <LoadingTaskDetails />
+      ) : isMobile ? (
         <TaskDetailsMobile
           task={task}
           statusOptions={statusOptions}
           epicsOptions={epicsOptions}
           membersOptions={membersOptions}
+          isError={taskError || epicsError}
         />
       ) : (
         <TaskDetailsDesktop
@@ -103,6 +108,7 @@ const TaskDetailsModal: React.FC = ({}) => {
           statusOptions={statusOptions}
           epicsOptions={epicsOptions}
           membersOptions={membersOptions}
+          isError={taskError || epicsError}
         />
       )}
     </Modal>

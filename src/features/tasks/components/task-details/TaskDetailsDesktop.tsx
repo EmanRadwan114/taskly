@@ -49,8 +49,14 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   const pathname = usePathname();
 
   const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-  const { control, errors, taskStatusWatcher, handleUpdateTaskDetails } =
-    useUpdateTaskDetails(task);
+
+  const {
+    control,
+    errors,
+    taskStatusWatcher,
+    handleUpdateTaskDetails,
+    isPending,
+  } = useUpdateTaskDetails(task);
 
   const isBoardView = searchParams.get('view') === 'board';
   const formatedCreatedAt = formateDateString(task?.created_at);
@@ -107,9 +113,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                       className={`bg-transparent! ${inputContentStyle} p-0!`}
                       isSelect
                       isEditing
-                      // disabled={isPending}
+                      disabled={isPending}
                       onChange={() => {
-                        // handleUpdateEpic('assignee_id');
+                        handleUpdateTaskDetails('epic_id');
                       }}
                       options={epicsOptions}
                     />
@@ -123,8 +129,8 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     label={task?.title as string}
                     placeholder="Enter Task title"
                     isEditing
-                    // disabled={isPending}
-                    // onBlur={(e) => handleUpdateEpic('title')}
+                    disabled={isPending}
+                    onBlur={(e) => handleUpdateTaskDetails('title')}
                     inputClassName="text-slate-dark font-bold text-3xl leading-9"
                     className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
                   />
@@ -146,8 +152,8 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   placeholder={`No description provided`}
                   isTextArea
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('description')}
+                  disabled={isPending}
+                  onBlur={(e) => handleUpdateTaskDetails('description')}
                   inputClassName="text-slate-dark leading-5.5 resize-none min-h-10"
                   className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
                 />
@@ -203,9 +209,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   containerClassName={`py-2! px-4! rounded-md ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]} `}
                   isSelect
                   isEditing
-                  // disabled={isPending}
+                  disabled={isPending}
                   onChange={() => {
-                    // handleUpdateEpic('assignee_id');
+                    handleUpdateTaskDetails('status');
                   }}
                   options={statusOptions}
                 />
@@ -228,9 +234,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     containerClassName={`bg-white! p-2! rounded-lg`}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('assignee_id');
                     }}
                     options={membersOptions}
                     formatOptionLabel={({ label, icon }) => (
@@ -284,9 +290,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     className="gap-2! bg-transparent! items-center date relative"
                     placeholder="YYYY-MM-DD"
                     isEditing={true}
-                    // disabled={isPending}
+                    disabled={isPending}
                     onBlur={() => {
-                      // handleUpdateEpic('deadline');
+                      handleUpdateTaskDetails('due_date');
                     }}
                   />
                 </div>

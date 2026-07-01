@@ -40,8 +40,14 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   isError,
 }) => {
   const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-  const { control, errors, taskStatusWatcher, handleUpdateTaskDetails } =
-    useUpdateTaskDetails(task);
+
+  const {
+    control,
+    errors,
+    taskStatusWatcher,
+    handleUpdateTaskDetails,
+    isPending,
+  } = useUpdateTaskDetails(task);
 
   const formatedCreatedAt = formateDateString(task?.created_at);
 
@@ -85,8 +91,8 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   label={task?.title as string}
                   placeholder="Enter Task title"
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('title')}
+                  disabled={isPending}
+                  onBlur={(e) => handleUpdateTaskDetails('title')}
                   inputClassName="text-slate-dark font-semibold text-2xl leading-7.5"
                 />
               </header>
@@ -102,9 +108,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     containerClassName={`py-1! px-3! rounded-xl ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]} `}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('status');
                     }}
                     options={statusOptions}
                   />
@@ -119,9 +125,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     className={`bg-transparent! ${inputContentStyle} p-0!`}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('epic_id');
                     }}
                     options={epicsOptions}
                   />
@@ -147,9 +153,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   className={`bg-transparent! ${inputContentStyle} text-body-sm p-0!`}
                   isSelect
                   isEditing
-                  // disabled={isPending}
+                  disabled={isPending}
                   onChange={() => {
-                    // handleUpdateEpic('assignee_id');
+                    handleUpdateTaskDetails('assignee_id');
                   }}
                   options={membersOptions}
                   formatOptionLabel={({ label, icon }) => (
@@ -184,9 +190,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     className="gap-2! bg-transparent! items-center date"
                     placeholder="YYYY-MM-DD"
                     isEditing={true}
-                    // disabled={isPending}
+                    disabled={isPending}
                     onBlur={() => {
-                      // handleUpdateEpic('deadline');
+                      handleUpdateTaskDetails('due_date');
                     }}
                   />
                 </div>
@@ -231,8 +237,10 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   placeholder={`No description provided`}
                   isTextArea
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('description')}
+                  disabled={isPending}
+                  onBlur={() => {
+                    handleUpdateTaskDetails('description');
+                  }}
                   inputClassName="text-slate-dark leading-5.5 resize-none min-h-10 text-body-sm"
                   className=""
                 />

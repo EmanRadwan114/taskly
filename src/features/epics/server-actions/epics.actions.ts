@@ -60,7 +60,6 @@ export const createEpicAction = async (
 };
 // ^ ------------------------- update Epic Action ------------------------- //
 export const updateEpicAction = async (
-  projectId: string,
   epicId: string,
   _: unknown,
   formData: FormData
@@ -73,6 +72,13 @@ export const updateEpicAction = async (
   const description = formData.get('description') as string;
   const assignee_id = (formData.get('assignee_id') as string) || null;
   const deadline = formData.get('deadline') as string;
+
+  if (!accessToken || !epicId) {
+    return {
+      success: false,
+      message: 'Failed to update epic. Please try again later.',
+    };
+  }
 
   const values: {
     title?: string;
@@ -88,8 +94,6 @@ export const updateEpicAction = async (
   if (deadline) values.deadline = deadline;
 
   try {
-    if (!accessToken) return;
-
     if (epicId) {
       await updateEpic({ data: values, accessToken, epicId });
     }

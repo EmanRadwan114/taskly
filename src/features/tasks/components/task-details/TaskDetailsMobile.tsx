@@ -80,7 +80,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
       ) : !task ? (
         <TaskNotFound />
       ) : (
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
           <div className="flex flex-col gap-8 min-h-full px-6">
             <div className="flex flex-col gap-4">
               <header className="flex flex-col gap-4">

@@ -84,7 +84,10 @@ export const useHandlePagination = <T extends { id: string | number }>({
   const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
 
   useEffect(() => {
-    if (!incomingData || !isMobile) return;
+    if (!incomingData || !isMobile) {
+      setAccumulatedList([]);
+      return;
+    }
 
     //reset after search
     if (currentPage === 1) {
@@ -148,7 +151,7 @@ export const useHandleSearch = ({
   time = 400,
   isSetPageParam = true,
 }: {
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentPage?: React.Dispatch<React.SetStateAction<number>>;
   time?: number;
   isSetPageParam?: boolean;
 }) => {
@@ -172,11 +175,11 @@ export const useHandleSearch = ({
 
   useEffect(() => {
     // to prevent page change to 1 on mount
-    if (isFirstRender.current) {
+    if (isFirstRender.current || !debouncedSearchTerm) {
       isFirstRender.current = false;
       return;
     }
-    setCurrentPage(1);
+    setCurrentPage?.(1);
     const newParams = new URLSearchParams(searchParams);
     newParams.set('search', debouncedSearchTerm);
     if (!isMobile && isSetPageParam) {

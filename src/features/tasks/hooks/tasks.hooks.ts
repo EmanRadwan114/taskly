@@ -14,8 +14,6 @@ import {
   useGetProjectTasksByStatusQuery,
 } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { ITask, TaskStatusEnum } from '../types/tasks.types';
-import { usePathname, useRouter } from 'next/navigation';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 
 // ^ ---------------------------- Create Task Hook -------------------------
@@ -130,7 +128,7 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0, rootMargin: '100px' }
     );
     observer.observe(target);
     return () => {
@@ -183,7 +181,7 @@ export const useFetchBoardColumn = ({
           setShouldFetched(true);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0, rootMargin: '100px' }
     );
 
     observer.observe(target);

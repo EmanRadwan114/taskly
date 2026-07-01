@@ -148,22 +148,35 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const mobileView = (
     <div className="lg:hidden flex flex-col gap-3 min-h-screen">
-      {accumulatedTasksList?.map((task) => (
-        <TaskMobileCard task={task} key={task?.id} />
-      ))}
+      {isLoading || (isFetching && !isMobile) ? (
+        <LoadingTasksList />
+      ) : debouncedSearchTerm && tasks?.length === 0 ? (
+        // empty search status
+        <SearchStatus
+          text="No tasks found matching your search"
+          imgSrc={emptyImg.src}
+          variant="empty"
+        />
+      ) : (
+        <>
+          {accumulatedTasksList?.map((task) => (
+            <TaskMobileCard task={task} key={task?.id} />
+          ))}
 
-      {/* loadmore on mobile */}
-      {hasMore && (
-        <div
-          ref={observerTarget}
-          className="mt-auto lg:hidden w-full flex items-center justify-center"
-        >
-          {isFetching ? 'Loading More...' : ''}
-        </div>
+          {/* loadmore on mobile */}
+          {hasMore && (
+            <div
+              ref={observerTarget}
+              className="mt-auto lg:hidden w-full flex items-center justify-center"
+            >
+              {isFetching ? 'Loading More...' : ''}
+            </div>
+          )}
+
+          {/* error retry */}
+          {error && <TasksScrollError />}
+        </>
       )}
-
-      {/* error retry */}
-      {error && <TasksScrollError />}
     </div>
   );
 

@@ -8,9 +8,6 @@ import LayersIcon from '@/assets/icons/layers.svg';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import Label from '@/shared/components/ui/Label';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { useForm } from 'react-hook-form';
-import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { statusBadgeStyle } from '../../utils/tasks.utils';
 import { SelectOption } from '@/shared/components/ui/SelectField';
@@ -50,9 +47,6 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   } = useUpdateTaskDetails(task);
 
   const formatedCreatedAt = formateDateString(task?.created_at);
-
-  // handlers
-  const onSubmit = () => {};
 
   //   style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;

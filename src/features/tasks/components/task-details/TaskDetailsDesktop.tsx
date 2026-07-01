@@ -14,9 +14,6 @@ import {
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
 import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
-import { useForm } from 'react-hook-form';
-import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { SelectOption } from '@/shared/components/ui/SelectField';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

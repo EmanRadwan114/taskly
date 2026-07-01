@@ -17,18 +17,12 @@ import {
   useGetProjectTasksByStatusQuery,
 } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { ITask, TaskStatusEnum } from '../types/tasks.types';
-import { usePathname, useRouter } from 'next/navigation';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
+import { fetchTaskById } from '../services/tasks.services';
 
 // ^ ---------------------------- Create Task Hook -------------------------
 export const useCreateTask = ({
@@ -280,11 +274,12 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       // update task details & task list cache
       const oldTaskDetailsCache = queryClient.getQueryData([
         queryKeys.tasks.taskById,
+        projectId,
         task?.id,
       ]);
 
       queryClient.setQueryData(
-        [queryKeys.tasks.taskById, task?.id],
+        [queryKeys.tasks.taskById, projectId, task?.id],
         (old: ITask) => (old ? { ...old, ...updatedFields } : old)
       );
 
@@ -387,7 +382,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
       // invalidate task details & list view
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks.taskById, task?.id],
+        queryKey: [queryKeys.tasks.taskById, projectId, task?.id],
       });
       queryClient.invalidateQueries({
         queryKey: [queryKeys.tasks.projectTasksList, projectId],
@@ -476,7 +471,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
           context.oldTasksListCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.taskById, task?.id],
+          [queryKeys.tasks.taskById, projectId, task?.id],
           context.oldTaskDetailsCache
         );
       }
@@ -511,4 +506,20 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     taskStatusWatcher: taskStatus,
     isPending,
   };
+};
+
+// ^ ---------------------- Fetch Task Details Hook --------------------------
+export const useFetchTaskDetails = ({
+  projectId,
+  taskId,
+}: {
+  projectId: string;
+  taskId: string;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.tasks.taskById, projectId, taskId],
+    queryFn: () => fetchTaskById({ projectId, taskId }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && !!taskId,
+  });
 };

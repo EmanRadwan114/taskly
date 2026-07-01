@@ -53,3 +53,27 @@ export const updateTask = async ({
     throw new Error(errMsg);
   }
 };
+
+// ^ ----------------------- Fetch Task By Id Service ----------------------- //
+export const fetchTaskById = async ({
+  projectId,
+  taskId,
+}: {
+  projectId: string;
+  taskId: string;
+}) => {
+  try {
+    const response = await fetch(`/api/task/${projectId}/${taskId}`);
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};

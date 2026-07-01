@@ -16,6 +16,7 @@ import UnassignIcon from '@/assets/icons/unassigned.svg';
 import TaskDetailsDesktop from './TaskDetailsDesktop';
 import TaskDetailsMobile from './TaskDetailsMobile';
 import LoadingTaskDetails from './LoadingTaskDetails';
+import { useFetchTaskDetails } from '../../hooks/tasks.hooks';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -30,10 +31,10 @@ const TaskDetailsModal: React.FC = ({}) => {
     data: taskData,
     isLoading: isTaskLoading,
     error: taskError,
-  } = useGetTaskByIdQuery(
-    { projectId: projectId as string, taskId: taskId as string },
-    { skip: !projectId || !taskId }
-  );
+  } = useFetchTaskDetails({
+    projectId: projectId as string,
+    taskId: taskId as string,
+  });
 
   const {
     data: epicsResponse,

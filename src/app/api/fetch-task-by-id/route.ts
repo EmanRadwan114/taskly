@@ -1,6 +1,5 @@
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 import { NextResponse } from 'next/server';
-import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 
 export async function GET(request: Request) {
   try {

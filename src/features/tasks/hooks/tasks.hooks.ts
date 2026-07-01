@@ -289,6 +289,6 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     control,
     errors,
     taskStatusWatcher: taskStatus,
-    isPending
+    isPending,
   };
 };

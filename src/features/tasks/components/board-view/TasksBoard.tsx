@@ -15,10 +15,8 @@ const TasksBoard: React.FC<Props> = ({ searchParams }) => {
   const taskIdParam = searchParams.task_id;
 
   const statusList = Object.values(TaskStatusEnum);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const { searchTerm, setSearchTerm, debouncedSearchTerm } = useHandleSearch({
-    setCurrentPage,
     isSetPageParam: false,
   });
 

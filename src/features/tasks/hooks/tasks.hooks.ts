@@ -97,7 +97,10 @@ export const useHandleBoardPagination = (params: {
   const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
 
   useEffect(() => {
-    if (!tasks || tasks.length === 0) return;
+    if (!tasks || tasks.length === 0) {
+      setAccumulatedTasks([]);
+      return;
+    }
 
     // reset after search
     if (currentPage === 1) {

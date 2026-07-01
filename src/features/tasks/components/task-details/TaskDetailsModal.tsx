@@ -59,7 +59,7 @@ const TaskDetailsModal: React.FC = ({}) => {
     },
     ...epicsList?.map((epic) => ({
       value: epic.epic_id,
-      label: `${epic?.epic_id} (${epic?.title})`,
+      label: isMobile ? epic?.epic_id : `${epic?.epic_id} (${epic?.title})`,
     })),
   ];
 

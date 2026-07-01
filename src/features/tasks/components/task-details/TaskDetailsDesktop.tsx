@@ -87,7 +87,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
 
       setTimeout(() => {
         setIsLinkCopied(false);
-      }, 2000);
+      }, 5000);
     } catch (error) {
       toast.error('Failed to copy link');
     }
@@ -191,15 +191,13 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   </Button>
                 )}
                 {/* close modal button */}
-                <div className="text-end">
-                  <Button
-                    variant="ghost"
-                    className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit!"
-                    onClick={handleCloseTaskDetails}
-                  >
-                    close
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit! ms-auto"
+                  onClick={handleCloseTaskDetails}
+                >
+                  close
+                </Button>
               </div>
             </div>
           </div>

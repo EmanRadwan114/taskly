@@ -9,7 +9,9 @@ export default async function Page({ searchParams }: Props) {
   return (
     <>
       {params?.view === 'board' && <TasksBoard searchParams={params} />}
-      {params?.view === 'list' && <TasksList searchParams={params} />}
+      {(params?.view === 'list' || !params?.view) && (
+        <TasksList searchParams={params} />
+      )}
     </>
   );
 }

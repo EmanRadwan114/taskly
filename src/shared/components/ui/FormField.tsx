@@ -76,9 +76,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
   const inputStyle = `py-0! px-0!`;
 
   return (
-    <div
-      className={`flex flex-col gap-1.5 w-full ${containerClassName} disabled:opacity-50`}
-    >
+    <div className={`flex flex-col gap-1.5 w-full ${containerClassName}`}>
       {isTextArea && (
         <TextArea
           variant={activeVariant}

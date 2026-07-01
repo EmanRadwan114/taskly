@@ -206,7 +206,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   name="status"
                   id="status"
                   className={`${inputContentStyle} bg-transparent! p-0!`}
-                  containerClassName={`py-2! px-4! rounded-md ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]} `}
+                  containerClassName={`py-2! px-4! rounded-md ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]}`}
                   isSelect
                   isEditing
                   disabled={isPending}

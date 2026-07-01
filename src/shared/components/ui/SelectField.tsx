@@ -39,10 +39,6 @@ const SelectField = ({
             width: '100%',
             padding: '14px 16px',
             borderRadius: '4px',
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
-            },
           }),
           control: (base) => ({
             ...base,
@@ -51,24 +47,17 @@ const SelectField = ({
             boxShadow: 'none',
             minHeight: 'none',
             borderRadius: '0px',
+            opacity: props.isDisabled ? '0.6' : '1',
             padding: '0px',
             cursor: 'pointer',
             '&:hover': {
               border: 'none',
-            },
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
             },
           }),
           valueContainer: (base) => ({
             ...base,
             margin: '0px',
             padding: '0px',
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
-            },
           }),
           singleValue: (base) => ({
             ...base,
@@ -81,19 +70,11 @@ const SelectField = ({
             color: 'inherit',
             margin: '0px',
             padding: '0px',
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
-            },
           }),
           placeholder: (base) => ({
             ...base,
             color: 'var(--color-secondary-light)',
             margin: '0px',
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
-            },
           }),
           indicatorSeparator: () => ({
             display: 'none',
@@ -111,10 +92,6 @@ const SelectField = ({
             width: '16px',
             '&:hover': {
               color: 'var(--color-secondary)',
-            },
-            disabled: {
-              opacity: '0.2',
-              cursor: 'default',
             },
           }),
           menu: (base) => ({

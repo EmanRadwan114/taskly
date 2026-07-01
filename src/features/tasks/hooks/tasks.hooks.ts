@@ -6,7 +6,10 @@ import {
   useTransition,
 } from 'react';
 import { toast } from 'react-toastify';
-import { createTaskAction } from '../server-actions/tasks.actions';
+import {
+  createTaskAction,
+  updateTaskAction,
+} from '../server-actions/tasks.actions';
 import { taskSchema, TTaskInput } from '../validation/tasks.validation';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import {
@@ -203,16 +206,21 @@ export const useFetchBoardColumn = ({
   };
 };
 
-// ^ -----
+// ^ ----------------------  Update Task Details Hook  --------------------------
 export const useUpdateTaskDetails = (task: ITask | undefined) => {
   const previousValues = useRef({
     title: task?.title || '',
-    status: task?.status,
+    status: task?.status || TaskStatusEnum.TODO,
     description: task?.description || '',
     assignee_id: task?.assignee?.id || null,
     epic_id: task?.epic?.id || null,
     due_date: task?.due_date || '',
   });
+
+  const action = updateTaskAction.bind(null, task?.id);
+
+  const [state, formAction, isPending] = useActionState(action, null);
+  const [_, startTransition] = useTransition();
 
   const {
     control,
@@ -236,7 +244,26 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
   const taskStatus = watch('status');
 
+  useEffect(() => {
+    if (!state) return;
+    if (state.success) {
+      toast.success(state.message);
+    } else {
+      toast.error(state.message);
+    }
+  }, [state]);
+
   // handlers
+  const handleUpdateAction = (fieldName: keyof TTaskInput) => {
+    const formData = new FormData();
+
+    formData.append(fieldName, getValues(fieldName) || '');
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
   const handleUpdateTaskDetails = async (fieldName: keyof TTaskInput) => {
     const isFieldValid = await trigger(fieldName);
     const { isDirty: isFieldDirty } = getFieldState(fieldName);
@@ -245,17 +272,15 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       getValues(fieldName) !== previousValues.current[fieldName];
 
     if (isFieldValid && (isFieldDirty || isValueChanged)) {
-      if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
-        onHandleSubmitTaskDetails({
-          assignee_id: null,
-        });
-      } else {
-        onHandleSubmitTaskDetails({
-          [fieldName]: getValues(fieldName),
-        });
-      }
+      handleUpdateAction(fieldName);
+
       // update previous values if field is valid
-      previousValues.current[fieldName] = getValues(fieldName) || '';
+      if (fieldName === 'status') {
+        previousValues.current[fieldName] =
+          getValues(fieldName) || TaskStatusEnum.TODO;
+      } else {
+        previousValues.current[fieldName] = getValues(fieldName) || '';
+      }
     }
   };
 

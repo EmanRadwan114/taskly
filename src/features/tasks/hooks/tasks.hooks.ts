@@ -270,6 +270,24 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       const oldEpicId = previousValues.current.epic_id;
       const projectId = task?.project_id;
 
+      const updatedFields: Record<string, unknown> = {};
+      formData.forEach((value, key) => {
+        if (value !== '') {
+          updatedFields[key] = value;
+        }
+      });
+
+      // update task details & task list cache
+      const oldTaskDetailsCache = queryClient.getQueryData([
+        queryKeys.tasks.taskById,
+        task?.id,
+      ]);
+
+      queryClient.setQueryData(
+        [queryKeys.tasks.taskById, task?.id],
+        (old: ITask) => (old ? { ...old, ...updatedFields } : old)
+      );
+
       const oldTasksListCache = queryClient.getQueryData([
         queryKeys.tasks.projectTasksList,
         projectId,
@@ -277,23 +295,10 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
       queryClient.setQueryData(
         [queryKeys.tasks.projectTasksList, projectId],
-        (old: ITask[]) =>
+        (old: ITask[] | undefined) =>
           old
             ? old.map((t) =>
-                t.id === task?.id
-                  ? {
-                      ...t,
-                      ...Object.entries(formData).reduce(
-                        (acc, [key, value]) => {
-                          if (value !== '') {
-                            acc[key] = value;
-                          }
-                          return acc;
-                        },
-                        {} as Record<string, string>
-                      ),
-                    }
-                  : t
+                t.id === task?.id ? { ...t, ...updatedFields } : t
               )
             : []
       );
@@ -319,39 +324,38 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         projectId,
       ]);
 
+      // update old & new status/epic cache
       if (oldStatus !== currentStatus) {
-        // Remove item from old column cache array
         queryClient.setQueryData(
           [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
           (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
         );
-        // add item to the new column cache array
         queryClient.setQueryData(
           [queryKeys.tasks.projectTasksByStatus, currentStatus, projectId],
           (old: ITask[]) => {
             const optimisticTask = {
               ...task,
+              ...updatedFields,
               status: currentStatus,
-            };
+            } as ITask;
             return old ? [...old, optimisticTask] : [optimisticTask];
           }
         );
       }
 
       if (oldEpicId !== currentEpicId) {
-        // Remove item from old epic cache array
         queryClient.setQueryData(
           [queryKeys.tasks.epicTasks, oldEpicId, projectId],
           (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
         );
-        // add item to the new epic cache array
         queryClient.setQueryData(
           [queryKeys.tasks.epicTasks, currentEpicId, projectId],
           (old: ITask[]) => {
             const optimisticTask = {
               ...task,
+              ...updatedFields,
               epic_id: currentEpicId,
-            };
+            } as ITask;
             return old ? [...old, optimisticTask] : [optimisticTask];
           }
         );
@@ -363,6 +367,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         oldEpicTasksCache,
         newEpicTasksCache,
         oldTasksListCache,
+        oldTaskDetailsCache,
       };
     },
     onSuccess: (response) => {
@@ -380,7 +385,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       const oldEpicId = previousValues.current.epic_id;
       const projectId = task?.project_id;
 
-      // Invalidate specific task details & list view
+      // invalidate task details & list view
       queryClient.invalidateQueries({
         queryKey: [queryKeys.tasks.taskById, task?.id],
       });
@@ -388,8 +393,8 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         queryKey: [queryKeys.tasks.projectTasksList, projectId],
       });
 
-      // invalidate cache of old & new epic/status if epic/status change
-      // or invalidate only selected epic tasks / selected status tasks if epic/status same
+      // invalidate new & old epic/status if changes
+      //or invalidate only current status/epic if remain the same
       if (oldStatus !== currentStatus) {
         queryClient.invalidateQueries({
           queryKey: [
@@ -416,23 +421,20 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       }
 
       if (oldEpicId !== currentEpicId) {
-        if (oldEpicId) {
+        if (oldEpicId)
           queryClient.invalidateQueries({
             queryKey: [queryKeys.tasks.epicTasks, oldEpicId, projectId],
           });
-        }
-        if (currentEpicId) {
+        if (currentEpicId)
           queryClient.invalidateQueries({
             queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
           });
-        }
       } else if (currentEpicId) {
         queryClient.invalidateQueries({
           queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
         });
       }
 
-      // update old values
       previousValues.current = {
         title: getValues('title') || '',
         status: currentStatus,
@@ -451,6 +453,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       const oldEpicId = previousValues.current.epic_id;
       const projectId = task?.project_id;
 
+      // restore all caches
       if (context) {
         queryClient.setQueryData(
           [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
@@ -471,6 +474,10 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         queryClient.setQueryData(
           [queryKeys.tasks.projectTasksList, projectId],
           context.oldTasksListCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.taskById, task?.id],
+          context.oldTaskDetailsCache
         );
       }
 

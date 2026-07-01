@@ -265,7 +265,21 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
   const { mutate, isPending } = useMutation({
     mutationFn: (formData: FormData) => updateTaskActionWithId(formData),
     onSuccess: (response) => {
-      if (!response.success) return;
+      if (!response.success) {
+        toast.error(response.message || 'Failed to update task.');
+
+        reset({
+          title: previousValues.current.title,
+          status: previousValues.current.status,
+          description: previousValues.current.description,
+          assignee_id: previousValues.current.assignee_id || '',
+          epic_id: previousValues.current.epic_id || '',
+          due_date: previousValues.current.due_date,
+        });
+        return;
+      }
+
+      toast.success(response.message || 'Task updated successfully!');
 
       // Invalidate specific task detail view
       queryClient.invalidateQueries({
@@ -318,6 +332,18 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         epic_id: currentEpicId,
         due_date: getValues('due_date') || '',
       };
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update task');
+
+      reset({
+        title: previousValues.current.title,
+        status: previousValues.current.status,
+        description: previousValues.current.description,
+        assignee_id: previousValues.current.assignee_id || '',
+        epic_id: previousValues.current.epic_id || '',
+        due_date: previousValues.current.due_date,
+      });
     },
   });
 

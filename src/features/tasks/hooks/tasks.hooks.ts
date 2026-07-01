@@ -25,6 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   QueryClient,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
@@ -252,45 +253,81 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (formData: FormData) => updateTaskActionWithId(formData),
-    onMutate: async () => {
+    onMutate: async (formData) => {
       await queryClient.cancelQueries({
         queryKey: [queryKeys.tasks.projectTasksByStatus],
       });
       await queryClient.cancelQueries({
         queryKey: [queryKeys.tasks.epicTasks],
       });
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.tasks.projectTasksList],
+      });
 
       const currentStatus = getValues('status') || TaskStatusEnum.TODO;
       const oldStatus = previousValues.current.status;
       const currentEpicId = getValues('epic_id') || null;
       const oldEpicId = previousValues.current.epic_id;
+      const projectId = task?.project_id;
+
+      const oldTasksListCache = queryClient.getQueryData([
+        queryKeys.tasks.projectTasksList,
+        projectId,
+      ]);
+
+      queryClient.setQueryData(
+        [queryKeys.tasks.projectTasksList, projectId],
+        (old: ITask[]) =>
+          old
+            ? old.map((t) =>
+                t.id === task?.id
+                  ? {
+                      ...t,
+                      ...Object.entries(formData).reduce(
+                        (acc, [key, value]) => {
+                          if (value !== '') {
+                            acc[key] = value;
+                          }
+                          return acc;
+                        },
+                        {} as Record<string, string>
+                      ),
+                    }
+                  : t
+              )
+            : []
+      );
 
       const oldStatusCache = queryClient.getQueryData([
         queryKeys.tasks.projectTasksByStatus,
         oldStatus,
+        projectId,
       ]);
       const newStatusCache = queryClient.getQueryData([
         queryKeys.tasks.projectTasksByStatus,
         currentStatus,
+        projectId,
       ]);
       const oldEpicTasksCache = queryClient.getQueryData([
         queryKeys.tasks.epicTasks,
         oldEpicId,
+        projectId,
       ]);
       const newEpicTasksCache = queryClient.getQueryData([
         queryKeys.tasks.epicTasks,
         currentEpicId,
+        projectId,
       ]);
 
       if (oldStatus !== currentStatus) {
         // Remove item from old column cache array
         queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, oldStatus],
+          [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
           (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
         );
         // add item to the new column cache array
         queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          [queryKeys.tasks.projectTasksByStatus, currentStatus, projectId],
           (old: ITask[]) => {
             const optimisticTask = {
               ...task,
@@ -304,12 +341,12 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       if (oldEpicId !== currentEpicId) {
         // Remove item from old epic cache array
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, oldEpicId],
+          [queryKeys.tasks.epicTasks, oldEpicId, projectId],
           (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
         );
         // add item to the new epic cache array
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, currentEpicId],
+          [queryKeys.tasks.epicTasks, currentEpicId, projectId],
           (old: ITask[]) => {
             const optimisticTask = {
               ...task,
@@ -325,6 +362,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         newStatusCache,
         oldEpicTasksCache,
         newEpicTasksCache,
+        oldTasksListCache,
       };
     },
     onSuccess: (response) => {
@@ -336,45 +374,61 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
       toast.success(response.message || 'Task updated successfully!');
 
-      // Invalidate specific task detail view
-      queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks.taskById, task?.id],
-      });
-
-      // invalidate cache of old & new epic/status if epic/status change
-      // or invalidate only selected epic tasks / selected status tasks if epic/status same
       const currentStatus = getValues('status') || TaskStatusEnum.TODO;
       const oldStatus = previousValues.current.status;
       const currentEpicId = getValues('epic_id') || null;
       const oldEpicId = previousValues.current.epic_id;
+      const projectId = task?.project_id;
 
+      // Invalidate specific task details & list view
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.taskById, task?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.projectTasksList, projectId],
+      });
+
+      // invalidate cache of old & new epic/status if epic/status change
+      // or invalidate only selected epic tasks / selected status tasks if epic/status same
       if (oldStatus !== currentStatus) {
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.tasks.projectTasksByStatus, oldStatus],
+          queryKey: [
+            queryKeys.tasks.projectTasksByStatus,
+            oldStatus,
+            projectId,
+          ],
         });
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          queryKey: [
+            queryKeys.tasks.projectTasksByStatus,
+            currentStatus,
+            projectId,
+          ],
         });
       } else {
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          queryKey: [
+            queryKeys.tasks.projectTasksByStatus,
+            currentStatus,
+            projectId,
+          ],
         });
       }
 
       if (oldEpicId !== currentEpicId) {
         if (oldEpicId) {
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.tasks.epicTasks, oldEpicId],
+            queryKey: [queryKeys.tasks.epicTasks, oldEpicId, projectId],
           });
         }
         if (currentEpicId) {
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.tasks.epicTasks, currentEpicId],
+            queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
           });
         }
       } else if (currentEpicId) {
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.tasks.epicTasks, currentEpicId],
+          queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
         });
       }
 
@@ -395,23 +449,28 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       const oldStatus = previousValues.current.status;
       const currentEpicId = getValues('epic_id') || null;
       const oldEpicId = previousValues.current.epic_id;
+      const projectId = task?.project_id;
 
       if (context) {
         queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, oldStatus],
+          [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
           context.oldStatusCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, currentStatus],
+          [queryKeys.tasks.projectTasksByStatus, currentStatus, projectId],
           context.newStatusCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, oldEpicId],
+          [queryKeys.tasks.epicTasks, oldEpicId, projectId],
           context.oldEpicTasksCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, currentEpicId],
+          [queryKeys.tasks.epicTasks, currentEpicId, projectId],
           context.newEpicTasksCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksList, projectId],
+          context.oldTasksListCache
         );
       }
 

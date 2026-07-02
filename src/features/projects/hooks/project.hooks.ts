@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import { fetchPaginatedProjects } from '../services/project.services';
+import { useAppSelector } from '@/shared/libs/store/store';
 
 // ^ ---------------------------- sumbit Project Hook ------------------------- //
 export const useSubmitProject = (projectId?: string) => {
@@ -57,8 +58,9 @@ export const useFetchPaginatedProjects = ({
   limit?: number;
   offset?: number;
 }) => {
+  const userId = useAppSelector((state) => state.auth.user?.sub);
   return useQuery({
-    queryKey: [queryKeys.projects.paginatedProjects, limit, offset],
+    queryKey: [queryKeys.projects.paginatedProjects, limit, offset, userId],
     queryFn: () => fetchPaginatedProjects({ limit, offset }),
     staleTime: 60 * 1000, // 1 minute
   });

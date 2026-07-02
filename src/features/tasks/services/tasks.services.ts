@@ -1,5 +1,7 @@
 import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
 import { TTaskInput } from '../validation/tasks.validation';
+import { ITask } from '../types/tasks.types';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
 
 // ^ ------------------------- Create Task Service ------------------------- //
 export const createTask = async ({
@@ -61,10 +63,72 @@ export const fetchTaskById = async ({
 }: {
   projectId: string;
   taskId: string;
-}) => {
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
       `/api/fetch-task-by-id?projectId=${projectId}&taskId=${taskId}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};
+
+// ^ ----------------------- Fetch Tasks By Status ----------------------- //
+export const fetchTasksByStatus = async ({
+  projectId,
+  status,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  status: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(
+      `/api/fetch-project-tasks-by-status?projectId=${projectId}&status=${status}&limit=${limit}&offset=${offset}&searchTerm=${searchTerm}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};
+
+// ^ ----------------------- Fetch Tasks list ----------------------- //
+export const fetchTasksList = async ({
+  projectId,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(
+      `/api/fetch-project-tasks?projectId=${projectId}&limit=${limit}&offset=${offset}&searchTerm=${searchTerm}`
     );
 
     const result = await response.json();

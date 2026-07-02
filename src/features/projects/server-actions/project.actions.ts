@@ -7,7 +7,6 @@ import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
 // ^ ------------------------- Create Project Action ------------------------- //
 export const projectAction = async (
   projectId: string | undefined,
-  _: unknown,
   formData: FormData
 ) => {
   // get access token
@@ -22,7 +21,13 @@ export const projectAction = async (
   };
 
   try {
-    if (!accessToken) return;
+    if (!accessToken) {
+      return {
+        success: false,
+        message: 'Session expired, please login again.',
+        status: 401,
+      };
+    }
 
     if (!isEditMode) {
       await createProject({ data: values, accessToken });

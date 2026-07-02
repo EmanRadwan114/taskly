@@ -9,13 +9,15 @@ import { useForm } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 import { epicsSchema, TEpicsInput } from '../validation/epics.validation';
 import { useCreateEpic } from '../hooks/epics.hooks';
-import { useFetchMembers } from '@/shared/hooks/shared.hooks';
+import { useFetchMembers } from '@/features/members/hooks/members.hooks';
 
 const EpicForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = useParams();
 
-  const { members: projectMembers } = useFetchMembers(projectId as string);
+  const { data } = useFetchMembers(projectId as string);
+
+  const projectMembers = data?.response?.data;
 
   const {
     handleSubmit,
@@ -34,15 +36,15 @@ const EpicForm: React.FC = () => {
     },
   });
 
-  const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic(
+  const { onHandleSubmitEpic, isPending, isSuccess } = useCreateEpic(
     projectId as string
   );
 
   useEffect(() => {
-    if (epicState?.success) {
+    if (isSuccess) {
       reset({ title: '', description: '', assignee_id: '', deadline: '' });
     }
-  }, [epicState, reset]);
+  }, [isSuccess, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');

@@ -5,17 +5,16 @@ import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-
-import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import LoadingAddTaskForm from './LoadingAddTaskForm';
 import { toast } from 'react-toastify';
-import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import { TaskStatusEnum } from '../../types/tasks.types';
 import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
 import { useCreateTask } from '../../hooks/tasks.hooks';
 import { taskStatusOptions } from '../../data/tasks.data';
+import { useFetchAllEpics } from '@/features/epics/hooks/epics.hooks';
+import { useFetchMembers } from '@/features/members/hooks/members.hooks';
 
 interface IProps {
   searchParams: { status: string; epic: string };
@@ -48,7 +47,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
     },
   });
 
-  const { onHandleCreateTask, isPending, taskState } = useCreateTask({
+  const { onHandleCreateTask, isPending, isSuccess } = useCreateTask({
     projectId: projectId as string,
     status: watch('status'),
     epicId: watch('epic_id') || '',
@@ -56,20 +55,22 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
 
   const {
     data: epicsResponse,
-    isError: epicsError,
-    isLoading: epicsLoading,
-  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
+    isError: isEpicsError,
+    isLoading: isEpicsLoading,
+  } = useFetchAllEpics({ projectId: projectId as string });
 
   const epicsList = epicsResponse?.response?.data || [];
 
   const {
-    members,
-    loading: membersLoading,
-    error: membersError,
+    data,
+    isLoading: isMembersLoading,
+    isError: isMembersError,
   } = useFetchMembers(projectId as string);
 
+  const members = data?.response?.data;
+
   useEffect(() => {
-    if (taskState?.success) {
+    if (isSuccess) {
       reset({
         title: '',
         description: '',
@@ -79,7 +80,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
         epic_id: selectedEpicId,
       });
     }
-  }, [taskState, reset, selectedStatus, selectedEpicId]);
+  }, [isSuccess, reset, selectedStatus, selectedEpicId]);
 
   // handlers
   const onSubmit = (data: TTaskInput) => {
@@ -112,12 +113,11 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
   ];
 
   // easly return
-  if (membersLoading === 'pending' || epicsLoading)
-    return <LoadingAddTaskForm />;
+  if (isMembersLoading || isEpicsLoading) return <LoadingAddTaskForm />;
 
-  if (membersError) toast.error('Failed to fetch members');
+  if (isMembersError) toast.error('Failed to fetch members');
 
-  if (epicsError) toast.error('Failed to fetch epics');
+  if (isEpicsError) toast.error('Failed to fetch epics');
 
   return (
     <form

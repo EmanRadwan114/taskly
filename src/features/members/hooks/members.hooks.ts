@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import {
   acceptInvitationAction,
@@ -7,6 +7,16 @@ import {
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { TInviteMemberInput } from '../validation/members.validation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
+import { fetchMembers } from '../services/members.services';
+
+// ^-------------------- fetch members --------------------
+export const useFetchMembers = (projectId: string) => {
+  return useQuery({
+    queryKey: [queryKeys.members.allMembers, projectId],
+    queryFn: () => fetchMembers(projectId),
+    staleTime: 60 * 1000, // 1 minute
+  });
+};
 
 // ^ ------------------------- Handle Invite Member ------------------------- //
 export const useHandleInviteMember = () => {
@@ -86,7 +96,7 @@ export const useHandleAcceptInvitation = () => {
       }
 
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.members.inviteMember, projectId],
+        queryKey: [queryKeys.members.allMembers, projectId],
       });
 
       toast.success(

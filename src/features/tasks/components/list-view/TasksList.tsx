@@ -4,13 +4,11 @@ import Table from '@/shared/components/ui/Table';
 import TableHead from '@/shared/components/ui/TableHead';
 import TableRow from '@/shared/components/ui/TableRow';
 import TasksListPagination from './TasksListPagination';
-import { useEffect, useState } from 'react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useGetProjectTasksQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import TaskListItem from './TaskListItem';
 import LoadingTasksList from './LoadingTasksList';
-import { toast } from 'react-toastify';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
 import TaskMobileCard from './TaskMobileCard';
 import {
@@ -25,6 +23,7 @@ import errorImg from '@/assets/imgs/alert.png';
 import EmptyProjectTasks from './EmptyProjectTasks';
 import TasksScrollError from '../TasksScrollError';
 import TaskDetailsModal from '../task-details/TaskDetailsModal';
+import { useFetchTasksList } from '../../hooks/tasks.hooks';
 
 interface IProps {
   searchParams: { page: string; task_id: string };
@@ -50,15 +49,13 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     isLoading,
     error,
     isFetching,
-  } = useGetProjectTasksQuery(
-    {
-      projectId: projectId as string,
-      limit,
-      offset,
-      searchTerm: debouncedSearchTerm,
-    },
-    { skip: !projectId }
-  );
+  } = useFetchTasksList({
+    projectId: projectId as string,
+    limit,
+    offset,
+    searchTerm: debouncedSearchTerm,
+  });
+
   const tasks = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
 

@@ -4,7 +4,7 @@ import { forgetPassword } from '../services/forget-password.services';
 import { resetPassword } from '../services/forget-password.services';
 
 // ^ ---------------------------- Forget Password Action ----------------------------
-export const forgetPasswordAction = async (_: unknown, formData: FormData) => {
+export const forgetPasswordAction = async (formData: FormData) => {
   const values = {
     email: formData.get('email') as string,
   };
@@ -27,7 +27,6 @@ export const forgetPasswordAction = async (_: unknown, formData: FormData) => {
 // ^ ---------------------------- Reset Password Action ----------------------------
 export const resetPasswordAction = async (
   accessToken: string,
-  _: unknown,
   formData: FormData
 ) => {
   const values = {

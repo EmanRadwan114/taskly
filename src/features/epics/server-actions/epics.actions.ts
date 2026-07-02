@@ -7,7 +7,6 @@ import { createEpic, updateEpic } from '../services/epics.services';
 // ^ ------------------------- Create Epic Action ------------------------- //
 export const createEpicAction = async (
   projectId: string | undefined,
-  _: unknown,
   formData: FormData
 ) => {
   // get access token
@@ -41,7 +40,13 @@ export const createEpicAction = async (
   }
 
   try {
-    if (!accessToken) return;
+    if (!accessToken) {
+      return {
+        success: false,
+        message: 'Session expired, please login again.',
+        status: 401,
+      };
+    }
 
     if (values.title && projectId) {
       await createEpic({ data: values, accessToken, projectId });
@@ -59,11 +64,7 @@ export const createEpicAction = async (
   }
 };
 // ^ ------------------------- update Epic Action ------------------------- //
-export const updateEpicAction = async (
-  epicId: string,
-  _: unknown,
-  formData: FormData
-) => {
+export const updateEpicAction = async (epicId: string, formData: FormData) => {
   // get access token
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
@@ -73,7 +74,15 @@ export const updateEpicAction = async (
   const assignee_id = (formData.get('assignee_id') as string) || null;
   const deadline = formData.get('deadline') as string;
 
-  if (!accessToken || !epicId) {
+  if (!accessToken) {
+    return {
+      success: false,
+      message: 'Session expired, please login again.',
+      status: 401,
+    };
+  }
+
+  if (!epicId) {
     return {
       success: false,
       message: 'Failed to update epic. Please try again later.',

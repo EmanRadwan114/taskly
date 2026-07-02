@@ -1,5 +1,27 @@
 import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
-import { IInviteMemberRequest } from '../types/members.types';
+import { IInviteMemberRequest, IMember } from '../types/members.types';
+
+// ^--------------------- fetch members ---------------------
+export const fetchMembers = async (
+  projectId: string
+): Promise<{
+  response: { data: IMember[] };
+}> => {
+  try {
+    const response = await fetch(`/api/fetch-members?project_id=${projectId}`);
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch members');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch members';
+    throw new Error(errMsg);
+  }
+};
 
 // ^-------------------------Invite new member -------------------------//
 export const inviteMember = async ({

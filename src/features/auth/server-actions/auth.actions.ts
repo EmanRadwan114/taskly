@@ -15,10 +15,7 @@ import {
 import { getExpireDateInMs } from '@/shared/utils/functions.server.utils';
 
 // ^ ---------------------------- Create User Account Action ----------------------------
-export const createUserAccountAction = async (
-  _: unknown,
-  formData: FormData
-) => {
+export const createUserAccountAction = async (formData: FormData) => {
   const values = {
     data: {
       name: formData.get('name') as string,
@@ -76,7 +73,6 @@ export const createUserAccountAction = async (
 // ^ ---------------------------- Login Action ----------------------------
 export const userLoginAction = async (
   rememberMe: boolean,
-  _: unknown,
   formData: FormData
 ) => {
   const values = {
@@ -142,7 +138,7 @@ export const userLoginAction = async (
 };
 
 // ^ ---------------------------- Logout Action ----------------------------
-export const userLogoutAction = async (_: unknown) => {
+export const userLogoutAction = async () => {
   // get access token
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;

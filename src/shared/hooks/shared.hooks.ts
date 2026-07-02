@@ -2,10 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { IUseHandlePagination } from '../types/shared.types';
-import { log } from 'console';
-import { useAppDispatch, useAppSelector } from '../libs/store/store';
-import { fetchMembers } from '../libs/store/slices/members.slice';
-import { ITask } from '@/features/tasks/types/tasks.types';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {
@@ -227,20 +223,4 @@ export const useHandleError = ({ error }: { error: Error }) => {
       toast.error(error.message);
     }
   }, [error]);
-};
-
-// ^ ------------------------ Use Fetch Members Hook -------------------------
-export const useFetchMembers = (projectId: string) => {
-  const { members, isFetched, loading, error } = useAppSelector(
-    (state) => state.members
-  );
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId));
-    }
-  }, [projectId]);
-
-  return { members, isFetched, loading, error };
 };

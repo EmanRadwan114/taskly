@@ -1,30 +1,41 @@
-import { useActionState, useEffect, useTransition } from 'react';
 import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TProjectInput } from '../validation/project.validation';
-import { useAppDispatch } from '@/shared/libs/store/store';
-import { projectsApi } from '@/shared/libs/store/redux-toolkit-query/projects-api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
+import { fetchPaginatedProjects } from '../services/project.services';
 
-// ^ ---------------------------- Create Project Hook ------------------------- //
+// ^ ---------------------------- sumbit Project Hook ------------------------- //
 export const useSubmitProject = (projectId?: string) => {
-  const dispatch = useAppDispatch();
-
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const action = projectAction.bind(null, projectId);
 
-  const [state, formAction, isPending] = useActionState(action, null);
-  const [_, startTransition] = useTransition();
-
-  // effects
-  useEffect(() => {
-    if (!state) return;
-
-    if (state?.success) {
-      toast.success(state.message);
-      dispatch(projectsApi.util.invalidateTags(['Projects']));
-    } else {
-      toast.error(state?.message);
-    }
-  }, [state]);
+  const { mutate, isPending, isSuccess } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await action(formData);
+      if (!res.success) {
+        if (res.status === 401) {
+          const routeEndpoint = projectId
+            ? `/projects/${projectId}/edit`
+            : `/project/new`;
+          router.replace(`/login?redirectTo=${routeEndpoint}`);
+        }
+        throw new Error(res.message || 'Failed to create project.');
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.projects.paginatedProjects],
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleSubmitProject = (data: TProjectInput) => {
@@ -32,10 +43,23 @@ export const useSubmitProject = (projectId?: string) => {
     if (data.name) formData.append('name', data.name);
     if (data.description) formData.append('description', data.description);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
-  return { onHandleSubmitProject, isPending, projectState: state };
+  return { onHandleSubmitProject, isPending, isSuccess };
+};
+
+// ^-------------------- fetch paginated projects --------------------
+export const useFetchPaginatedProjects = ({
+  limit,
+  offset,
+}: {
+  limit?: number;
+  offset?: number;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.projects.paginatedProjects, limit, offset],
+    queryFn: () => fetchPaginatedProjects({ limit, offset }),
+    staleTime: 60 * 1000, // 1 minute
+  });
 };

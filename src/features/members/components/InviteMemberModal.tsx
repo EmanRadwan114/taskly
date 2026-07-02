@@ -1,3 +1,4 @@
+'use client';
 import Button from '@/shared/components/ui/Button';
 import Modal from '@/shared/components/ui/Modal';
 import { useHandleModalRoute, useMobile } from '@/shared/hooks/shared.hooks';
@@ -13,10 +14,13 @@ import {
   inviteMemberSchema,
   TInviteMemberInput,
 } from '../validation/members.validation';
+import { useHandleInviteMember } from '../hooks/members.hooks';
 
 const InviteMemberModal: React.FC = ({}) => {
   const searchParams = useSearchParams();
   const { isMobile } = useMobile(1024);
+
+  const isOpen = !!searchParams.get('invite-member');
 
   const {
     control,
@@ -30,14 +34,17 @@ const InviteMemberModal: React.FC = ({}) => {
   const { handleCloseModal } = useHandleModalRoute({
     queryKey: 'invite-member',
   });
-  const isOpen = !!searchParams.get('invite-member');
+
+  const { handleInviteMember, isPending } = useHandleInviteMember();
 
   // handlers
-  const onSumbit = (formData: TInviteMemberInput) => {};
+  const onSumbit = (formData: TInviteMemberInput) => {
+    handleInviteMember(formData);
+  };
 
   // views
   const desktopView = (
-    <section className="hidden lg:flex min-h-[80vh] bg-white rounded-lg p-8">
+    <section className="hidden lg:flex lg:flex-col min-h-[50vh] bg-white rounded-lg p-8">
       <header className="flex flex-col gap-2 mb-6">
         <div className="flex justify-between items-center">
           <div className="bg-surface-low size-12 rounded-lg flex items-center justify-center">
@@ -80,14 +87,14 @@ const InviteMemberModal: React.FC = ({}) => {
             type="button"
             onClick={handleCloseModal}
             className="font-semibold! text-slate-md! text-base!"
-            // disabled={isPending}
+            disabled={isPending}
           >
             Cancel
           </Button>
           <Button
             type="submit"
             className="text-base! lg:rounded-xs! leading-5"
-            // disabled={isPending}
+            disabled={isPending}
           >
             {isPending ? 'Sending Invitation...' : 'Send Invitation'}
           </Button>
@@ -97,8 +104,8 @@ const InviteMemberModal: React.FC = ({}) => {
   );
 
   const mobileView = (
-    <section className="rounded-t-3xl border-t border-t-white/40 bg-background max-h-[70vh] self-end lg:hidden p-8">
-      <div className="bg-slate-lighter/30 w-12 h-1.5 rounded-xl mb-8"></div>
+    <section className="rounded-t-3xl bg-white max-h-[70vh] self-end lg:hidden p-8">
+      <div className="bg-slate-lighter mx-auto w-12 h-1.5 rounded-xl mb-8"></div>
       <header className="flex flex-col gap-2 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-primary text-label-sm">Project Name</span>
@@ -118,7 +125,7 @@ const InviteMemberModal: React.FC = ({}) => {
         </p>
       </header>
       <form onSubmit={handleSubmit(onSumbit)}>
-        <div className="flex flex-col gap-1.5 md:col-span-2 mb-10">
+        <div className="flex flex-col gap-1.5 md:col-span-2 mb-6">
           <Label
             htmlFor="email address"
             activeVariant={errors.email ? 'error' : 'default'}
@@ -135,22 +142,22 @@ const InviteMemberModal: React.FC = ({}) => {
             }
           />
         </div>
-        <div className="flex">
+        <div className="flex flex-col gap-2">
+          <Button
+            type="submit"
+            className="text-base! lg:rounded-xs! leading-5"
+            disabled={isPending}
+          >
+            {isPending ? 'Sending Invitation...' : 'Send Invitation'}
+          </Button>
           <Button
             variant="ghost"
             type="button"
             onClick={handleCloseModal}
             className="font-semibold! text-slate-md! text-base!"
-            // disabled={isPending}
+            disabled={isPending}
           >
             Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="text-base! lg:rounded-xs! leading-5"
-            // disabled={isPending}
-          >
-            {isPending ? 'Sending Invitation...' : 'Send Invitation'}
           </Button>
         </div>
       </form>
@@ -161,7 +168,7 @@ const InviteMemberModal: React.FC = ({}) => {
     <Modal
       isOpen={isOpen}
       onClose={handleCloseModal}
-      className="sm:w-full lg:w-3/4 xl:w-2/3 p-0! lg:p-8! self-end lg:self-center"
+      className="lg:w-1/2! p-0! lg:p-8! self-end lg:self-center"
     >
       {isMobile ? mobileView : desktopView}
     </Modal>

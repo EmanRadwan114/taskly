@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { IMember } from '../types/members.types';
 import Badge from '@/shared/components/ui/Badge';
 import DotsIcon from '@/assets/icons/dots.svg';
@@ -90,12 +90,7 @@ const MemberItem: React.FC<IProps> = ({ member }) => {
       </div>
     </div>
   );
-  return (
-    <>
-      {desktopView}
-      {mobileView}
-    </>
-  );
+  return <>{isMobile ? mobileView : desktopView}</>;
 };
 
 export default MemberItem;

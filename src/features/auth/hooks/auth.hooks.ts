@@ -7,29 +7,28 @@ import {
   userLogoutAction,
 } from '../server-actions/auth.actions';
 import { TLoginInput, TSignupInput } from '../validation/auth.validation';
+import { useMutation } from '@tanstack/react-query';
 
 // ^---------------------- Create Account Hook ------------------------
 export const useCreateAccount = () => {
   const router = useRouter();
 
-  const [state, formAction, isPending] = useActionState(
-    createUserAccountAction,
-    null
-  );
-  const [_, startTransition] = useTransition();
-
-  // effects
-  useEffect(() => {
-    if (!state) return;
-
-    if (state?.success) {
-      toast.success(state.message);
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await createUserAccountAction(formData);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
       router.push('/project');
-    } else {
-      toast.error(state?.message);
-    }
-  }, [state]);
-
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   // handlers
   const onHandleCreateAccount = (data: TSignupInput) => {
     const formData = new FormData();
@@ -40,9 +39,7 @@ export const useCreateAccount = () => {
     formData.append('email', data.email);
     formData.append('password', data.password);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
   return { onHandleCreateAccount, isPending };
@@ -54,28 +51,27 @@ export const useLogin = (rememberMe: boolean) => {
   const redirectToParam = useSearchParams().get('redirectTo');
 
   const loginActionRemeberMe = userLoginAction.bind(null, rememberMe);
-  const [state, formAction, isPending] = useActionState(
-    loginActionRemeberMe,
-    null
-  );
-  const [_, startTransition] = useTransition();
 
-  // effects
-  useEffect(() => {
-    if (!state) return;
-
-    if (state?.success) {
-      toast.success(state.message);
-
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await loginActionRemeberMe(formData);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
       if (redirectToParam) {
         router.replace(redirectToParam);
       } else {
         router.replace('/project');
       }
-    } else {
-      toast.error(state?.message);
-    }
-  }, [state]);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleLogin = (data: TLoginInput) => {
@@ -83,9 +79,7 @@ export const useLogin = (rememberMe: boolean) => {
     formData.append('email', data.email);
     formData.append('password', data.password);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
   return { onHandleLogin, isPending };
@@ -94,26 +88,27 @@ export const useLogin = (rememberMe: boolean) => {
 // ^---------------------- Logout Hook ------------------------
 export const useLogout = () => {
   const router = useRouter();
-  const [state, dispatch, isPending] = useActionState(userLogoutAction, null);
-  const [_, startTransition] = useTransition();
 
-  // effects
-  useEffect(() => {
-    if (!state) return;
-
-    if (state?.success) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const res = await userLogoutAction();
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
       router.push('/login');
-      toast.success(state.message);
-    } else {
-      toast.error(state?.message);
-    }
-  }, [state]);
+      toast.success(response.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleLogout = () => {
-    startTransition(() => {
-      dispatch();
-    });
+    mutate();
   };
 
   return { onHandleLogout, isPending };

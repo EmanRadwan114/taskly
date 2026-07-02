@@ -1,10 +1,8 @@
 'use client';
 
-import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
 import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
-import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useHandleModalRoute, useMobile } from '@/shared/hooks/shared.hooks';
 import LoadingMembers from './LoadingMembers';
@@ -14,35 +12,30 @@ import TableHead from '@/shared/components/ui/TableHead';
 import InviteMemberModal from './InviteMemberModal';
 import MemberItemMobile from './MemberItemMobile';
 import MemberItemDesktop from './MemberItemDesktop';
+import { useFetchMembers } from '../hooks/members.hooks';
 
 const DisplayedMembers: React.FC = ({}) => {
   const { projectId } = useParams();
   const isInviteMemberModalOpen = useSearchParams().get('invite-member');
-
-  const dispatch = useAppDispatch();
+  const { isMobile } = useMobile(768);
 
   const { handleNavToModal } = useHandleModalRoute({
     queryKey: 'invite-member',
     queryValue: true,
   });
 
-  const { members, loading, error, isFetched } = useAppSelector(
-    (state) => state.members
+  const { data, isLoading, isError, error } = useFetchMembers(
+    projectId as string
   );
-  const { isMobile } = useMobile(768);
 
-  useEffect(() => {
-    if (projectId && !isFetched) {
-      dispatch(fetchMembers(projectId as string));
-    }
-  }, [dispatch, isFetched]);
+  const members = data?.response?.data;
 
-  if (loading === 'pending') {
+  if (isLoading) {
     return <LoadingMembers />;
   }
 
-  if (loading === 'rejected') {
-    if (loading === 'rejected') throw new Error(error!);
+  if (isError) {
+    throw new Error(error?.message!);
   }
 
   // desktop members view
@@ -56,7 +49,7 @@ const DisplayedMembers: React.FC = ({}) => {
         </TableRow>
       </thead>
       <tbody>
-        {members.map((member) => (
+        {members?.map((member) => (
           <MemberItemDesktop key={member?.member_id} member={member} />
         ))}
       </tbody>
@@ -66,7 +59,7 @@ const DisplayedMembers: React.FC = ({}) => {
   // mobile members view
   const mobileMembersView = (
     <div className="flex md:hidden flex-col gap-3">
-      {members.map((member) => (
+      {members?.map((member) => (
         <MemberItemMobile key={member?.member_id} member={member} />
       ))}
     </div>

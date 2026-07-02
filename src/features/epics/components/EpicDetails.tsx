@@ -54,7 +54,10 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     },
   });
 
-  const { onHandleSubmitEpic, isPending } = useUpdateEpic(epic?.id as string);
+  const { onHandleSubmitEpic, isPending } = useUpdateEpic(
+    epic?.id as string,
+    projectId as string
+  );
 
   // handlers
   const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {

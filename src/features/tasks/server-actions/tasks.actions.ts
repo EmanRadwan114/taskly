@@ -15,7 +15,15 @@ export const createTaskAction = async (
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  if (!accessToken || !projectId) {
+  if (!accessToken) {
+    return {
+      success: false,
+      message: 'Session expired, please login again.',
+      status: 401,
+    };
+  }
+
+  if (!projectId) {
     return {
       success: false,
       message: 'Failed to create task. Please try again later.',
@@ -68,7 +76,15 @@ export const updateTaskAction = async (
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  if (!accessToken || !task_id) {
+  if (!accessToken) {
+    return {
+      success: false,
+      message: 'Session expired, please login again.',
+      status: 401,
+    };
+  }
+
+  if (!task_id) {
     return {
       success: false,
       message: 'Failed to update task. Please try again later.',

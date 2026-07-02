@@ -22,7 +22,13 @@ export const projectAction = async (
   };
 
   try {
-    if (!accessToken) return;
+    if (!accessToken) {
+      return {
+        success: false,
+        message: 'Session expired, please login again.',
+        status: 401,
+      };
+    }
 
     if (!isEditMode) {
       await createProject({ data: values, accessToken });

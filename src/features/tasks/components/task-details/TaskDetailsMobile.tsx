@@ -8,7 +8,6 @@ import LayersIcon from '@/assets/icons/layers.svg';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import Label from '@/shared/components/ui/Label';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { statusBadgeStyle } from '../../utils/tasks.utils';
 import { SelectOption } from '@/shared/components/ui/SelectField';
 import {
@@ -20,6 +19,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 import TaskNotFound from './TaskNotFound';
 import { useUpdateTaskDetails } from '../../hooks/tasks.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask | undefined;
@@ -36,8 +36,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   membersOptions,
   isError,
 }) => {
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
   const {
     control,
     errors,
@@ -73,7 +74,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   <Button
                     variant="ghost"
                     className="w-fit! p-0.5!"
-                    onClick={handleCloseTaskDetails}
+                    onClick={handleCloseModal}
                   >
                     <CloseIcon className="size-3.5 text-secondary" />
                   </Button>

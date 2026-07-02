@@ -9,8 +9,8 @@ import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epi
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
 import {
   useFetchMembers,
+  useHandleModalRoute,
   useMobile,
-  useHandleTaskDetailsRoute,
 } from '@/shared/hooks/shared.hooks';
 import UnassignIcon from '@/assets/icons/unassigned.svg';
 import TaskDetailsDesktop from './TaskDetailsDesktop';
@@ -22,8 +22,10 @@ const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
   const searchParams = useSearchParams();
   const { isMobile } = useMobile(1024);
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
 
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
   const taskId = searchParams.get('task_id');
   const isOpen = !!taskId;
 
@@ -87,8 +89,8 @@ const TaskDetailsModal: React.FC = ({}) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={handleCloseTaskDetails}
-      className="sm:w-full lg:w-3/4 xl:w-2/3 p-0! lg:p-8! self-end"
+      onClose={handleCloseModal}
+      className="sm:w-full lg:w-3/4 xl:w-2/3 p-0! lg:p-8! self-end lg:self-center"
     >
       {isTaskLoading || isEpicsLoading ? (
         <LoadingTaskDetails />

@@ -13,7 +13,6 @@ import {
   formateDateString,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { SelectOption } from '@/shared/components/ui/SelectField';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -24,6 +23,7 @@ import TaskNotFound from './TaskNotFound';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useUpdateTaskDetails } from '../../hooks/tasks.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask | undefined;
@@ -45,8 +45,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
   const {
     control,
     errors,
@@ -178,7 +179,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                 <Button
                   variant="ghost"
                   className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit! ms-auto"
-                  onClick={handleCloseTaskDetails}
+                  onClick={handleCloseModal}
                 >
                   close
                 </Button>

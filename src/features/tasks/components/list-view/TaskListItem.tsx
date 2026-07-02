@@ -12,17 +12,19 @@ import {
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
 import UnassignedIcon from '@/assets/icons/unassigned.svg';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { ITask } from '../../types/tasks.types';
 import { statusBadgeStyle } from '../../utils/tasks.utils';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask;
 }
 
 const TaskListItem: React.FC<IProps> = ({ task }) => {
-  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
-
+  const { handleNavToModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+    queryValue: task?.id,
+  });
   const taskStatus = task?.status;
   const displayedTaskStatus = formateTaskStatus(taskStatus);
   const assigneeName = task?.assignee?.name;
@@ -36,7 +38,7 @@ const TaskListItem: React.FC<IProps> = ({ task }) => {
     <TableRow
       key={task?.id}
       className="bg-white border-b border-b-surface-low cursor-pointer"
-      onClick={handleNavToTaskDetails}
+      onClick={handleNavToModal}
     >
       {/* task id */}
       <TableCol className={`${tdStyle}`}>

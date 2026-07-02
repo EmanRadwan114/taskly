@@ -6,16 +6,24 @@ import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
 import { fetchMembers } from '@/shared/libs/store/slices/members.slice';
-import { useParams } from 'next/navigation';
-import { useMobile } from '@/shared/hooks/shared.hooks';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useHandleModalRoute, useMobile } from '@/shared/hooks/shared.hooks';
 import LoadingMembers from './LoadingMembers';
 import Table from '@/shared/components/ui/Table';
 import TableRow from '@/shared/components/ui/TableRow';
 import TableHead from '@/shared/components/ui/TableHead';
+import InviteMemberModal from './InviteMemberModal';
 
 const DisplayedMembers: React.FC = ({}) => {
   const { projectId } = useParams();
+  const isInviteMemberModalOpen = useSearchParams().get('invite-member');
+
   const dispatch = useAppDispatch();
+
+  const { handleNavToModal } = useHandleModalRoute({
+    queryKey: 'invite-member',
+    queryValue: true,
+  });
 
   const { members, loading, error, isFetched } = useAppSelector(
     (state) => state.members
@@ -64,20 +72,27 @@ const DisplayedMembers: React.FC = ({}) => {
   );
 
   return (
-    <section>
-      {/* page header */}
-      <header className="justify-between items-center flex mb-5 lg:mb-10">
-        <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 text-center lg:text-start w-full">
-          project members
-        </h1>
-        <Button className="w-fit! gap-2! hidden lg:flex">
-          <InviteMemeberIcon className="text-white w-4.5" />
-          Invite member
-        </Button>
-      </header>
-      {/* members */}
-      {isMobile ? mobileMembersView : desktopMembersView}
-    </section>
+    <>
+      <section>
+        {/* page header */}
+        <header className="justify-between items-center flex mb-5 lg:mb-10">
+          <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 text-center lg:text-start w-full">
+            project members
+          </h1>
+          <Button
+            className="w-fit! gap-2! hidden lg:flex"
+            onClick={handleNavToModal}
+          >
+            <InviteMemeberIcon className="text-white w-4.5" />
+            Invite member
+          </Button>
+        </header>
+        {/* members */}
+        {isMobile ? mobileMembersView : desktopMembersView}
+      </section>
+
+      {isInviteMemberModalOpen && <InviteMemberModal />}
+    </>
   );
 };
 

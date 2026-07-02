@@ -11,15 +11,17 @@ import Button from '@/shared/components/ui/Button';
 import DotsIcon from '@/assets/icons/dots.svg';
 import { ITask } from '../../types/tasks.types';
 import { statusBadgeStyle } from '../../utils/tasks.utils';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask;
 }
 
 const TaskMobileCard: React.FC<IProps> = ({ task }) => {
-  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
-
+  const { handleNavToModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+    queryValue: task?.id,
+  });
   const taskStatus = task?.status;
   const displayedTaskStatus = formateTaskStatus(taskStatus);
   const assigneeName = task?.assignee?.name;
@@ -31,7 +33,7 @@ const TaskMobileCard: React.FC<IProps> = ({ task }) => {
   return (
     <div
       className="bg-white flex flex-col gap-3 p-4 rounded-lg cursor-pointer"
-      onClick={handleNavToTaskDetails}
+      onClick={handleNavToModal}
     >
       <div>
         <div className="flex justify-between items-center">

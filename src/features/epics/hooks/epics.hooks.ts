@@ -4,9 +4,7 @@ import {
   createEpicAction,
   updateEpicAction,
 } from '../server-actions/epics.actions';
-import { useAppDispatch } from '@/shared/libs/store/store';
-import { epicsApi } from '@/shared/libs/store/redux-toolkit-query/epics-api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import {
@@ -17,7 +15,7 @@ import {
 
 // ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
-  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const action = createEpicAction.bind(null, projectId);
@@ -35,7 +33,12 @@ export const useCreateEpic = (projectId: string) => {
     },
     onSuccess: (response) => {
       toast.success(response.message);
-      dispatch(epicsApi.util.invalidateTags(['PaginatedEpics', 'AllEpics']));
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.allEpics, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.paginatedEpics, projectId],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -58,7 +61,7 @@ export const useCreateEpic = (projectId: string) => {
 
 // ^ ---------------------------- Update epic Hook -------------------------
 export const useUpdateEpic = (epicId: string, projectId: string) => {
-  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const action = updateEpicAction.bind(null, epicId);
@@ -78,9 +81,15 @@ export const useUpdateEpic = (epicId: string, projectId: string) => {
     },
     onSuccess: (response) => {
       toast.success(response.message);
-      dispatch(
-        epicsApi.util.invalidateTags(['PaginatedEpics', 'EpicBYID', 'AllEpics'])
-      );
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.allEpics, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.paginatedEpics, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.epicById, projectId, epicId],
+      });
     },
     onError: (error) => {
       toast.error(error.message);

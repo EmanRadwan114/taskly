@@ -59,28 +59,25 @@ export const updateProject = async ({
   }
 };
 
-// ^--------------------- fetch all projects ---------------------
-export const fetchProjects = async ({
+// ^--------------------- fetch paginated projects ---------------------
+export const fetchPaginatedProjects = async ({
   limit,
   offset,
 }: {
-  limit: number;
-  offset: number;
-}): Promise<{ data: IProject[]; meta: IMetaFetchedData }> => {
+  limit?: number;
+  offset?: number;
+}): Promise<{ response: { data: IProject[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
       `/api/fetch-projects?limit=${limit}&offset=${offset}`
     );
 
-    if (response.status === 204)
-      return { data: [], meta: { totalCount: 0, totalPages: 0 } };
-
     const result = await response.json();
-
-    if (!response.ok)
+    if (response.status !== 200) {
       throw new Error(result?.message || 'Failed to fetch projects');
+    }
 
-    return result?.response;
+    return result;
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'Failed to fetch projects';

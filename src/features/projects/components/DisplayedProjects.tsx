@@ -9,8 +9,8 @@ import { useHandlePagination } from '@/shared/hooks/shared.hooks';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import { useState } from 'react';
 import LoadingProjects from './LoadingProjects';
-import { useGetProjectsQuery } from '@/shared/libs/store/redux-toolkit-query/projects-api';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
+import { useFetchPaginatedProjects } from '../hooks/project.hooks';
 
 interface IProps {
   searchParams: { page: string };
@@ -28,7 +28,7 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
     data: projects,
     isLoading,
     isFetching,
-  } = useGetProjectsQuery({
+  } = useFetchPaginatedProjects({
     limit,
     offset,
   });

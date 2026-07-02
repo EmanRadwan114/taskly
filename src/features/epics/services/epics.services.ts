@@ -76,7 +76,7 @@ export const fetchPaginatedEpics = async ({
 }): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
-      `/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}&searchTerm=${searchTerm}`
+      `/api/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}&searchTerm=${searchTerm}`
     );
 
     const result = await response.json();
@@ -98,7 +98,7 @@ export const fetchAllEpics = async ({
   projectId: string;
 }): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
   try {
-    const response = await fetch(`/fetch-all-epics?projectId=${projectId}`);
+    const response = await fetch(`/api/fetch-all-epics?projectId=${projectId}`);
 
     const result = await response.json();
     if (response.status !== 200) {
@@ -123,7 +123,7 @@ export const fetchEpicById = async ({
 }): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
-      `/fetch-epic-by-id?projectId=${projectId}&epicId=${epicId}`
+      `/api/fetch-epic-by-id?projectId=${projectId}&epicId=${epicId}`
     );
 
     const result = await response.json();

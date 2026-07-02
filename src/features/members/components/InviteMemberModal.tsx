@@ -7,15 +7,33 @@ import MemberIcon from '@/assets/icons/member.svg';
 import Label from '@/shared/components/ui/Label';
 import FormField from '@/shared/components/ui/FormField';
 import EmailIcon from '@/assets/icons/email.svg';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  inviteMemberSchema,
+  TInviteMemberInput,
+} from '../validation/members.validation';
 
 const InviteMemberModal: React.FC = ({}) => {
   const searchParams = useSearchParams();
   const { isMobile } = useMobile(1024);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TInviteMemberInput>({
+    resolver: zodResolver(inviteMemberSchema),
+    mode: 'onBlur',
+  });
+
   const { handleCloseModal } = useHandleModalRoute({
     queryKey: 'invite-member',
   });
   const isOpen = !!searchParams.get('invite-member');
+
+  // handlers
+  const onSumbit = (formData: TInviteMemberInput) => {};
 
   // views
   const desktopView = (
@@ -40,7 +58,7 @@ const InviteMemberModal: React.FC = ({}) => {
           Send an invitation to join the Architectural Studio workspace.
         </p>
       </header>
-      <form>
+      <form onSubmit={handleSubmit(onSumbit)}>
         <div className="flex flex-col gap-1.5 md:col-span-2 mb-10">
           <Label
             htmlFor="email address"
@@ -52,7 +70,7 @@ const InviteMemberModal: React.FC = ({}) => {
             control={control}
             name="email"
             label="email address"
-            placeholder="yourname@company.com"
+            placeholder="Enter your email"
             icon={<EmailIcon className="text-secondary-light size-4" />}
           />
         </div>
@@ -99,7 +117,7 @@ const InviteMemberModal: React.FC = ({}) => {
           Send an invitation to join the Architectural Studio workspace.
         </p>
       </header>
-      <form>
+      <form onSubmit={handleSubmit(onSumbit)}>
         <div className="flex flex-col gap-1.5 md:col-span-2 mb-10">
           <Label
             htmlFor="email address"
@@ -111,7 +129,7 @@ const InviteMemberModal: React.FC = ({}) => {
             control={control}
             name="email"
             label="email address"
-            placeholder="yourname@company.com"
+            placeholder="Enter your email"
             icon={
               <EmailIcon className="text-secondary-light size-4 -order-1" />
             }

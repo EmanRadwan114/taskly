@@ -1,8 +1,8 @@
 import { emailValidationSchema } from '@/shared/validation/email.validation';
 import { z } from 'zod';
 
-export const addMemberSchema = z.object({
+export const inviteMemberSchema = z.object({
   email: emailValidationSchema,
 });
 
-export type TAddMemberInput = z.infer<typeof addMemberSchema>;
+export type TInviteMemberInput = z.infer<typeof inviteMemberSchema>;

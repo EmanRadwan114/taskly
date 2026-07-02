@@ -33,21 +33,23 @@ const ForgetPasswordForm: React.FC = ({}) => {
     },
   });
 
-  const { onHandleForgetPassword, isPending, actionStateResult } =
-    useForgetPassword();
+  const {
+    onHandleForgetPassword,
+    isPending: isMainPending,
+    isSuccess: isMainSuccess,
+  } = useForgetPassword();
 
   const {
     onHandleForgetPassword: onHandleTimerAction,
     isPending: isTimerPending,
-    actionStateResult: timerActionStateResult,
+    isSuccess: isTimerSuccess,
   } = useForgetPassword();
 
   //timer hook
   const { formatedTime, isRunning, startTimer } = useTimer();
 
   //remove msg when error in response
-  const successResponse =
-    actionStateResult?.success || timerActionStateResult?.success;
+  const successResponse = isMainSuccess || isTimerSuccess;
 
   // start timer condition
   const isTimerActive = successResponse && resendCount <= 3;
@@ -115,9 +117,9 @@ const ForgetPasswordForm: React.FC = ({}) => {
             {/* submit */}
             <Button
               className="md:col-span-2 gap-x-2 py-3.5"
-              disabled={isPending || successResponse}
+              disabled={isMainPending || successResponse}
             >
-              {isPending ? 'Sending...' : 'Send Reset Link'}
+              {isMainPending ? 'Sending...' : 'Send Reset Link'}
             </Button>
           </form>
 

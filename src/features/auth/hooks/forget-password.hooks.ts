@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query';
 
 // ^---------------------- Forget Password Hook ------------------------
 export const useForgetPassword = () => {
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await forgetPasswordAction(formData);
       if (!res.success) {
@@ -37,7 +37,7 @@ export const useForgetPassword = () => {
     mutate(formData);
   };
 
-  return { onHandleForgetPassword, isPending };
+  return { onHandleForgetPassword, isPending, isSuccess };
 };
 
 // ^---------------------- Reset Password Redirect Hook ------------------------

@@ -141,6 +141,10 @@
   color: white;
 }
 
+@utility dark-gradient {
+  @apply bg-linear-[135deg] from-surface-high to-surface-low from-0% to-30%;
+}
+
 @utility light-gradient {
   @apply bg-linear-[135deg] from-white to-surface-low from-15% to-40% lg:from-white lg:to-white;
   color: var(--slate-dark);

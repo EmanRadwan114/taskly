@@ -122,8 +122,8 @@ export const fetchTasksList = async ({
   searchTerm,
 }: {
   projectId: string;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
   searchTerm?: string;
 }): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
   try {

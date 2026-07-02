@@ -103,19 +103,28 @@ export const useFetchTasksByStatus = ({
   limit,
   offset,
   searchTerm,
+  shouldFetch = false,
 }: {
   projectId: string;
   status: string;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
   searchTerm?: string;
+  shouldFetch: boolean;
 }) => {
   return useQuery({
-    queryKey: [queryKeys.tasks.projectTasksByStatus, status, projectId],
+    queryKey: [
+      queryKeys.tasks.projectTasksByStatus,
+      projectId,
+      status,
+      limit,
+      offset,
+      searchTerm,
+    ],
     queryFn: () =>
       fetchTasksByStatus({ projectId, status, limit, offset, searchTerm }),
     staleTime: 60 * 1000, // 1 minute
-    enabled: !!projectId && !!status,
+    enabled: !!projectId && !!status && shouldFetch,
   });
 };
 
@@ -127,12 +136,18 @@ export const useFetchTasksList = ({
   searchTerm,
 }: {
   projectId: string;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
   searchTerm?: string;
 }) => {
   return useQuery({
-    queryKey: [queryKeys.tasks.projectTasksList, projectId],
+    queryKey: [
+      queryKeys.tasks.projectTasksList,
+      projectId,
+      limit,
+      offset,
+      searchTerm,
+    ],
     queryFn: () => fetchTasksList({ projectId, limit, offset, searchTerm }),
     staleTime: 60 * 1000, // 1 minute
     enabled: !!projectId,
@@ -156,12 +171,9 @@ export const useHandleBoardPagination = (params: {
   const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
 
   useEffect(() => {
-    if (!tasks || tasks.length === 0) {
-      setAccumulatedTasks([]);
-      return;
-    }
+    if (!tasks) return;
 
-    // reset after search
+    //reset after search
     if (currentPage === 1) {
       setAccumulatedTasks(tasks);
       return;
@@ -175,7 +187,7 @@ export const useHandleBoardPagination = (params: {
       if (newItemsOnly.length === 0) return prev;
       return [...prev, ...newItemsOnly];
     });
-  }, [tasks]);
+  }, [tasks, currentPage]);
 
   // Infinite Scroll Observer Configuration
   useEffect(() => {
@@ -196,7 +208,7 @@ export const useHandleBoardPagination = (params: {
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [hasMore]);
+  }, [hasMore, isFetching, setCurrentPage]);
 
   return {
     hasMore,
@@ -220,7 +232,7 @@ export const useFetchBoardColumn = ({
   searchTerm?: string;
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
-  const [shouldFetched, setShouldFetched] = useState(false);
+  const [shouldFetch, setShouldFetch] = useState(false);
 
   const { data, isFetching, isLoading, error } = useFetchTasksByStatus({
     status,
@@ -228,6 +240,7 @@ export const useFetchBoardColumn = ({
     limit,
     offset,
     searchTerm,
+    shouldFetch,
   });
 
   const tasks = data?.response?.data || [];
@@ -240,8 +253,8 @@ export const useFetchBoardColumn = ({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting && !shouldFetched) {
-          setShouldFetched(true);
+        if (entry.isIntersecting && !shouldFetch) {
+          setShouldFetch(true);
         }
       },
       { threshold: 0, rootMargin: '100px' }
@@ -252,7 +265,7 @@ export const useFetchBoardColumn = ({
     return () => {
       observer.disconnect();
     };
-  }, [projectId, status, shouldFetched]);
+  }, [projectId, status, shouldFetch]);
 
   return {
     tasks,

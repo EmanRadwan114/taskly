@@ -38,7 +38,7 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
   const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
+  const offset = (currentPage - 1) * limit;
 
   const { searchTerm, debouncedSearchTerm, setSearchTerm } = useHandleSearch({
     setCurrentPage,
@@ -81,9 +81,9 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const desktopView = (
     <div className="hidden lg:flex lg:flex-col lg:flex-1 w-full pb-6">
-      {isLoading || (isFetching && !isMobile) ? (
+      {isFetching && !isMobile ? (
         <LoadingTasksList />
-      ) : debouncedSearchTerm && tasks?.length === 0 ? (
+      ) : debouncedSearchTerm && tasks?.length === 0 && !isLoading ? (
         // empty search status
         <SearchStatus
           text="No tasks found matching your search"
@@ -145,9 +145,9 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const mobileView = (
     <div className="lg:hidden flex flex-col gap-3 min-h-screen">
-      {isLoading || (isFetching && !isMobile) ? (
+      {isLoading && currentPage === 1 ? (
         <LoadingTasksList />
-      ) : debouncedSearchTerm && tasks?.length === 0 ? (
+      ) : debouncedSearchTerm && tasks?.length === 0 && !isLoading ? (
         // empty search status
         <SearchStatus
           text="No tasks found matching your search"

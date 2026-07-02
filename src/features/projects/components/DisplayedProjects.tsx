@@ -22,7 +22,7 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
   const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
+  const offset = (currentPage - 1) * limit;
 
   const {
     data: projects,
@@ -50,7 +50,8 @@ const DisplayedProjects: React.FC<IProps> = ({ searchParams }) => {
     currentPage,
   });
 
-  if (isLoading || (isFetching && !isMobile)) return <LoadingProjects />;
+  if ((isFetching && !isMobile) || (isLoading && currentPage === 1 && isMobile))
+    return <LoadingProjects />;
   if (incomingProjects.length === 0 && !isFetching) return <EmptyProjects />;
 
   return (

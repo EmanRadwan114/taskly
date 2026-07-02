@@ -33,7 +33,7 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
 
   const limit = FETCH_LIMIT;
-  const offset = ((currentPage || 1) - 1) * limit;
+  const offset = (currentPage - 1) * limit;
 
   const { searchTerm, debouncedSearchTerm, setSearchTerm } = useHandleSearch({
     setCurrentPage,
@@ -101,7 +101,8 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
         </div>
       </header>
 
-      {isLoading || (isFetching && !isMobile) ? (
+      {(isFetching && !isMobile) ||
+      (isLoading && currentPage === 1 && isMobile) ? (
         <LoadingEpics />
       ) : debouncedSearchTerm && incomingEpics?.length === 0 ? (
         // empty search status

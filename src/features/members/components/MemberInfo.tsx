@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const MemberInfo: React.FC<IProps> = ({ member }) => {
-  const avatarBg = Math.round(Math.random() * 255) + 1;
+  const avatarBg = Math.round(Math.random() * 254);
   const memberInitials = getNameInitials(member?.metadata.name);
 
   return (

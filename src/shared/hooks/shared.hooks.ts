@@ -101,7 +101,7 @@ export const useHandlePagination = <T extends { id: string | number }>({
       if (newItemsOnly.length === 0) return prev;
       return [...prev, ...newItemsOnly];
     });
-  }, [incomingData, isMobile]);
+  }, [incomingData, isMobile, currentPage]);
 
   // Infinite Scroll Observer Configuration
   useEffect(() => {
@@ -115,14 +115,14 @@ export const useHandlePagination = <T extends { id: string | number }>({
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '100px' }
+      { threshold: 0, rootMargin: '50px' }
     );
     observer.observe(target);
     return () => {
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [isMobile, hasMore]);
+  }, [isMobile, hasMore, isFetching, setCurrentPage]);
 
   // Desktop Page Click Link Sync Handler
   const handleCurrentPage = (page: number) => {
@@ -171,18 +171,22 @@ export const useHandleSearch = ({
 
   useEffect(() => {
     // to prevent page change to 1 on mount
-    if (isFirstRender.current || !debouncedSearchTerm) {
+    if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
     setCurrentPage?.(1);
     const newParams = new URLSearchParams(searchParams);
-    newParams.set('search', debouncedSearchTerm);
+    if (debouncedSearchTerm) {
+      newParams.set('search', debouncedSearchTerm);
+    } else {
+      newParams.delete('search');
+    }
     if (!isMobile && isSetPageParam) {
       newParams.set('page', '1');
     }
     router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-  }, [debouncedSearchTerm, isSetPageParam, isMobile]);
+  }, [debouncedSearchTerm, isMobile, isSetPageParam]);
 
   return { searchTerm, setSearchTerm, debouncedSearchTerm };
 };

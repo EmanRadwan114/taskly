@@ -28,7 +28,7 @@ const TaskMobileCard: React.FC<IProps> = ({ task }) => {
   const assigneeInitials = getNameInitials(assigneeName);
   const formatedDueDate = formateDateString(task?.due_date);
 
-  const avatarBgColor = Math.round(Math.random() * 255) + 1;
+  const avatarBgColor = Math.round(Math.random() * 254);
 
   return (
     <div

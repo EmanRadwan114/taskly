@@ -49,7 +49,7 @@ export const useSubmitProject = (projectId?: string) => {
   return { onHandleSubmitProject, isPending, isSuccess };
 };
 
-// fetch paginated projects
+// ^-------------------- fetch paginated projects --------------------
 export const useFetchPaginatedProjects = ({
   limit,
   offset,

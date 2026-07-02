@@ -226,19 +226,3 @@ export const useHandleError = ({ error }: { error: Error }) => {
     }
   }, [error]);
 };
-
-// ^ ------------------------ Use Fetch Members Hook -------------------------
-export const useFetchMembers = (projectId: string) => {
-  const { members, isFetched, loading, error } = useAppSelector(
-    (state) => state.members
-  );
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (!isFetched && projectId) {
-      dispatch(fetchMembers(projectId));
-    }
-  }, [projectId]);
-
-  return { members, isFetched, loading, error };
-};

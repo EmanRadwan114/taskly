@@ -17,9 +17,9 @@ import { useParams, useRouter } from 'next/navigation';
 import FormField from '@/shared/components/ui/FormField';
 import { useUpdateEpic } from '../hooks/epics.hooks';
 import Button from '@/shared/components/ui/Button';
-import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { ReactNode, useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useFetchMembers } from '@/features/members/hooks/members.hooks';
 
 interface IProps {
   epic: IEpics | undefined;
@@ -35,7 +35,9 @@ const EpicDetails: React.FC<IProps> = ({ epic }) => {
     deadline: epic?.deadline || '',
   });
 
-  const { members } = useFetchMembers(projectId as string);
+  const { data } = useFetchMembers(projectId as string);
+
+  const members = data?.response?.data;
 
   const {
     control,

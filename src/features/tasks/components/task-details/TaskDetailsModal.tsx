@@ -5,17 +5,14 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { taskStatusOptions } from '../../data/tasks.data';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
-import {
-  useFetchMembers,
-  useHandleModalRoute,
-  useMobile,
-} from '@/shared/hooks/shared.hooks';
+import { useHandleModalRoute, useMobile } from '@/shared/hooks/shared.hooks';
 import UnassignIcon from '@/assets/icons/unassigned.svg';
 import TaskDetailsDesktop from './TaskDetailsDesktop';
 import TaskDetailsMobile from './TaskDetailsMobile';
 import LoadingTaskDetails from './LoadingTaskDetails';
 import { useFetchTaskDetails } from '../../hooks/tasks.hooks';
 import { useFetchAllEpics } from '@/features/epics/hooks/epics.hooks';
+import { useFetchMembers } from '@/features/members/hooks/members.hooks';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -43,7 +40,9 @@ const TaskDetailsModal: React.FC = ({}) => {
     isLoading: isEpicsLoading,
   } = useFetchAllEpics({ projectId: projectId as string });
 
-  const { members } = useFetchMembers(projectId as string);
+  const { data } = useFetchMembers(projectId as string);
+
+  const members = data?.response?.data;
 
   const task = taskData?.response?.data?.[0];
   const epicsList = epicsResponse?.response?.data || [];

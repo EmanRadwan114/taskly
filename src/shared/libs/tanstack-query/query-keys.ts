@@ -15,6 +15,6 @@ export const queryKeys = {
     projectTasksList: 'PROJECT_TASKS',
   },
   members: {
-    inviteMember: 'INVITE_MEMBER',
+    allMembers: 'All_MEMBERS',
   },
 };

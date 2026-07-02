@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useTransition } from 'react';
+import { useEffect } from 'react';
 import {
   forgetPasswordAction,
   resetPasswordAction,
@@ -9,31 +9,35 @@ import {
 } from '../validation/forget-password.validation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
 
 // ^---------------------- Forget Password Hook ------------------------
 export const useForgetPassword = () => {
-  const [state, formAction, isPending] = useActionState(
-    forgetPasswordAction,
-    null
-  );
-  const [_, startTransition] = useTransition();
-
-  // effects
-  useEffect(() => {
-    if (!state?.success) toast.error(state?.message);
-  }, [state]);
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await forgetPasswordAction(formData);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleForgetPassword = (data: TforgetPasswordInput) => {
     const formData = new FormData();
     formData.append('email', data.email);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
-  return { onHandleForgetPassword, isPending, actionStateResult: state };
+  return { onHandleForgetPassword, isPending };
 };
 
 // ^---------------------- Reset Password Redirect Hook ------------------------
@@ -61,26 +65,29 @@ export const useResetPassRedirect = () => {
 export const useResetPassword = (accessToken: string) => {
   const resetPassWithToken = resetPasswordAction.bind(null, accessToken);
 
-  const [state, formAction, isPending] = useActionState(
-    resetPassWithToken,
-    null
-  );
-  const [_, startTransition] = useTransition();
-
-  // effects
-  useEffect(() => {
-    if (!state?.success) toast.error(state?.message);
-  }, [state]);
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await resetPassWithToken(formData);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleResetPassword = (data: TResetPasswordInput) => {
     const formData = new FormData();
     formData.append('password', data.password);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
-  return { onHandleResetPassword, isPending, state };
+  return { onHandleResetPassword, isPending };
 };

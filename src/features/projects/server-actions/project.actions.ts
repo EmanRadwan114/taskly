@@ -7,7 +7,6 @@ import { ACCESS_TOKEN_KEY } from '@/shared/utils/variables.utils';
 // ^ ------------------------- Create Project Action ------------------------- //
 export const projectAction = async (
   projectId: string | undefined,
-  _: unknown,
   formData: FormData
 ) => {
   // get access token

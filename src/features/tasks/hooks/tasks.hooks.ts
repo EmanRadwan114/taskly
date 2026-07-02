@@ -5,8 +5,6 @@ import {
   updateTaskAction,
 } from '../server-actions/tasks.actions';
 import { taskSchema, TTaskInput } from '../validation/tasks.validation';
-import { useAppDispatch } from '@/shared/libs/store/store';
-import { tasksApi } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
@@ -30,22 +28,20 @@ export const useCreateTask = ({
   status: TaskStatusEnum;
   epicId: string;
 }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const action = createTaskAction.bind(null, projectId);
 
   const inValidateTasksQueries = () => {
     if (status)
-      dispatch(
-        tasksApi.util.invalidateTags([
-          { type: 'ProjectTasksByStatus', id: status },
-        ])
-      );
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.projectTasksByStatus, projectId, status],
+      });
     if (epicId)
-      dispatch(
-        tasksApi.util.invalidateTags([{ type: 'EpicTasks', id: epicId }])
-      );
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.epicTasks, epicId],
+      });
   };
 
   const { mutate, isPending, isSuccess } = useMutation({

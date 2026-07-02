@@ -11,7 +11,7 @@ import {
 const authRoutes = ['login', 'sign-up', 'forgot-password', 'reset-password'];
 
 export default async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
   // pass pathname to server components
   const requestHeaders = new Headers(request.headers);
@@ -41,7 +41,11 @@ export default async function proxy(request: NextRequest) {
     if (isServerAction) {
       return NextResponse.next({ request: { headers: requestHeaders } });
     }
-    return NextResponse.redirect(new URL('/login', request.nextUrl));
+    const originalUrl = `${pathname}${search}`;
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirectTo', `/${originalUrl}`);
+
+    return NextResponse.redirect(loginUrl);
   }
 
   // refresh access token

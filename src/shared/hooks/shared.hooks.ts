@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { IUseHandlePagination } from '../types/shared.types';
-import { useAppDispatch, useAppSelector } from '../libs/store/store';
-import { fetchMembers } from '../libs/store/slices/members.slice';
 
 // ^--------------------- Timer hook ------------------------
 export const useTimer = () => {

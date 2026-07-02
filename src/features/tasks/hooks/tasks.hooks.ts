@@ -23,8 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import { fetchTaskById } from '../services/tasks.services';
-import { useRouter } from 'next/router';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 // ^ ---------------------------- Create Task Hook -------------------------
 export const useCreateTask = ({
@@ -37,11 +36,9 @@ export const useCreateTask = ({
   epicId: string;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const action = createTaskAction.bind(null, projectId);
-
-  const [state, formAction, isPending] = useActionState(action, null);
-  const [_, startTransition] = useTransition();
 
   const inValidateTasksQueries = () => {
     if (status)
@@ -56,17 +53,25 @@ export const useCreateTask = ({
       );
   };
 
-  // effects
-  useEffect(() => {
-    if (!state) return;
-
-    if (state.success) {
-      toast.success(state.message);
+  const { mutate, isPending, isSuccess } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await action(formData);
+      if (!res.success) {
+        if (res.status === 401) {
+          router.replace(`/login?redirectTo=/project/${projectId}/tasks/new`);
+        }
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.success(response.message);
       inValidateTasksQueries();
-    } else {
-      toast.error(state.message);
-    }
-  }, [state]);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // handlers
   const onHandleCreateTask = (data: TTaskInput) => {
@@ -78,12 +83,10 @@ export const useCreateTask = ({
     if (data.due_date) formData.append('due_date', data.due_date);
     if (data.epic_id) formData.append('epic_id', data.epic_id);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    mutate(formData);
   };
 
-  return { onHandleCreateTask, isPending, taskState: state };
+  return { onHandleCreateTask, isPending, isSuccess };
 };
 
 // ^ ---------------------------- Handle Board Pagination Hook -------------------------
@@ -212,6 +215,7 @@ export const useFetchBoardColumn = ({
 // ^ ----------------------  Update Task Details Hook  --------------------------
 export const useUpdateTaskDetails = (task: ITask | undefined) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const previousValues = useRef({
     title: task?.title || '',
@@ -251,6 +255,11 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     mutationFn: async (formData: FormData) => {
       const response = await updateTaskActionWithId(formData);
       if (!response.success) {
+        if (response.status === 401) {
+          router.replace(
+            `/login?redirectTo=/project/${task?.project_id}/tasks?task_id=${task?.id}`
+          );
+        }
         throw new Error(response.message || 'Failed to update task.');
       }
       return response;

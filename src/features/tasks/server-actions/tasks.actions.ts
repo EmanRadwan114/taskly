@@ -8,7 +8,6 @@ import { TaskStatusEnum } from '../types/tasks.types';
 // ^ ------------------------- Create Task Action ------------------------- //
 export const createTaskAction = async (
   projectId: string,
-  _: unknown,
   formData: FormData
 ) => {
   // get access token

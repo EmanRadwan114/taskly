@@ -48,7 +48,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
     },
   });
 
-  const { onHandleCreateTask, isPending, taskState } = useCreateTask({
+  const { onHandleCreateTask, isPending, isSuccess } = useCreateTask({
     projectId: projectId as string,
     status: watch('status'),
     epicId: watch('epic_id') || '',
@@ -69,7 +69,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
   } = useFetchMembers(projectId as string);
 
   useEffect(() => {
-    if (taskState?.success) {
+    if (isSuccess) {
       reset({
         title: '',
         description: '',
@@ -79,7 +79,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
         epic_id: selectedEpicId,
       });
     }
-  }, [taskState, reset, selectedStatus, selectedEpicId]);
+  }, [isSuccess, reset, selectedStatus, selectedEpicId]);
 
   // handlers
   const onSubmit = (data: TTaskInput) => {

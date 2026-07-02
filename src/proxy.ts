@@ -41,7 +41,8 @@ export default async function proxy(request: NextRequest) {
     if (isServerAction) {
       return NextResponse.next({ request: { headers: requestHeaders } });
     }
-    const originalUrl = `${pathname}${search}`;
+    const originalUrl = encodeURIComponent(`${pathname}${search}`);
+
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectTo', originalUrl);
 

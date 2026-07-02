@@ -13,7 +13,7 @@ export const useSubmitProject = (projectId?: string) => {
   const router = useRouter();
   const action = projectAction.bind(null, projectId);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await action(formData);
       if (!res.success) {
@@ -45,5 +45,5 @@ export const useSubmitProject = (projectId?: string) => {
     mutate(formData);
   };
 
-  return { onHandleSubmitProject, isPending };
+  return { onHandleSubmitProject, isPending, isSuccess };
 };

@@ -34,15 +34,15 @@ const EpicForm: React.FC = () => {
     },
   });
 
-  const { onHandleSubmitEpic, isPending, epicState } = useCreateEpic(
+  const { onHandleSubmitEpic, isPending, isSuccess } = useCreateEpic(
     projectId as string
   );
 
   useEffect(() => {
-    if (epicState?.success) {
+    if (isSuccess) {
       reset({ title: '', description: '', assignee_id: '', deadline: '' });
     }
-  }, [epicState, reset]);
+  }, [isSuccess, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');

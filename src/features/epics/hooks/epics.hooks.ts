@@ -17,7 +17,7 @@ export const useCreateEpic = (projectId: string) => {
 
   const action = createEpicAction.bind(null, projectId);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (formData: FormData) => {
       const response = await action(formData);
       if (!response.success) {
@@ -48,7 +48,7 @@ export const useCreateEpic = (projectId: string) => {
     mutate(formData);
   };
 
-  return { onHandleSubmitEpic, isPending };
+  return { onHandleSubmitEpic, isPending, isSuccess };
 };
 
 // ^ ---------------------------- Update epic Hook -------------------------

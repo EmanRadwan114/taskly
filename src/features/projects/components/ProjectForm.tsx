@@ -20,7 +20,7 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
 
   const isEditMode = !!projectItem?.id;
 
-  const { onHandleSubmitProject, isPending, projectState } = useSubmitProject(
+  const { onHandleSubmitProject, isPending, isSuccess } = useSubmitProject(
     isEditMode ? projectItem?.id : undefined
   );
 
@@ -40,10 +40,10 @@ const ProjectForm: React.FC<IProps> = ({ projectItem }) => {
   });
 
   useEffect(() => {
-    if (projectState?.success && !isEditMode) {
+    if (isSuccess && !isEditMode) {
       reset({ name: '', description: '' });
     }
-  }, [projectState, isEditMode, reset]);
+  }, [isSuccess, isEditMode, reset]);
 
   // watchers
   const descriptionWatcher = watch('description');

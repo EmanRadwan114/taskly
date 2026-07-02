@@ -7,7 +7,7 @@ import {
   formateDateString,
   getDueDateStatus,
 } from '@/shared/utils/functions.client.utils';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 import { ITask } from '../../types/tasks.types';
 
 interface IProps {
@@ -15,7 +15,10 @@ interface IProps {
 }
 
 const BoardTaskCard: React.FC<IProps> = ({ task }) => {
-  const { handleNavToTaskDetails } = useHandleTaskDetailsRoute(task?.id);
+  const { handleNavToModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+    queryValue: task?.id,
+  });
 
   const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
 
@@ -27,7 +30,7 @@ const BoardTaskCard: React.FC<IProps> = ({ task }) => {
   return (
     <div
       className={`cursor-pointer p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday && task?.due_date ? 'border-s-2 border-s-primary' : ''} ${isDelayed && task?.due_date ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'}`}
-      onClick={handleNavToTaskDetails}
+      onClick={handleNavToModal}
     >
       <h2 className="text-slate-dark font-medium leading-4.75">
         {task?.title}

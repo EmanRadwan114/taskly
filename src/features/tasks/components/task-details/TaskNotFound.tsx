@@ -1,12 +1,13 @@
 'use client';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import Button from '@/shared/components/ui/Button';
 import Image from 'next/image';
 import emptyProjectImg from '@/assets/imgs/projects.png';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 const TaskNotFound: React.FC = ({}) => {
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="flex flex-col justify-center items-center gap-3">
@@ -25,7 +26,7 @@ const TaskNotFound: React.FC = ({}) => {
           <Button
             variant="ghost"
             className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit!"
-            onClick={handleCloseTaskDetails}
+            onClick={handleCloseModal}
           >
             close
           </Button>

@@ -192,26 +192,32 @@ export const useHandleSearch = ({
 };
 
 // ^ ------------------------ Use Nav To Task Details Hook ------------------------
-export const useHandleTaskDetailsRoute = (taskId?: string) => {
+export const useHandleModalRoute = ({
+  queryKey,
+  queryValue,
+}: {
+  queryValue?: string | boolean | number;
+  queryKey: string;
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const handleNavToTaskDetails = () => {
-    if (!taskId) return;
+  const handleNavToModal = () => {
+    if (!queryValue) return;
 
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('task_id', taskId);
+    newSearchParams.set(queryKey, queryValue.toString());
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const handleCloseTaskDetails = () => {
+  const handleCloseModal = () => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete('task_id');
+    newParams.delete(queryKey);
     router.push(`${pathname}?${newParams.toString()}`);
   };
 
-  return { handleNavToTaskDetails, handleCloseTaskDetails };
+  return { handleNavToModal, handleCloseModal };
 };
 
 // ^ ------------------------ Use Handle Error Hook -------------------------

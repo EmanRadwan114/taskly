@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useTransition } from 'react';
 import { toast } from 'react-toastify';
 import {
@@ -51,6 +51,7 @@ export const useCreateAccount = () => {
 // ^---------------------- Login Hook ------------------------
 export const useLogin = (rememberMe: boolean) => {
   const router = useRouter();
+  const redirectToParam = useSearchParams().get('redirectTo');
 
   const loginActionRemeberMe = userLoginAction.bind(null, rememberMe);
   const [state, formAction, isPending] = useActionState(
@@ -65,7 +66,12 @@ export const useLogin = (rememberMe: boolean) => {
 
     if (state?.success) {
       toast.success(state.message);
-      router.push('/project');
+
+      if (redirectToParam) {
+        router.replace(redirectToParam);
+      } else {
+        router.replace('/project');
+      }
     } else {
       toast.error(state?.message);
     }

@@ -13,10 +13,6 @@ import {
   formateDateString,
   getNameInitials,
 } from '@/shared/utils/functions.client.utils';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
-import { useForm } from 'react-hook-form';
-import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { SelectOption } from '@/shared/components/ui/SelectField';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,6 +22,8 @@ import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 import TaskNotFound from './TaskNotFound';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
+import { useUpdateTaskDetails } from '../../hooks/tasks.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask | undefined;
@@ -47,32 +45,19 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
+  const {
+    control,
+    errors,
+    taskStatusWatcher,
+    handleUpdateTaskDetails,
+    isPending,
+  } = useUpdateTaskDetails(task);
 
   const isBoardView = searchParams.get('view') === 'board';
   const formatedCreatedAt = formateDateString(task?.created_at);
-
-  const {
-    control,
-    getValues,
-    watch,
-    trigger,
-    getFieldState,
-    formState: { errors },
-  } = useForm<TTaskInput>({
-    resolver: zodResolver(taskSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      title: task?.title || '',
-      status: task?.status || TaskStatusEnum.TODO,
-      description: task?.description || '',
-      assignee_id: task?.assignee?.id || '',
-      epic_id: task?.epic_id || '',
-      due_date: task?.due_date || '',
-    },
-  });
-
-  const taskStatus = watch('status');
 
   useEffect(() => {
     setSharedLink(window.location.href);
@@ -102,7 +87,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
   return (
     <div className="hidden lg:flex min-h-[80vh] bg-white rounded-lg">
       {isError ? (
-        <FetchDataErrorMsg />
+        <FetchDataErrorMsg message="Failed to fetch task" />
       ) : !task ? (
         <TaskNotFound />
       ) : (
@@ -126,9 +111,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                       className={`bg-transparent! ${inputContentStyle} p-0!`}
                       isSelect
                       isEditing
-                      // disabled={isPending}
+                      disabled={isPending}
                       onChange={() => {
-                        // handleUpdateEpic('assignee_id');
+                        handleUpdateTaskDetails('epic_id');
                       }}
                       options={epicsOptions}
                     />
@@ -142,8 +127,8 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     label={task?.title as string}
                     placeholder="Enter Task title"
                     isEditing
-                    // disabled={isPending}
-                    // onBlur={(e) => handleUpdateEpic('title')}
+                    disabled={isPending}
+                    onBlur={(e) => handleUpdateTaskDetails('title')}
                     inputClassName="text-slate-dark font-bold text-3xl leading-9"
                     className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
                   />
@@ -165,9 +150,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   placeholder={`No description provided`}
                   isTextArea
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('description')}
-                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-10"
+                  disabled={isPending}
+                  onBlur={(e) => handleUpdateTaskDetails('description')}
+                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-6"
                   className="focus-within:border-b focus-within:border-b-primary-container focus-within:rounded-b-none"
                 />
               </div>
@@ -194,7 +179,7 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                 <Button
                   variant="ghost"
                   className="bg-surface-high! py-2! px-4! rounded-sm! text-slate-dark! font-semibold! leading-5 w-fit! ms-auto"
-                  onClick={handleCloseTaskDetails}
+                  onClick={handleCloseModal}
                 >
                   close
                 </Button>
@@ -219,12 +204,12 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                   name="status"
                   id="status"
                   className={`${inputContentStyle} bg-transparent! p-0!`}
-                  containerClassName={`py-2! px-4! rounded-md ${statusBadgeStyle[taskStatus as TaskStatusEnum]} `}
+                  containerClassName={`py-2! px-4! rounded-md ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]}`}
                   isSelect
                   isEditing
-                  // disabled={isPending}
+                  disabled={isPending}
                   onChange={() => {
-                    // handleUpdateEpic('assignee_id');
+                    handleUpdateTaskDetails('status');
                   }}
                   options={statusOptions}
                 />
@@ -247,9 +232,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     containerClassName={`bg-white! p-2! rounded-lg`}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('assignee_id');
                     }}
                     options={membersOptions}
                     formatOptionLabel={({ label, icon }) => (
@@ -303,9 +288,9 @@ const TaskDetailsDesktop: React.FC<IProps> = ({
                     className="gap-2! bg-transparent! items-center date relative"
                     placeholder="YYYY-MM-DD"
                     isEditing={true}
-                    // disabled={isPending}
+                    disabled={isPending}
                     onBlur={() => {
-                      // handleUpdateEpic('deadline');
+                      handleUpdateTaskDetails('due_date');
                     }}
                   />
                 </div>

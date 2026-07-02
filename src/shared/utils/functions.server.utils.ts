@@ -1,5 +1,5 @@
 import { generateNewTokens } from '@/features/auth/services/auth.services';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
 import {
@@ -34,6 +34,10 @@ export const fetchWithAuthServer = async ({
 
   // 1. If tokens are missing (like after logout)
   if (!refreshToken) {
+    const headersList = await headers();
+    if (headersList.get('next-action')) {
+      return null;
+    }
     redirect('/login');
   }
 
@@ -61,6 +65,11 @@ export const fetchWithAuthServer = async ({
       // redirect to login if refresh token fails
       cookieStore.delete(REFRESH_TOKEN_EXPIRES_AT_KEY);
       cookieStore.delete(REFRESH_TOKEN_KEY);
+      
+      const headersList = await headers();
+      if (headersList.get('next-action')) {
+        return null;
+      }
       redirect('/login');
     }
   }

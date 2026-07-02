@@ -26,3 +26,56 @@ export const createTask = async ({
     throw new Error(errMsg);
   }
 };
+// ^ ------------------------- Update Task Service ------------------------- //
+export const updateTask = async ({
+  data,
+  accessToken,
+  taskId,
+}: {
+  data: Partial<TTaskInput>;
+  accessToken: string;
+  taskId: string;
+}) => {
+  try {
+    const response = await fetch(`${BASE_URL}/rest/v1/tasks?id=eq.${taskId}`, {
+      method: 'PATCH',
+      headers: { ...requestHeaders, Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify(data),
+    });
+
+    if (response.status !== 204) {
+      const result = await response.json();
+      throw new Error(result?.message || 'Failed to update task');
+    }
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to update task';
+    throw new Error(errMsg);
+  }
+};
+
+// ^ ----------------------- Fetch Task By Id Service ----------------------- //
+export const fetchTaskById = async ({
+  projectId,
+  taskId,
+}: {
+  projectId: string;
+  taskId: string;
+}) => {
+  try {
+    const response = await fetch(
+      `/api/fetch-task-by-id?projectId=${projectId}&taskId=${taskId}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};

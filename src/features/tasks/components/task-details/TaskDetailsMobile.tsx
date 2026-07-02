@@ -8,10 +8,6 @@ import LayersIcon from '@/assets/icons/layers.svg';
 import CalenderIcon from '@/assets/icons/calender.svg';
 import Label from '@/shared/components/ui/Label';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { useForm } from 'react-hook-form';
-import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useHandleTaskDetailsRoute } from '@/shared/hooks/shared.hooks';
 import { statusBadgeStyle } from '../../utils/tasks.utils';
 import { SelectOption } from '@/shared/components/ui/SelectField';
 import {
@@ -22,6 +18,8 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 import TaskNotFound from './TaskNotFound';
+import { useUpdateTaskDetails } from '../../hooks/tasks.hooks';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 interface IProps {
   task: ITask | undefined;
@@ -38,34 +36,18 @@ const TaskDetailsMobile: React.FC<IProps> = ({
   membersOptions,
   isError,
 }) => {
-  const { handleCloseTaskDetails } = useHandleTaskDetailsRoute();
-
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'task_id',
+  });
   const {
     control,
-    getValues,
-    watch,
-    trigger,
-    getFieldState,
-    formState: { errors },
-  } = useForm<TTaskInput>({
-    resolver: zodResolver(taskSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      title: task?.title || '',
-      status: task?.status || TaskStatusEnum.TODO,
-      description: task?.description || '',
-      assignee_id: task?.assignee?.id || '',
-      epic_id: task?.epic_id || '',
-      due_date: task?.due_date || '',
-    },
-  });
-
-  const taskStatus = watch('status');
+    errors,
+    taskStatusWatcher,
+    handleUpdateTaskDetails,
+    isPending,
+  } = useUpdateTaskDetails(task);
 
   const formatedCreatedAt = formateDateString(task?.created_at);
-
-  // handlers
-  const onSubmit = () => {};
 
   //   style
   const labelStyle = `uppercase font-bold text-body-xs leading-3.75 letter-spacing-md text-secondary`;
@@ -76,7 +58,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
     <div className="rounded-t-3xl pb-8 border-t border-t-white/40 bg-background max-h-[70vh] self-end lg:hidden">
       <div className="mx-auto bg-slate-light/50 w-10 h-1 rounded-xl my-4"></div>
       {isError ? (
-        <FetchDataErrorMsg />
+        <FetchDataErrorMsg message="Failed to fetch task" />
       ) : !task ? (
         <TaskNotFound />
       ) : (
@@ -92,7 +74,7 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   <Button
                     variant="ghost"
                     className="w-fit! p-0.5!"
-                    onClick={handleCloseTaskDetails}
+                    onClick={handleCloseModal}
                   >
                     <CloseIcon className="size-3.5 text-secondary" />
                   </Button>
@@ -104,8 +86,8 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   label={task?.title as string}
                   placeholder="Enter Task title"
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('title')}
+                  disabled={isPending}
+                  onBlur={(e) => handleUpdateTaskDetails('title')}
                   inputClassName="text-slate-dark font-semibold text-2xl leading-7.5"
                 />
               </header>
@@ -118,12 +100,12 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     name="status"
                     id="status"
                     className={`${inputContentStyle} bg-transparent! p-0!`}
-                    containerClassName={`py-1! px-3! rounded-xl ${statusBadgeStyle[taskStatus as TaskStatusEnum]} `}
+                    containerClassName={`py-1! px-3! rounded-xl ${statusBadgeStyle[taskStatusWatcher as TaskStatusEnum]} `}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('status');
                     }}
                     options={statusOptions}
                   />
@@ -138,9 +120,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     className={`bg-transparent! ${inputContentStyle} p-0!`}
                     isSelect
                     isEditing
-                    // disabled={isPending}
+                    disabled={isPending}
                     onChange={() => {
-                      // handleUpdateEpic('assignee_id');
+                      handleUpdateTaskDetails('epic_id');
                     }}
                     options={epicsOptions}
                   />
@@ -166,9 +148,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   className={`bg-transparent! ${inputContentStyle} text-body-sm p-0!`}
                   isSelect
                   isEditing
-                  // disabled={isPending}
+                  disabled={isPending}
                   onChange={() => {
-                    // handleUpdateEpic('assignee_id');
+                    handleUpdateTaskDetails('assignee_id');
                   }}
                   options={membersOptions}
                   formatOptionLabel={({ label, icon }) => (
@@ -203,9 +185,9 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                     className="gap-2! bg-transparent! items-center date"
                     placeholder="YYYY-MM-DD"
                     isEditing={true}
-                    // disabled={isPending}
+                    disabled={isPending}
                     onBlur={() => {
-                      // handleUpdateEpic('deadline');
+                      handleUpdateTaskDetails('due_date');
                     }}
                   />
                 </div>
@@ -250,9 +232,11 @@ const TaskDetailsMobile: React.FC<IProps> = ({
                   placeholder={`No description provided`}
                   isTextArea
                   isEditing
-                  // disabled={isPending}
-                  // onBlur={(e) => handleUpdateEpic('description')}
-                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-10 text-body-sm"
+                  disabled={isPending}
+                  onBlur={() => {
+                    handleUpdateTaskDetails('description');
+                  }}
+                  inputClassName="text-slate-dark leading-5.5 resize-none min-h-6 text-body-sm"
                   className=""
                 />
               </div>

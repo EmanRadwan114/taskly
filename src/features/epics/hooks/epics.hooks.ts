@@ -46,10 +46,10 @@ export const useCreateEpic = (projectId: string) => {
 };
 
 // ^ ---------------------------- Update epic Hook -------------------------
-export const useUpdateEpic = (projectId: string, epicId: string) => {
+export const useUpdateEpic = (epicId: string) => {
   const dispatch = useAppDispatch();
 
-  const action = updateEpicAction.bind(null, projectId, epicId);
+  const action = updateEpicAction.bind(null, epicId);
 
   const [state, formAction, isPending] = useActionState(action, null);
   const [_, startTransition] = useTransition();
@@ -85,4 +85,3 @@ export const useUpdateEpic = (projectId: string, epicId: string) => {
 
   return { onHandleSubmitEpic, isPending, epicState: state };
 };
-

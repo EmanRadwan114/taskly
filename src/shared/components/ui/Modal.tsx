@@ -51,7 +51,7 @@ const Modal: React.FC<IProps> = ({ children, isOpen, onClose, className }) => {
       onClick={onClose}
     >
       <div
-        className={`sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto scroll flex flex-col p-4 lg:p-8 ${className}`}
+        className={`lg:w-2/3 xl:w-1/2 mx-auto overflow-y-auto scroll flex flex-col p-4 lg:p-8 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

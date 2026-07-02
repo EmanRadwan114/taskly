@@ -5,17 +5,17 @@ import FormField from '@/shared/components/ui/FormField';
 import Label from '@/shared/components/ui/Label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useFetchMembers } from '@/shared/hooks/shared.hooks';
 import LoadingAddTaskForm from './LoadingAddTaskForm';
 import { toast } from 'react-toastify';
-import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import { TaskStatusEnum } from '../../types/tasks.types';
 import { taskSchema, TTaskInput } from '../../validation/tasks.validation';
 import { useCreateTask } from '../../hooks/tasks.hooks';
 import { taskStatusOptions } from '../../data/tasks.data';
+import { useFetchAllEpics } from '@/features/epics/hooks/epics.hooks';
 
 interface IProps {
   searchParams: { status: string; epic: string };
@@ -58,7 +58,7 @@ const AddTaskForm: React.FC<IProps> = ({ searchParams }) => {
     data: epicsResponse,
     isError: epicsError,
     isLoading: epicsLoading,
-  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
+  } = useFetchAllEpics({ projectId: projectId as string });
 
   const epicsList = epicsResponse?.response?.data || [];
 

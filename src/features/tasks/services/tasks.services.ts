@@ -1,5 +1,7 @@
 import { BASE_URL, requestHeaders } from '@/shared/utils/variables.utils';
 import { TTaskInput } from '../validation/tasks.validation';
+import { ITask } from '../types/tasks.types';
+import { IMetaFetchedData } from '@/shared/types/shared.types';
 
 // ^ ------------------------- Create Task Service ------------------------- //
 export const createTask = async ({
@@ -61,7 +63,7 @@ export const fetchTaskById = async ({
 }: {
   projectId: string;
   taskId: string;
-}) => {
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
       `/api/fetch-task-by-id?projectId=${projectId}&taskId=${taskId}`

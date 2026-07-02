@@ -6,8 +6,14 @@ import {
 } from '../server-actions/epics.actions';
 import { useAppDispatch } from '@/shared/libs/store/store';
 import { epicsApi } from '@/shared/libs/store/redux-toolkit-query/epics-api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
+import {
+  fetchAllEpics,
+  fetchEpicById,
+  fetchPaginatedEpics,
+} from '../services/epics.services';
 
 // ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
@@ -95,4 +101,62 @@ export const useUpdateEpic = (epicId: string, projectId: string) => {
   };
 
   return { onHandleSubmitEpic, isPending };
+};
+
+// ^ ---------------------------- fetch Paginated Epics Hook -------------------------
+export const useFetchPaginatedEpics = ({
+  projectId,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}) => {
+  return useQuery({
+    queryKey: [
+      queryKeys.epics.paginatedEpics,
+      projectId,
+      limit,
+      offset,
+      searchTerm,
+    ],
+    queryFn: () =>
+      fetchPaginatedEpics({
+        projectId,
+        limit,
+        offset,
+        searchTerm,
+      }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId,
+  });
+};
+
+// ^ ---------------------------- fetch all Epics Hook -------------------------
+export const useFetchAllEpics = ({ projectId }: { projectId: string }) => {
+  return useQuery({
+    queryKey: [queryKeys.epics.allEpics, projectId],
+    queryFn: () => fetchAllEpics({ projectId }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId,
+  });
+};
+
+// ^ ---------------------------- fetch Epic by id Hook -------------------------
+export const useFetchEpicById = ({
+  projectId,
+  epicId,
+}: {
+  projectId: string;
+  epicId: string;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.epics.epicById, projectId, epicId],
+    queryFn: () => fetchEpicById({ projectId, epicId }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && !!epicId,
+  });
 };

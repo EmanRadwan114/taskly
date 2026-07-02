@@ -1,6 +1,10 @@
 export const queryKeys = {
   projects: {},
-  epics: {},
+  epics: {
+    paginatedEpics: 'PAGINATED_EPICS',
+    epicById: 'EPIC_BY_ID',
+    allEpics: 'ALL_EPICS',
+  },
   tasks: {
     taskById: 'TASK_BY_ID',
     epicTasks: 'EPIC_TASKS',

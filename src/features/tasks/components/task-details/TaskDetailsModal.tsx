@@ -4,8 +4,6 @@ import Modal from '@/shared/components/ui/Modal';
 import { useParams, useSearchParams } from 'next/navigation';
 import { taskStatusOptions } from '../../data/tasks.data';
 import UserAvatar from '@/shared/components/ui/UserAvatar';
-import { useGetTaskByIdQuery } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
-import { useGetAllEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import { getNameInitials } from '@/shared/utils/functions.client.utils';
 import {
   useFetchMembers,
@@ -17,6 +15,7 @@ import TaskDetailsDesktop from './TaskDetailsDesktop';
 import TaskDetailsMobile from './TaskDetailsMobile';
 import LoadingTaskDetails from './LoadingTaskDetails';
 import { useFetchTaskDetails } from '../../hooks/tasks.hooks';
+import { useFetchAllEpics } from '@/features/epics/hooks/epics.hooks';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -42,7 +41,7 @@ const TaskDetailsModal: React.FC = ({}) => {
     data: epicsResponse,
     isError: epicsError,
     isLoading: isEpicsLoading,
-  } = useGetAllEpicsQuery(projectId as string, { skip: !projectId });
+  } = useFetchAllEpics({ projectId: projectId as string });
 
   const { members } = useFetchMembers(projectId as string);
 

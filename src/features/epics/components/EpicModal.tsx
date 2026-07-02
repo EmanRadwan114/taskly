@@ -12,9 +12,9 @@ import { useGetEpicTasksQuery } from '@/shared/libs/store/redux-toolkit-query/ta
 import { toast } from 'react-toastify';
 import LoadingEpicDetails from './LoadingEpicDetails';
 import LoadingEpicTasks from '@/features/epics/components/LoadingEpicTasks';
-import { useGetEpicByIdQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import TaskDetailsModal from '@/features/tasks/components/task-details/TaskDetailsModal';
 import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
+import { useFetchEpicById } from '../hooks/epics.hooks';
 
 const EpicModal = () => {
   const router = useRouter();
@@ -29,10 +29,7 @@ const EpicModal = () => {
     data: epicData,
     isLoading: isLoadingEpic,
     error: epicError,
-  } = useGetEpicByIdQuery(
-    { projectId, epicId },
-    { skip: !projectId || !epicId }
-  );
+  } = useFetchEpicById({ projectId, epicId });
   const epic = epicData?.response?.data[0];
 
   const {

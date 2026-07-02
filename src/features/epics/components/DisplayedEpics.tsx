@@ -4,22 +4,22 @@ import PlusIcon from '@/assets/icons/plus.svg';
 import LinkButton from '@/shared/components/ui/LinkButton';
 import Search from '@/shared/components/ui/Search';
 import EpicItem from './EpicItem';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import EmptyEpics from './EmptyEpics';
 import Pagination from '@/shared/components/ui/Pagination';
 import { IEpics } from '../types/epics.types';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 import LoadingEpics from './LoadingEpics';
 import {
   useHandlePagination,
   useHandleSearch,
 } from '@/shared/hooks/shared.hooks';
-import { useGetPaginatedEpicsQuery } from '@/shared/libs/store/redux-toolkit-query/epics-api';
 import FloatingLink from '@/shared/components/ui/FloatingLink';
 import SearchStatus from '@/shared/components/ui/SearchStatus';
 import emptyEpicImg from '@/assets/imgs/empty-epics.png';
 import errorEpicImg from '@/assets/imgs/alert.png';
+import { useFetchPaginatedEpics } from '../hooks/epics.hooks';
 
 interface IProps {
   searchParams: { page: string };
@@ -44,15 +44,12 @@ const DisplayedEpics: React.FC<IProps> = ({ searchParams }) => {
     isLoading,
     isFetching,
     error,
-  } = useGetPaginatedEpicsQuery(
-    {
-      limit,
-      offset,
-      projectId: projectId as string,
-      searchTerm: debouncedSearchTerm,
-    },
-    { skip: !projectId }
-  );
+  } = useFetchPaginatedEpics({
+    limit,
+    offset,
+    projectId: projectId as string,
+    searchTerm: debouncedSearchTerm,
+  });
 
   const incomingEpics = epics?.response?.data || [];
   const meta = epics?.response?.meta;

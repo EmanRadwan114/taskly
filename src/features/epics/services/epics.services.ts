@@ -62,33 +62,79 @@ export const updateEpic = async ({
   }
 };
 
-// ^--------------------- fetch project epics ---------------------
-export const fetchEpics = async ({
-  limit = FETCH_LIMIT,
-  offset = 0,
+// ^--------------------- fetch paginated project epics ---------------------
+export const fetchPaginatedEpics = async ({
+  limit,
+  offset,
   projectId,
+  searchTerm,
 }: {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
   projectId: string;
-}): Promise<{ data: IEpics[]; meta: IMetaFetchedData }> => {
+  searchTerm?: string;
+}): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
   try {
     const response = await fetch(
-      `/api/fetch-epics?limit=${limit}&offset=${offset}&projectId=${projectId}`
+      `/fetch-epics-with-pagination?limit=${limit}&offset=${offset}&projectId=${projectId}&searchTerm=${searchTerm}`
     );
 
-    if (response.status === 204)
-      return { data: [], meta: { totalCount: 0, totalPages: 0 } };
-
     const result = await response.json();
-
-    if (!response.ok)
+    if (response.status !== 200) {
       throw new Error(result?.message || 'Failed to fetch epics');
+    }
 
-    return result?.response;
+    return result;
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'Failed to fetch epics';
+    throw new Error(errMsg);
+  }
+};
+// ^--------------------- fetch all project epics ---------------------
+export const fetchAllEpics = async ({
+  projectId,
+}: {
+  projectId: string;
+}): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(`/fetch-all-epics?projectId=${projectId}`);
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch epics');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch epics';
+    throw new Error(errMsg);
+  }
+};
+
+// ^--------------------- fetch Epic by Id ---------------------
+export const fetchEpicById = async ({
+  projectId,
+  epicId,
+}: {
+  projectId: string;
+  epicId: string;
+}): Promise<{ response: { data: IEpics[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(
+      `/fetch-epic-by-id?projectId=${projectId}&epicId=${epicId}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch epic');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch epic';
     throw new Error(errMsg);
   }
 };

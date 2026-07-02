@@ -16,9 +16,11 @@ export const inviteMember = async ({
       body: JSON.stringify(data),
     });
 
-    if (response.status !== 204) {
-      const result = await response.json();
-      throw new Error(result?.message || 'Failed to invite member');
+    if (response.status === 401) {
+      throw new Error('Session expired, please login again');
+    }
+    if (response.status === 403) {
+      throw new Error('You do not have permission to invite members');
     }
   } catch (error) {
     const errMsg =

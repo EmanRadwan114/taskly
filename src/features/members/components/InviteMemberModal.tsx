@@ -15,6 +15,7 @@ import {
   TInviteMemberInput,
 } from '../validation/members.validation';
 import { useHandleInviteMember } from '../hooks/members.hooks';
+import Check from '@/assets/icons/check.svg';
 
 const InviteMemberModal: React.FC = ({}) => {
   const searchParams = useSearchParams();
@@ -29,13 +30,16 @@ const InviteMemberModal: React.FC = ({}) => {
   } = useForm<TInviteMemberInput>({
     resolver: zodResolver(inviteMemberSchema),
     mode: 'onBlur',
+    defaultValues: {
+      email: '',
+    },
   });
 
   const { handleCloseModal } = useHandleModalRoute({
     queryKey: 'invite-member',
   });
 
-  const { handleInviteMember, isPending } = useHandleInviteMember();
+  const { handleInviteMember, isPending, isSuccess } = useHandleInviteMember();
 
   // handlers
   const onSumbit = (formData: TInviteMemberInput) => {
@@ -43,6 +47,17 @@ const InviteMemberModal: React.FC = ({}) => {
   };
 
   // views
+  const successMsg = (
+    <div className="flex items-center justify-center py-2 bg-success/30 rounded-lg mt-6">
+      <div className="flex gap-2 items-center">
+        <Check className="size-4 text-success-text" />
+        <p className="font-medium text-success-text text-body-lg">
+          Invitation sent successfully!
+        </p>
+      </div>
+    </div>
+  );
+
   const desktopView = (
     <section className="hidden lg:flex lg:flex-col min-h-[50vh] bg-white rounded-lg p-8">
       <header className="flex flex-col gap-2 mb-6">
@@ -76,7 +91,7 @@ const InviteMemberModal: React.FC = ({}) => {
           <FormField
             control={control}
             name="email"
-            label="email address"
+            id="email address"
             placeholder="Enter your email"
             icon={<EmailIcon className="text-secondary-light size-4" />}
           />
@@ -100,6 +115,7 @@ const InviteMemberModal: React.FC = ({}) => {
           </Button>
         </div>
       </form>
+      {isSuccess && successMsg}
     </section>
   );
 
@@ -135,7 +151,7 @@ const InviteMemberModal: React.FC = ({}) => {
           <FormField
             control={control}
             name="email"
-            label="email address"
+            id="email address"
             placeholder="Enter your email"
             icon={
               <EmailIcon className="text-secondary-light size-4 -order-1" />
@@ -161,6 +177,7 @@ const InviteMemberModal: React.FC = ({}) => {
           </Button>
         </div>
       </form>
+      {isSuccess && successMsg}
     </section>
   );
 

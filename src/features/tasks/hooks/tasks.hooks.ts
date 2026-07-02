@@ -248,7 +248,13 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
   const updateTaskActionWithId = updateTaskAction.bind(null, task?.id);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (formData: FormData) => updateTaskActionWithId(formData),
+    mutationFn: async (formData: FormData) => {
+      const response = await updateTaskActionWithId(formData);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update task.');
+      }
+      return response;
+    },
     onMutate: async (formData) => {
       await queryClient.cancelQueries({
         queryKey: [queryKeys.tasks.projectTasksByStatus],

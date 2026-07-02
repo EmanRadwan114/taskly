@@ -3,12 +3,13 @@
 import React from 'react';
 import DotsIcon from '@/assets/icons/dots.svg';
 import Button from '@/shared/components/ui/Button';
-import { useMobile } from '@/shared/hooks/shared.hooks';
 import TableCol from '@/shared/components/ui/TableCol';
 
-const MemberItemSkeleton: React.FC = () => {
-  const { isMobile } = useMobile(768);
+interface IProps {
+  layout: 'desktop' | 'mobile';
+}
 
+const MemberItemSkeleton: React.FC<IProps> = ({ layout }) => {
   // Common inner layout structural skeleton (Avatar + Text Rows)
   const memberInfoSkeleton = (
     <div className="flex gap-4 items-center animate-pulse">
@@ -66,7 +67,7 @@ const MemberItemSkeleton: React.FC = () => {
     </div>
   );
 
-  return <>{isMobile ? mobileView : desktopView}</>;
+  return <>{layout === 'desktop' ? desktopView : mobileView}</>;
 };
 
 export default MemberItemSkeleton;

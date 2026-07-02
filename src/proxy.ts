@@ -6,7 +6,6 @@ import {
   cookieConfig,
   REFRESH_TOKEN_EXPIRES_AT_KEY,
   REFRESH_TOKEN_KEY,
-  REFRESH_TOKEN_SINGLE_SESSION,
 } from './shared/utils/variables.utils';
 
 const authRoutes = ['login', 'sign-up', 'forgot-password', 'reset-password'];
@@ -35,8 +34,13 @@ export default async function proxy(request: NextRequest) {
   if (isAuthRoute && !refreshToken)
     return NextResponse.next({ request: { headers: requestHeaders } });
 
+  const isServerAction = request.headers.has('next-action');
+
   // login if both tokens expired
   if (!refreshToken || (!refreshToken && !accessToken)) {
+    if (isServerAction) {
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }
     return NextResponse.redirect(new URL('/login', request.nextUrl));
   }
 

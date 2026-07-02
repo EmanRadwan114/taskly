@@ -29,7 +29,7 @@ const LoadingMembers: React.FC = () => {
             key={index}
             className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row"
           >
-            <MemberItemSkeleton />
+            <MemberItemSkeleton layout="desktop" />
           </TableRow>
         ))}
       </tbody>
@@ -40,7 +40,7 @@ const LoadingMembers: React.FC = () => {
   const mobileSkeletonView = (
     <div className="flex md:hidden flex-col gap-3">
       {dummyRows.map((_, index) => (
-        <MemberItemSkeleton key={index} />
+        <MemberItemSkeleton key={index} layout="mobile" />
       ))}
     </div>
   );

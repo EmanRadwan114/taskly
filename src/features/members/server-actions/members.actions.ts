@@ -47,7 +47,7 @@ export const inviteMemberAction = async (
     if (!accessToken) {
       return {
         success: false,
-        message: 'Access token is required!',
+        message: 'Session expired, please login again.',
       };
     }
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from '@/shared/libs/store/store';
-import MemberItem from './MemberItem';
 import Button from '@/shared/components/ui/Button';
 import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { useEffect } from 'react';
@@ -13,6 +12,8 @@ import Table from '@/shared/components/ui/Table';
 import TableRow from '@/shared/components/ui/TableRow';
 import TableHead from '@/shared/components/ui/TableHead';
 import InviteMemberModal from './InviteMemberModal';
+import MemberItemMobile from './MemberItemMobile';
+import MemberItemDesktop from './MemberItemDesktop';
 
 const DisplayedMembers: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -56,7 +57,7 @@ const DisplayedMembers: React.FC = ({}) => {
       </thead>
       <tbody>
         {members.map((member) => (
-          <MemberItem key={member?.member_id} member={member} />
+          <MemberItemDesktop key={member?.member_id} member={member} />
         ))}
       </tbody>
     </Table>
@@ -66,7 +67,7 @@ const DisplayedMembers: React.FC = ({}) => {
   const mobileMembersView = (
     <div className="flex md:hidden flex-col gap-3">
       {members.map((member) => (
-        <MemberItem key={member?.member_id} member={member} />
+        <MemberItemMobile key={member?.member_id} member={member} />
       ))}
     </div>
   );

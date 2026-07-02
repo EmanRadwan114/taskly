@@ -41,11 +41,8 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
     },
   });
 
-  const {
-    onHandleResetPassword,
-    isPending,
-    state: resetPassActionState,
-  } = useResetPassword(accessToken);
+  const { onHandleResetPassword, isPending, isSuccess } =
+    useResetPassword(accessToken);
 
   // watchers
   const watchedPassword = watch('password');
@@ -109,7 +106,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
 
     if (timeout) clearTimeout(timeout);
 
-    if (resetPassActionState?.success) {
+    if (isSuccess) {
       timeout = setTimeout(() => {
         // Performs a clean browser replace and drops all params/hashes
         window.location.replace('/login');
@@ -119,7 +116,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [resetPassActionState]);
+  }, [isSuccess]);
 
   // handlers
   const onSubmit: SubmitHandler<TResetPasswordInput> = (data) => {
@@ -209,7 +206,7 @@ const ResetPasswordForm: React.FC<IProps> = ({ accessToken }) => {
         </form>
 
         {/* success msg */}
-        {resetPassActionState?.success && (
+        {isSuccess && (
           <div className="bg-success/20 backdrop-blur-md flex justify-center items-center p-4 rounded-sm">
             <p className="text-success-text font-semibold text-center">
               Your password has been updated successfully. <br /> You can now

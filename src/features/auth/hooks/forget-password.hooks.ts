@@ -65,7 +65,7 @@ export const useResetPassRedirect = () => {
 export const useResetPassword = (accessToken: string) => {
   const resetPassWithToken = resetPasswordAction.bind(null, accessToken);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await resetPassWithToken(formData);
       if (!res.success) {
@@ -89,5 +89,5 @@ export const useResetPassword = (accessToken: string) => {
     mutate(formData);
   };
 
-  return { onHandleResetPassword, isPending };
+  return { onHandleResetPassword, isPending, isSuccess };
 };

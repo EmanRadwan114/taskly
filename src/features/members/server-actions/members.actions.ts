@@ -2,7 +2,10 @@
 
 import { ACCESS_TOKEN_KEY, BASE_URL } from '@/shared/utils/variables.utils';
 import { cookies } from 'next/headers';
-import { inviteMember } from '../services/members.services';
+import {
+  acceptMemberInvitation,
+  inviteMember,
+} from '../services/members.services';
 import { IInviteMemberRequest } from '../types/members.types';
 
 // ^ ------------------------- Invite Member Action ------------------------- //
@@ -48,6 +51,7 @@ export const inviteMemberAction = async (
       return {
         success: false,
         message: 'Session expired, please login again.',
+        status: 401,
       };
     }
 
@@ -60,7 +64,45 @@ export const inviteMemberAction = async (
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Something went wrong',
+      message:
+        error instanceof Error ? error.message : 'Failed to invite member',
+    };
+  }
+};
+
+// ^ ------------------------- Accept Member Invitation Action ------------------------- //
+export const acceptInvitationAction = async (invitationToken: string) => {
+  if (!invitationToken) {
+    return {
+      success: false,
+      message: 'Invitation token is required!',
+    };
+  }
+
+  // get access token
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      message: 'Session expired, please login again.',
+      status: 401,
+    };
+  }
+
+  try {
+    await acceptMemberInvitation({ invitationToken, accessToken });
+
+    return {
+      success: true,
+      message: 'Invitation accepted successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : 'Failed to accept invitation',
     };
   }
 };

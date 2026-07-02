@@ -68,9 +68,9 @@ export const useLogin = (rememberMe: boolean) => {
       toast.success(state.message);
 
       if (redirectToParam) {
-        router.push(redirectToParam);
+        router.replace(redirectToParam);
       } else {
-        router.push('/project');
+        router.replace('/project');
       }
     } else {
       toast.error(state?.message);

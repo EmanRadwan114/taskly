@@ -41,12 +41,9 @@ export default async function proxy(request: NextRequest) {
     if (isServerAction) {
       return NextResponse.next({ request: { headers: requestHeaders } });
     }
-    const targetPathAndQuery = `${pathname}${search}`;
-    const encodedTarget = encodeURIComponent(targetPathAndQuery);
-
+    const originalUrl = `${pathname}${search}`;
     const loginUrl = new URL('/login', request.url);
-
-    loginUrl.search = `?redirectTo=${encodedTarget}`;
+    loginUrl.searchParams.set('redirectTo', originalUrl);
 
     return NextResponse.redirect(loginUrl);
   }
@@ -85,16 +82,11 @@ export default async function proxy(request: NextRequest) {
 
       return response;
     } catch (error) {
-      const targetPathAndQuery = `${pathname}${search}`;
-      const encodedTarget = encodeURIComponent(targetPathAndQuery);
-
+      const originalUrl = `${pathname}${search}`;
       const loginUrl = new URL('/login', request.url);
-
-      loginUrl.search = `?redirectTo=${encodedTarget}`;
-
+      loginUrl.searchParams.set('redirectTo', originalUrl);
       // redirect to login if refresh token fails
       const errorResponse = NextResponse.redirect(loginUrl);
-
       errorResponse.cookies.delete(REFRESH_TOKEN_KEY);
       errorResponse.cookies.delete(REFRESH_TOKEN_EXPIRES_AT_KEY);
       return errorResponse;

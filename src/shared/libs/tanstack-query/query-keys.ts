@@ -7,10 +7,10 @@ export const queryKeys = {
     paginatedEpics: 'PAGINATED_EPICS',
     epicById: 'EPIC_BY_ID',
     allEpics: 'ALL_EPICS',
+    epicTasks: 'EPIC_TASKS',
   },
   tasks: {
     taskById: 'TASK_BY_ID',
-    epicTasks: 'EPIC_TASKS',
     projectTasksByStatus: 'PROJECT_TASKS_BY_STATUS',
     projectTasksList: 'PROJECT_TASKS',
   },

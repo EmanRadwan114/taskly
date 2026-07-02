@@ -10,6 +10,7 @@ import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import {
   fetchAllEpics,
   fetchEpicById,
+  fetchEpicTasks,
   fetchPaginatedEpics,
 } from '../services/epics.services';
 
@@ -167,5 +168,15 @@ export const useFetchEpicById = ({
     queryFn: () => fetchEpicById({ projectId, epicId }),
     staleTime: 60 * 1000, // 1 minute
     enabled: !!projectId && !!epicId,
+  });
+};
+
+// ^ ---------------------------- fetch Epic tasks Hook -------------------------
+export const useFetchEpicTasks = ({ epicId }: { epicId: string }) => {
+  return useQuery({
+    queryKey: [queryKeys.epics.epicTasks, epicId],
+    queryFn: () => fetchEpicTasks({ epicId }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!epicId,
   });
 };

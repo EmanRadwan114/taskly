@@ -6,6 +6,7 @@ import {
 import { TEpicsInput } from '../validation/epics.validation';
 import { IEpics } from '../types/epics.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
+import { ITask } from '@/features/tasks/types/tasks.types';
 
 // ^-------------------------Create new epic -------------------------//
 export const createEpic = async ({
@@ -135,6 +136,28 @@ export const fetchEpicById = async ({
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'Failed to fetch epic';
+    throw new Error(errMsg);
+  }
+};
+
+// ^--------------------- fetch Epic tasks ---------------------
+export const fetchEpicTasks = async ({
+  epicId,
+}: {
+  epicId: string;
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(`/api/fetch-epic-tasks?epicId=${epicId}`);
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch epic tasks');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch epic tasks';
     throw new Error(errMsg);
   }
 };

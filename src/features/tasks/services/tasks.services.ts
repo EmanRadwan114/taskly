@@ -81,3 +81,65 @@ export const fetchTaskById = async ({
     throw new Error(errMsg);
   }
 };
+
+// ^ ----------------------- Fetch Tasks By Status ----------------------- //
+export const fetchTasksByStatus = async ({
+  projectId,
+  status,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  status: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(
+      `/api/fetch-project-tasks-by-status?projectId=${projectId}&status=${status}&limit=${limit}&offset=${offset}&searchTerm=${searchTerm}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};
+
+// ^ ----------------------- Fetch Tasks list ----------------------- //
+export const fetchTasksList = async ({
+  projectId,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}): Promise<{ response: { data: ITask[]; meta: IMetaFetchedData } }> => {
+  try {
+    const response = await fetch(
+      `/api/fetch-project-tasks?projectId=${projectId}&limit=${limit}&offset=${offset}&searchTerm=${searchTerm}`
+    );
+
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(result?.message || 'Failed to fetch task');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch task';
+    throw new Error(errMsg);
+  }
+};

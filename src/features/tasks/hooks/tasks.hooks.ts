@@ -1,10 +1,4 @@
-import {
-  useActionState,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   createTaskAction,
@@ -12,17 +6,18 @@ import {
 } from '../server-actions/tasks.actions';
 import { taskSchema, TTaskInput } from '../validation/tasks.validation';
 import { useAppDispatch } from '@/shared/libs/store/store';
-import {
-  tasksApi,
-  useGetProjectTasksByStatusQuery,
-} from '@/shared/libs/store/redux-toolkit-query/tasks-api';
+import { tasksApi } from '@/shared/libs/store/redux-toolkit-query/tasks-api';
 import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
-import { fetchTaskById } from '../services/tasks.services';
+import {
+  fetchTaskById,
+  fetchTasksByStatus,
+  fetchTasksList,
+} from '../services/tasks.services';
 import { useRouter } from 'next/navigation';
 
 // ^ ---------------------------- Create Task Hook -------------------------
@@ -87,6 +82,65 @@ export const useCreateTask = ({
   };
 
   return { onHandleCreateTask, isPending, isSuccess };
+};
+
+// ^ ---------------------- Fetch Task Details Hook --------------------------
+export const useFetchTaskDetails = ({
+  projectId,
+  taskId,
+}: {
+  projectId: string;
+  taskId: string;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.tasks.taskById, projectId, taskId],
+    queryFn: () => fetchTaskById({ projectId, taskId }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && !!taskId,
+  });
+};
+
+// ^ ---------------------- Fetch Tasks by Status Hook --------------------------
+export const useFetchTasksByStatus = ({
+  projectId,
+  status,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  status: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.tasks.projectTasksByStatus, status, projectId],
+    queryFn: () =>
+      fetchTasksByStatus({ projectId, status, limit, offset, searchTerm }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && !!status,
+  });
+};
+
+// ^ ---------------------- Fetch Tasks list Hook --------------------------
+export const useFetchTasksList = ({
+  projectId,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  limit?: number;
+  offset?: number;
+  searchTerm?: string;
+}) => {
+  return useQuery({
+    queryKey: [queryKeys.tasks.projectTasksList, projectId],
+    queryFn: () => fetchTasksList({ projectId, limit, offset, searchTerm }),
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId,
+  });
 };
 
 // ^ ---------------------------- Handle Board Pagination Hook -------------------------
@@ -172,11 +226,13 @@ export const useFetchBoardColumn = ({
   const observerTarget = useRef<HTMLDivElement>(null);
   const [shouldFetched, setShouldFetched] = useState(false);
 
-  const { data, isFetching, isLoading, error } =
-    useGetProjectTasksByStatusQuery(
-      { status, projectId, limit, offset, searchTerm },
-      { skip: !projectId || !status || !shouldFetched }
-    );
+  const { data, isFetching, isLoading, error } = useFetchTasksByStatus({
+    status,
+    projectId,
+    limit,
+    offset,
+    searchTerm,
+  });
 
   const tasks = data?.response?.data || [];
   const tasksMeta = data?.response?.meta;
@@ -269,7 +325,7 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         queryKey: [queryKeys.tasks.projectTasksByStatus],
       });
       await queryClient.cancelQueries({
-        queryKey: [queryKeys.tasks.epicTasks],
+        queryKey: [queryKeys.epics.epicTasks],
       });
       await queryClient.cancelQueries({
         queryKey: [queryKeys.tasks.projectTasksList],
@@ -326,12 +382,12 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         projectId,
       ]);
       const oldEpicTasksCache = queryClient.getQueryData([
-        queryKeys.tasks.epicTasks,
+        queryKeys.epics.epicTasks,
         oldEpicId,
         projectId,
       ]);
       const newEpicTasksCache = queryClient.getQueryData([
-        queryKeys.tasks.epicTasks,
+        queryKeys.epics.epicTasks,
         currentEpicId,
         projectId,
       ]);
@@ -357,11 +413,11 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
       if (oldEpicId !== currentEpicId) {
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, oldEpicId, projectId],
+          [queryKeys.epics.epicTasks, oldEpicId, projectId],
           (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, currentEpicId, projectId],
+          [queryKeys.epics.epicTasks, currentEpicId, projectId],
           (old: ITask[]) => {
             const optimisticTask = {
               ...task,
@@ -435,15 +491,15 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       if (oldEpicId !== currentEpicId) {
         if (oldEpicId)
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.tasks.epicTasks, oldEpicId, projectId],
+            queryKey: [queryKeys.epics.epicTasks, oldEpicId, projectId],
           });
         if (currentEpicId)
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
+            queryKey: [queryKeys.epics.epicTasks, currentEpicId, projectId],
           });
       } else if (currentEpicId) {
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.tasks.epicTasks, currentEpicId, projectId],
+          queryKey: [queryKeys.epics.epicTasks, currentEpicId, projectId],
         });
       }
 
@@ -476,11 +532,11 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
           context.newStatusCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, oldEpicId, projectId],
+          [queryKeys.epics.epicTasks, oldEpicId, projectId],
           context.oldEpicTasksCache
         );
         queryClient.setQueryData(
-          [queryKeys.tasks.epicTasks, currentEpicId, projectId],
+          [queryKeys.epics.epicTasks, currentEpicId, projectId],
           context.newEpicTasksCache
         );
         queryClient.setQueryData(
@@ -523,20 +579,4 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     taskStatusWatcher: taskStatus,
     isPending,
   };
-};
-
-// ^ ---------------------- Fetch Task Details Hook --------------------------
-export const useFetchTaskDetails = ({
-  projectId,
-  taskId,
-}: {
-  projectId: string;
-  taskId: string;
-}) => {
-  return useQuery({
-    queryKey: [queryKeys.tasks.taskById, projectId, taskId],
-    queryFn: () => fetchTaskById({ projectId, taskId }),
-    staleTime: 60 * 1000, // 1 minute
-    enabled: !!projectId && !!taskId,
-  });
 };

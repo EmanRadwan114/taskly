@@ -43,7 +43,7 @@ export default async function proxy(request: NextRequest) {
     }
     const originalUrl = `${pathname}${search}`;
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirectTo', `/${originalUrl}`);
+    loginUrl.searchParams.set('redirectTo', originalUrl);
 
     return NextResponse.redirect(loginUrl);
   }

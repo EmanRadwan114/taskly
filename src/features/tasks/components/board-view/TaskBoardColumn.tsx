@@ -62,7 +62,7 @@ const TaskBoardColumn: React.FC<IProps> = ({
     setCurrentPage(1);
   }, [debouncedSearchTerm]);
 
-  if (isLoading) return <LoadingBoardColumn />;
+  if (isLoading && currentPage === 1) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
 
   const statusColor: {
@@ -106,7 +106,7 @@ const TaskBoardColumn: React.FC<IProps> = ({
 
   return (
     <div
-      className="flex flex-col gap-4 min-w-64 max-h-full overflow-x-auto scroll"
+      className="flex flex-col gap-4 min-w-64 max-h-[60vh] overflow-y-auto scroll"
       ref={columnTarget}
     >
       {/* status header */}

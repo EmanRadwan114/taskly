@@ -3,7 +3,7 @@
 import { useFetchTasksPerProject } from '../hooks/statistics.hooks';
 
 const AllProjectsStats: React.FC = ({}) => {
-  const { data, isPending, isError, error } = useFetchTasksPerProject({
+  const { data, isLoading, isError, error } = useFetchTasksPerProject({
     p_start_date: '2026-06-25',
     p_end_date: '2026-07-01',
   });
@@ -21,7 +21,7 @@ const AllProjectsStats: React.FC = ({}) => {
             key={task?.project_id}
             className="flex justify-between items-center gap-2"
           >
-            <span className="text-body-sm leading-4 font-bold text-slate-dark/30 capitalize">
+            <span className="text-body-sm leading-4 font-bold text-slate-dark/60 capitalize">
               {task?.project_name}
             </span>
             <span className="text-slate-dark text-body-sm font-bold leading-4">

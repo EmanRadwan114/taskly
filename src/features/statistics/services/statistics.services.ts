@@ -4,6 +4,7 @@ import {
   ITaskStatsPerProject,
   ITaskStatsResponse,
 } from '../types/statistics.types';
+import { IProject } from '@/features/projects/types/project.types';
 
 // ^ ----------------------- Fetch Tasks Calendar Stats ----------------------- //
 export const fetchTasksCalendarStats = async (
@@ -51,6 +52,26 @@ export const fetchTasksStatsPerProject = async (
       error instanceof Error
         ? error.message
         : 'Failed to fetch tasks stats per project';
+    throw new Error(errMsg);
+  }
+};
+
+// ^ ----------------------- Fetch all projects list ----------------------- //
+export const fetchAllProjects = async (): Promise<{
+  response: { data: IProject[] };
+}> => {
+  try {
+    const response = await fetch(`/api/fetch-all-projects`);
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result?.message || 'Failed to fetch projects');
+    }
+
+    return result;
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : 'Failed to fetch projects';
     throw new Error(errMsg);
   }
 };

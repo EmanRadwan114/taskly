@@ -20,5 +20,6 @@ export const queryKeys = {
   statistics: {
     taskStatsCalendar: 'TASK_STATS_CALENDAR',
     taskStatsPerProject: 'TASK_STATS_PER_PROJECT',
+    allProjects: 'ALL_PROJECTS',
   },
 };

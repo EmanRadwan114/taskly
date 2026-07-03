@@ -10,10 +10,9 @@ import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
 import {
   useFetchBoardColumn,
-  useHandleBoardPagination,
 } from '../../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import TasksScrollError from '../TasksScrollError';
 import { useDroppable } from '@dnd-kit/react';
 
@@ -29,45 +28,51 @@ const TaskBoardColumn: React.FC<IProps> = ({
   const { ref, isDropTarget } = useDroppable({ id: status });
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const limit = 6;
-  const offset = (currentPage - 1) * limit;
+  const paginationTarget = useRef<HTMLDivElement>(null);
 
   const {
     tasks,
     tasksMeta,
     isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
     error,
     observerTarget: columnTarget,
-    isFetching,
   } = useFetchBoardColumn({
     projectId: projectId as string,
     status,
-    limit,
-    offset,
+    limit: 6,
     searchTerm: debouncedSearchTerm,
   });
 
-  const {
-    accumulatedTasks,
-    observerTarget: paginationTarget,
-    hasMore,
-  } = useHandleBoardPagination({
-    currentPage,
-    setCurrentPage,
-    tasks,
-    isFetching,
-    meta: tasksMeta,
-    scrollRoot: scrollContainerRef,
-  });
-
-  // Reset to page 1 whenever the search term changes
+  // Infinite Scroll Observer Configuration
   useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedSearchTerm]);
+    const target = paginationTarget.current;
+    if (!target || !hasNextPage) return;
 
-  if (isLoading && currentPage === 1) return <LoadingBoardColumn />;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isFetching && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        threshold: 0,
+        rootMargin: '100px',
+        root: scrollContainerRef.current,
+      }
+    );
+    observer.observe(target);
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [hasNextPage, isFetching, isFetchingNextPage, fetchNextPage]);
+
+  if (isLoading) return <LoadingBoardColumn />;
   if (error) toast.error('Failed to fetch tasks');
 
   const statusColor: {
@@ -147,8 +152,8 @@ const TaskBoardColumn: React.FC<IProps> = ({
           className={`${isDropTarget ? 'bg-slate-lighter/30' : ''} w-full flex flex-col gap-4 max-h-[45vh] overflow-y-auto scroll`}
           ref={scrollContainerRef}
         >
-          {accumulatedTasks.map((task, indx) => {
-            if (indx === accumulatedTasks.length - 1 && hasMore) {
+          {tasks.map((task, indx) => {
+            if (indx === tasks.length - 1 && hasNextPage) {
               return (
                 <div ref={paginationTarget} key={task.id}>
                   <BoardTaskCard task={task} />
@@ -158,9 +163,9 @@ const TaskBoardColumn: React.FC<IProps> = ({
             return <BoardTaskCard key={task.id} task={task} />;
           })}
           {/* loadmore */}
-          {hasMore && (
+          {hasNextPage && (
             <div className="mt-auto w-full flex items-center justify-center">
-              {isFetching ? 'Loading More...' : ''}
+              {isFetchingNextPage ? 'Loading More...' : ''}
             </div>
           )}
 

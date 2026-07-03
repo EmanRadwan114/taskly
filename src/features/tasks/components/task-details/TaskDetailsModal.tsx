@@ -13,6 +13,7 @@ import LoadingTaskDetails from './LoadingTaskDetails';
 import { useFetchTaskDetails } from '../../hooks/tasks.hooks';
 import { useFetchAllEpics } from '@/features/epics/hooks/epics.hooks';
 import { useFetchMembers } from '@/features/members/hooks/members.hooks';
+import { IEpics } from '@/features/epics/types/epics.types';
 
 const TaskDetailsModal: React.FC = ({}) => {
   const { projectId } = useParams();
@@ -55,8 +56,8 @@ const TaskDetailsModal: React.FC = ({}) => {
       value: '',
       label: 'Select an epic...',
     },
-    ...epicsList?.map((epic) => ({
-      value: epic.epic_id,
+    ...epicsList?.map((epic:IEpics) => ({
+      value: epic.id,
       label: isMobile ? epic?.epic_id : `${epic?.epic_id} (${epic?.title})`,
     })),
   ];

@@ -110,9 +110,11 @@ export const updateTaskAction = async (
   if (title) values.title = title;
   if (description) values.description = description;
   if (status) values.status = (status as TaskStatusEnum) || TaskStatusEnum.TODO;
-  if (assignee_id) values.assignee_id = assignee_id || null;
+  if (assignee_id) values.assignee_id = assignee_id;
+  else values.assignee_id = null;
   if (due_date) values.due_date = due_date;
-  if (epic_id) values.epic_id = epic_id || null;
+  if (epic_id) values.epic_id = epic_id;
+  else values.epic_id = null;
 
   try {
     await updateTask({

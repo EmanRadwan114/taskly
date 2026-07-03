@@ -9,7 +9,7 @@ import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import {
   fetchTaskById,
@@ -154,103 +154,58 @@ export const useFetchTasksList = ({
   });
 };
 
-// ^ ---------------------------- Handle Board Pagination Hook -------------------------
-export const useHandleBoardPagination = (params: {
-  currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  tasks?: ITask[];
-  isFetching?: boolean;
-  meta?: IMetaFetchedData;
-  scrollRoot?: React.RefObject<HTMLDivElement | null>;
-}) => {
-  const { currentPage, setCurrentPage, tasks, isFetching, meta, scrollRoot } =
-    params;
 
-  const observerTarget = useRef<HTMLDivElement | null>(null);
-
-  const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
-
-  const [accumulatedTasks, setAccumulatedTasks] = useState<ITask[]>([]);
-
-  useEffect(() => {
-    if (!tasks) return;
-
-    //reset after search
-    if (currentPage === 1) {
-      setAccumulatedTasks(tasks);
-      return;
-    }
-
-    setAccumulatedTasks((prev) => {
-      const existingIds = new Set(prev.map((item) => item.id));
-
-      const newItemsOnly = tasks.filter((item) => !existingIds.has(item.id));
-
-      if (newItemsOnly.length === 0) return prev;
-      return [...prev, ...newItemsOnly];
-    });
-  }, [tasks, currentPage]);
-
-  // Infinite Scroll Observer Configuration
-  useEffect(() => {
-    const target = observerTarget.current;
-    if (!target || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entires) => {
-        const entry = entires[0];
-        if (entry.isIntersecting && !isFetching) {
-          setCurrentPage((prev) => prev + 1);
-        }
-      },
-      {
-        threshold: 0,
-        rootMargin: '100px',
-        root: scrollRoot?.current ?? null,
-      }
-    );
-    observer.observe(target);
-    return () => {
-      if (target) observer.unobserve(target);
-      observer.disconnect();
-    };
-  }, [hasMore, isFetching, setCurrentPage, scrollRoot, accumulatedTasks]);
-
-  return {
-    hasMore,
-    observerTarget,
-    accumulatedTasks,
-  };
-};
 
 // ^ --------------------  Fetch Board Column Hook ---------------------
 export const useFetchBoardColumn = ({
   projectId,
   status,
-  limit,
-  offset,
+  limit = 6,
   searchTerm,
 }: {
   projectId: string;
   status: TaskStatusEnum;
-  limit: number;
-  offset: number;
+  limit?: number;
   searchTerm?: string;
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [shouldFetch, setShouldFetch] = useState(false);
 
-  const { data, isFetching, isLoading, error } = useFetchTasksByStatus({
-    status,
-    projectId,
-    limit,
-    offset,
-    searchTerm,
-    shouldFetch,
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteQuery({
+    queryKey: [
+      queryKeys.tasks.projectTasksByStatus,
+      projectId,
+      status,
+      searchTerm,
+    ],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchTasksByStatus({
+        projectId,
+        status,
+        limit,
+        offset: pageParam as number,
+        searchTerm,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const loadedCount = allPages.reduce(
+        (acc, page) => acc + (page?.response?.data?.length || 0),
+        0
+      );
+      const totalCount = lastPage?.response?.meta?.totalCount || 0;
+      return loadedCount < totalCount ? loadedCount : undefined;
+    },
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && !!status && shouldFetch,
   });
-
-  const tasks = data?.response?.data || [];
-  const tasksMeta = data?.response?.meta;
 
   useEffect(() => {
     const target = observerTarget.current;
@@ -273,11 +228,17 @@ export const useFetchBoardColumn = ({
     };
   }, [projectId, status, shouldFetch]);
 
+  const tasks = data?.pages.flatMap((page) => page?.response?.data || []) || [];
+  const tasksMeta = data?.pages[data.pages.length - 1]?.response?.meta;
+
   return {
     tasks,
     tasksMeta,
     isLoading,
     isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
     error,
     observerTarget,
   };
@@ -426,7 +387,8 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       // update old & new status/epic cache
       if (oldStatus !== currentStatus) {
         queryClient.setQueriesData<{
-          response: { data: ITask[]; meta: IMetaFetchedData };
+          pages: { response: { data: ITask[]; meta: IMetaFetchedData } }[];
+          pageParams: unknown[];
         }>(
           {
             queryKey: [
@@ -437,22 +399,25 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
           },
           (old) => {
             if (!old) return old;
-            const filtered = old.response.data.filter((t) => t.id !== task?.id);
             return {
               ...old,
-              response: {
-                ...old.response,
-                data: filtered,
-                meta: {
-                  ...old.response.meta,
-                  totalCount: old.response.meta?.totalCount - 1,
+              pages: old.pages.map((page) => ({
+                ...page,
+                response: {
+                  ...page.response,
+                  data: page.response.data.filter((t) => t.id !== task?.id),
+                  meta: {
+                    ...page.response.meta,
+                    totalCount: Math.max(0, (page.response.meta?.totalCount || 0) - 1),
+                  },
                 },
-              },
+              })),
             };
           }
         );
         queryClient.setQueriesData<{
-          response: { data: ITask[]; meta: IMetaFetchedData };
+          pages: { response: { data: ITask[]; meta: IMetaFetchedData } }[];
+          pageParams: unknown[];
         }>(
           {
             queryKey: [
@@ -469,28 +434,42 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
             } as ITask;
             if (!old) {
               return {
-                response: {
-                  data: [optimisticTask],
-                  meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
-                },
+                pages: [
+                  {
+                    response: {
+                      data: [optimisticTask],
+                      meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+                    },
+                  },
+                ],
+                pageParams: [0],
               };
             }
             return {
               ...old,
-              response: {
-                ...old.response,
-                data: [optimisticTask, ...old.response.data],
-                meta: {
-                  ...old.response.meta,
-                  totalCount: (old.response.meta?.totalCount ?? 0) + 1,
-                },
-              },
+              pages: old.pages.map((page, idx) => {
+                if (idx === 0) {
+                  return {
+                    ...page,
+                    response: {
+                      ...page.response,
+                      data: [optimisticTask, ...page.response.data],
+                      meta: {
+                        ...page.response.meta,
+                        totalCount: (page.response.meta?.totalCount || 0) + 1,
+                      },
+                    },
+                  };
+                }
+                return page;
+              }),
             };
           }
         );
       } else {
         queryClient.setQueriesData<{
-          response: { data: ITask[]; meta: IMetaFetchedData };
+          pages: { response: { data: ITask[]; meta: IMetaFetchedData } }[];
+          pageParams: unknown[];
         }>(
           {
             queryKey: [
@@ -503,12 +482,15 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
             if (!old) return old;
             return {
               ...old,
-              response: {
-                ...old.response,
-                data: old.response.data.map((t) =>
-                  t.id === task?.id ? { ...t, ...updatedFields } : t
-                ),
-              },
+              pages: old.pages.map((page) => ({
+                ...page,
+                response: {
+                  ...page.response,
+                  data: page.response.data.map((t) =>
+                    t.id === task?.id ? { ...t, ...updatedFields } : t
+                  ),
+                },
+              })),
             };
           }
         );
@@ -861,7 +843,8 @@ export const useUpdateTaskStatus = () => {
 
       if (oldStatus !== newStatus) {
         queryClient.setQueriesData<{
-          response: { data: ITask[]; meta: IMetaFetchedData };
+          pages: { response: { data: ITask[]; meta: IMetaFetchedData } }[];
+          pageParams: unknown[];
         }>(
           {
             queryKey: [
@@ -872,57 +855,70 @@ export const useUpdateTaskStatus = () => {
           },
           (old) => {
             if (!old) return old;
-            const filtered = old.response.data.filter((t) => t.id !== task?.id);
             return {
               ...old,
-              response: {
-                ...old.response,
-                data: filtered,
-                meta: {
-                  ...old.response.meta,
-                  totalCount: old.response.meta?.totalCount - 1,
+              pages: old.pages.map((page) => ({
+                ...page,
+                response: {
+                  ...page.response,
+                  data: page.response.data.filter((t) => t.id !== task?.id),
+                  meta: {
+                    ...page.response.meta,
+                    totalCount: Math.max(0, (page.response.meta?.totalCount || 0) - 1),
+                  },
                 },
-              },
+              })),
             };
           }
         );
 
-        // add the task to the 1st page of the new column
-        const LIMIT = 6;
-        const OFFSET = 0;
-
         const optimisticTask = { ...task, status: newStatus } as ITask;
-        const firstPageKey = [
-          queryKeys.tasks.projectTasksByStatus,
-          projectId,
-          newStatus,
-          LIMIT,
-          OFFSET,
-          searchTerm,
-        ];
-        queryClient.setQueryData<{
-          response: { data: ITask[]; meta: IMetaFetchedData };
-        }>(firstPageKey, (old) => {
-          if (!old) {
+        queryClient.setQueriesData<{
+          pages: { response: { data: ITask[]; meta: IMetaFetchedData } }[];
+          pageParams: unknown[];
+        }>(
+          {
+            queryKey: [
+              queryKeys.tasks.projectTasksByStatus,
+              projectId,
+              newStatus,
+            ],
+          },
+          (old) => {
+            if (!old) {
+              return {
+                pages: [
+                  {
+                    response: {
+                      data: [optimisticTask],
+                      meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+                    },
+                  },
+                ],
+                pageParams: [0],
+              };
+            }
             return {
-              response: {
-                data: [optimisticTask],
-                meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
-              },
+              ...old,
+              pages: old.pages.map((page, idx) => {
+                if (idx === 0) {
+                  return {
+                    ...page,
+                    response: {
+                      ...page.response,
+                      data: [optimisticTask, ...page.response.data],
+                      meta: {
+                        ...page.response.meta,
+                        totalCount: (page.response.meta?.totalCount || 0) + 1,
+                      },
+                    },
+                  };
+                }
+                return page;
+              }),
             };
           }
-          return {
-            ...old,
-            response: {
-              ...old.response,
-              data: [optimisticTask, ...old.response.data],
-              meta: {
-                ...old.response.meta,
-                totalCount: (old.response.meta?.totalCount ?? 0) + 1,
-              },
-            },
-          };
-        });
+        );
       }
 
       return {

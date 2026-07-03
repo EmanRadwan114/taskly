@@ -65,7 +65,7 @@ export const fetchWithAuthServer = async ({
       // redirect to login if refresh token fails
       cookieStore.delete(REFRESH_TOKEN_EXPIRES_AT_KEY);
       cookieStore.delete(REFRESH_TOKEN_KEY);
-      
+
       const headersList = await headers();
       if (headersList.get('next-action')) {
         return null;
@@ -94,6 +94,7 @@ export const fetchWithAuthServer = async ({
     }
 
     const data = await response?.json();
+
     if (!response.ok)
       throw new Error(
         `${response.status}: ${data?.msg || 'Failed to fetch data'}`

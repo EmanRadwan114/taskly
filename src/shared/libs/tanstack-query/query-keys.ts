@@ -17,4 +17,8 @@ export const queryKeys = {
   members: {
     allMembers: 'All_MEMBERS',
   },
+  statistics: {
+    taskStatsCalendar: 'TASK_STATS_CALENDAR',
+    taskStatsPerProject: 'TASK_STATS_PER_PROJECT',
+  },
 };

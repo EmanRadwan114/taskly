@@ -1,7 +1,5 @@
 import Tip from '@/features/projects/components/Tip';
 import InitializeIcon from '@/assets/icons/initialize.svg';
-import Button from '@/shared/components/ui/Button';
-import InviteMemeberIcon from '@/assets/icons/invite-member.svg';
 import { IProject } from '@/features/projects/types/project.types';
 import { fetchWithAuthServer } from '@/shared/utils/functions.server.utils';
 import ProjectForm from '@/features/projects/components/ProjectForm';
@@ -29,10 +27,6 @@ export default async function Page({
         <h1 className="font-semibold text-slate-dark text-heading-2 leading-10 letter-spacing-xs capitalize flex-1 w-full">
           edit project
         </h1>
-        <Button className="w-fit! gap-2!">
-          <InviteMemeberIcon className="text-white w-4.5" />
-          Invite member
-        </Button>
       </header>
       {/* form section */}
       <section className="lg:bg-white rounded-t-2 lg:max-w-4/5 xl:max-w-3/4 2xl:max-w-1/2 lg:mx-auto lg:shadow-primary lg:p-0 mb-10">

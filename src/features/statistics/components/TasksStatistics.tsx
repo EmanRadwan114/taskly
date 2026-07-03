@@ -27,6 +27,8 @@ import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import TasksIcon from '@/assets/icons/total-tasks.svg';
 import StatsCard from './StatsCard';
 import Check from '@/assets/icons/check.svg';
+import TasksStatsChart from './TasksStatsChart';
+import StatsCalenderDay from './StatsCalenderDay';
 
 const TasksStatistics: React.FC = () => {
   const today = new Date();
@@ -270,7 +272,18 @@ const TasksStatistics: React.FC = () => {
           titleColor="text-error-dark"
         />
       </div>
-      <AllProjectsStats />
+
+      {/* calendar */}
+      <div className="flex gap-6 overflow-x-auto scroll">
+        {stats?.daily.map((day, index) => (
+          <StatsCalenderDay key={index} dailyStats={day} />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {stats?.total_tasks !== 0 && <TasksStatsChart totals={stats?.totals} />}
+        <AllProjectsStats />
+      </div>
     </>
   );
 };

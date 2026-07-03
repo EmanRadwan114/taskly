@@ -25,7 +25,7 @@ interface TaskStatusProps {
 
 export default function TasksStatsChart({ totals }: TaskStatusProps) {
   const data = {
-    labels: Object.keys(totals),
+    labels: Object.keys(totals || {}),
     datasets: [
       {
         label: 'Tasks Count',

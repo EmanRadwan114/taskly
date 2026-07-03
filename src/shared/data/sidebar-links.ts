@@ -3,6 +3,7 @@ import TasksIcon from '@/assets/icons/tasks.svg';
 import EpicsIcon from '@/assets/icons/epic.svg';
 import DetailsIcon from '@/assets/icons/details.svg';
 import MembersIcon from '@/assets/icons/members.svg';
+import StatsIcon from '@/assets/icons/stats.svg';
 
 export const getAsideLinks = (
   projectId?: string
@@ -23,13 +24,20 @@ export const getAsideLinks = (
   },
   {
     id: 2,
+    label: 'my statistics',
+    href: `/my-statistics`,
+    icon: StatsIcon,
+    protected: false,
+  },
+  {
+    id: 3,
     label: 'project epics',
     href: `/project/${projectId}/epics`,
     icon: EpicsIcon,
     protected: true,
   },
   {
-    id: 3,
+    id: 4,
     label: 'project tasks',
     href: `/project/${projectId}/tasks?view=board`,
     icon: TasksIcon,
@@ -37,14 +45,14 @@ export const getAsideLinks = (
     mobileHref: `/project/${projectId}/tasks?view=list`,
   },
   {
-    id: 4,
+    id: 5,
     label: 'project members',
     href: `/project/${projectId}/members`,
     icon: MembersIcon,
     protected: true,
   },
   {
-    id: 5,
+    id: 6,
     label: 'project details',
     href: `/project/${projectId}/edit`,
     icon: DetailsIcon,

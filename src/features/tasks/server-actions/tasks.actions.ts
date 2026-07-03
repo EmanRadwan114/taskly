@@ -91,12 +91,12 @@ export const updateTaskAction = async (
   }
 
   // form values
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string;
-  const status = formData.get('status') as string;
-  const assignee_id = formData.get('assignee_id') as string;
-  const due_date = formData.get('due_date') as string;
-  const epic_id = formData.get('epic_id') as string;
+  const title = formData?.get('title') as string;
+  const description = formData?.get('description') as string;
+  const status = formData?.get('status') as string;
+  const assignee_id = formData?.get('assignee_id') as string;
+  const due_date = formData?.get('due_date') as string;
+  const epic_id = formData?.get('epic_id') as string;
 
   const values: {
     title?: string;
@@ -117,6 +117,48 @@ export const updateTaskAction = async (
   try {
     await updateTask({
       data: values,
+      accessToken,
+      taskId: task_id,
+    });
+
+    return {
+      success: true,
+      message: 'Task updated successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Something went wrong',
+    };
+  }
+};
+// ^ ------------------------- Update Task status Action ------------------------- //
+export const updateTaskStatusAction = async (
+  task_id: string | undefined,
+  newStatus: TaskStatusEnum
+) => {
+  // get access token
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      message: 'Session expired, please login again.',
+      status: 401,
+    };
+  }
+
+  if (!task_id) {
+    return {
+      success: false,
+      message: 'Failed to update task. Please try again later.',
+    };
+  }
+
+  try {
+    await updateTask({
+      data: { status: newStatus },
       accessToken,
       taskId: task_id,
     });

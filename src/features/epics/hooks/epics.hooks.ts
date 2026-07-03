@@ -172,11 +172,11 @@ export const useFetchEpicById = ({
 };
 
 // ^ ---------------------------- fetch Epic tasks Hook -------------------------
-export const useFetchEpicTasks = ({ epicId }: { epicId: string }) => {
+export const useFetchEpicTasks = ({ epicId, projectId }: { epicId: string, projectId: string }) => {
   return useQuery({
-    queryKey: [queryKeys.epics.epicTasks, epicId],
+    queryKey: [queryKeys.epics.epicTasks, epicId, projectId],
     queryFn: () => fetchEpicTasks({ epicId }),
     staleTime: 60 * 1000, // 1 minute
-    enabled: !!epicId,
+    enabled: !!epicId && !!projectId,
   });
 };

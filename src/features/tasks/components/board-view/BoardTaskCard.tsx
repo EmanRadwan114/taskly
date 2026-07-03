@@ -17,7 +17,10 @@ interface IProps {
 
 const BoardTaskCard: React.FC<IProps> = ({ task }) => {
   const { ref, isDragging } = useDraggable({
-    id: task.id,
+    id: task?.id,
+    data: {
+      task,
+    },
   });
   const { handleNavToModal } = useHandleModalRoute({
     queryKey: 'task_id',

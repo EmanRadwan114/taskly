@@ -9,12 +9,19 @@ import {
 } from '@/shared/utils/functions.client.utils';
 import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 import { ITask } from '../../types/tasks.types';
+import { useDraggable } from '@dnd-kit/react';
 
 interface IProps {
   task: ITask;
 }
 
 const BoardTaskCard: React.FC<IProps> = ({ task }) => {
+  const { ref, isDragging } = useDraggable({
+    id: task?.id,
+    data: {
+      task,
+    },
+  });
   const { handleNavToModal } = useHandleModalRoute({
     queryKey: 'task_id',
     queryValue: task?.id,
@@ -29,7 +36,8 @@ const BoardTaskCard: React.FC<IProps> = ({ task }) => {
 
   return (
     <div
-      className={`cursor-pointer p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday && task?.due_date ? 'border-s-2 border-s-primary' : ''} ${isDelayed && task?.due_date ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'}`}
+      ref={ref}
+      className={`cursor-pointer p-4 border rounded-lg shadow-board flex flex-col gap-4 ${isDueToday && task?.due_date ? 'border-s-2 border-s-primary' : ''} ${isDelayed && task?.due_date ? 'bg-error-background/20 border-error/10' : 'bg-white border-slate-light/10'} ${isDragging ? 'opacity-40' : 'opacity-100'}`}
       onClick={handleNavToModal}
     >
       <h2 className="text-slate-dark font-medium leading-4.75">

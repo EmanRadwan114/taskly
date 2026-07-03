@@ -13,8 +13,9 @@ import {
   useHandleBoardPagination,
 } from '../../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TasksScrollError from '../TasksScrollError';
+import { useDroppable } from '@dnd-kit/react';
 
 interface IProps {
   status: TaskStatusEnum;
@@ -25,6 +26,9 @@ const TaskBoardColumn: React.FC<IProps> = ({
   searchTerm: debouncedSearchTerm,
 }) => {
   const { projectId } = useParams();
+  const { ref, isDropTarget } = useDroppable({ id: status });
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 6;
@@ -55,6 +59,7 @@ const TaskBoardColumn: React.FC<IProps> = ({
     tasks,
     isFetching,
     meta: tasksMeta,
+    scrollRoot: scrollContainerRef,
   });
 
   // Reset to page 1 whenever the search term changes
@@ -105,57 +110,64 @@ const TaskBoardColumn: React.FC<IProps> = ({
     : `/project/${projectId}/tasks/new`;
 
   return (
-    <div
-      className="flex flex-col gap-4 min-w-64 max-h-[60vh] overflow-y-auto scroll"
-      ref={columnTarget}
-    >
-      {/* status header */}
-      <div className={`flex items-center justify-between gap-2`}>
-        <div className="flex items-center gap-2">
-          <div
-            className={`size-2 rounded-full ${statusColor[status]?.dotBackgroundColor}`}
-          ></div>
-          <span className={`text-label-sm text-accent-dark`}>
-            {displayedStatusTitle}
-          </span>
-          <div
-            className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${statusColor[status]?.lengthClassName}`}
-          >
-            <span>{tasksMeta?.totalCount}</span>
+    <div className="min-w-64" ref={columnTarget}>
+      <div className={`w-full flex flex-col gap-4`} ref={ref}>
+        {/* status header */}
+        <div className={`flex items-center justify-between gap-2`}>
+          <div className="flex items-center gap-2">
+            <div
+              className={`size-2 rounded-full ${statusColor[status]?.dotBackgroundColor}`}
+            ></div>
+            <span className={`text-label-sm text-accent-dark`}>
+              {displayedStatusTitle}
+            </span>
+            <div
+              className={`text-body-xs font-bold leading-4.5 size-4.75 rounded-xs flex items-center justify-center py-0.5 px-1.5 bg-slate-lighter ${statusColor[status]?.lengthClassName}`}
+            >
+              <span>{tasksMeta?.totalCount}</span>
+            </div>
           </div>
+          <LinkButton href={href} variant="ghost" className="w-fit! p-0.5!">
+            <PlusIcon className="w-2.75 text-secondary" />
+          </LinkButton>
         </div>
-        <LinkButton href={href} variant="ghost" className="w-fit! p-0.5!">
-          <PlusIcon className="w-2.75 text-secondary" />
-        </LinkButton>
-      </div>
-      {/* add task link */}
-      <LinkButton
-        href={href}
-        variant="ghost"
-        className="border-2 border-slate-light/40 border-dashed p-4! w-full! gap-2! rounded-sm"
-      >
-        <PlusBorderIcon className="text-secondary/60 size-4.5" />
-        <span className="uppercase text-secondary/60 font-bold text-body-sm letter-spacing-xl leading-4">
-          Add New Task
-        </span>
-      </LinkButton>
-      {/* cards */}
-      {accumulatedTasks.map((task) => (
-        <BoardTaskCard key={task.id} task={task} />
-      ))}
-
-      {/* loadmore */}
-      {hasMore && (
-        <div
-          ref={paginationTarget}
-          className="mt-auto w-full flex items-center justify-center"
+        {/* add task link */}
+        <LinkButton
+          href={href}
+          variant="ghost"
+          className="border-2 border-slate-light/40 border-dashed p-4! w-full! gap-2! rounded-sm"
         >
-          {isFetching ? 'Loading More...' : ''}
-        </div>
-      )}
+          <PlusBorderIcon className="text-secondary/60 size-4.5" />
+          <span className="uppercase text-secondary/60 font-bold text-body-sm letter-spacing-xl leading-4">
+            Add New Task
+          </span>
+        </LinkButton>
+        {/* cards */}
+        <div
+          className={`${isDropTarget ? 'bg-slate-lighter/30' : ''} w-full flex flex-col gap-4 max-h-[45vh] overflow-y-auto scroll`}
+          ref={scrollContainerRef}
+        >
+          {accumulatedTasks.map((task, indx) => {
+            if (indx === accumulatedTasks.length - 1 && hasMore) {
+              return (
+                <div ref={paginationTarget} key={task.id}>
+                  <BoardTaskCard task={task} />
+                </div>
+              );
+            }
+            return <BoardTaskCard key={task.id} task={task} />;
+          })}
+          {/* loadmore */}
+          {hasMore && (
+            <div className="mt-auto w-full flex items-center justify-center">
+              {isFetching ? 'Loading More...' : ''}
+            </div>
+          )}
 
-      {/* error retry */}
-      {error && <TasksScrollError status={status} />}
+          {/* error retry */}
+          {error && <TasksScrollError status={status} />}
+        </div>
+      </div>
     </div>
   );
 };

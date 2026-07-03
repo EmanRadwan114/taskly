@@ -28,6 +28,7 @@ export const createTask = async ({
     throw new Error(errMsg);
   }
 };
+
 // ^ ------------------------- Update Task Service ------------------------- //
 export const updateTask = async ({
   data,

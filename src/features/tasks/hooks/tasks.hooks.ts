@@ -40,7 +40,7 @@ export const useCreateTask = ({
       });
     if (epicId)
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.epics.epicTasks, epicId],
+        queryKey: [queryKeys.epics.epicTasks, epicId, projectId],
       });
   };
 
@@ -161,8 +161,10 @@ export const useHandleBoardPagination = (params: {
   tasks?: ITask[];
   isFetching?: boolean;
   meta?: IMetaFetchedData;
+  scrollRoot?: React.RefObject<HTMLDivElement | null>;
 }) => {
-  const { currentPage, setCurrentPage, tasks, isFetching, meta } = params;
+  const { currentPage, setCurrentPage, tasks, isFetching, meta, scrollRoot } =
+    params;
 
   const observerTarget = useRef<HTMLDivElement | null>(null);
 
@@ -201,14 +203,18 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '100px' }
+      {
+        threshold: 0,
+        rootMargin: '100px',
+        root: scrollRoot?.current ?? null,
+      }
     );
     observer.observe(target);
     return () => {
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [hasMore, isFetching, setCurrentPage]);
+  }, [hasMore, isFetching, setCurrentPage, scrollRoot, accumulatedTasks]);
 
   return {
     hasMore,
@@ -360,36 +366,52 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         task?.id,
       ]);
 
-      queryClient.setQueryData(
-        [queryKeys.tasks.taskById, projectId, task?.id],
-        (old: ITask) => (old ? { ...old, ...updatedFields } : old)
-      );
+      queryClient.setQueryData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>([queryKeys.tasks.taskById, projectId, task?.id], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          response: {
+            ...old.response,
+            data: old.response.data.map((t) =>
+              t.id === task?.id ? { ...t, ...updatedFields } : t
+            ),
+          },
+        };
+      });
 
       const oldTasksListCache = queryClient.getQueryData([
         queryKeys.tasks.projectTasksList,
         projectId,
       ]);
 
-      queryClient.setQueryData(
-        [queryKeys.tasks.projectTasksList, projectId],
-        (old: ITask[] | undefined) =>
-          old
-            ? old.map((t) =>
-                t.id === task?.id ? { ...t, ...updatedFields } : t
-              )
-            : []
-      );
+      queryClient.setQueryData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>([queryKeys.tasks.projectTasksList, projectId], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          response: {
+            ...old.response,
+            data: old.response.data.map((t) =>
+              t.id === task?.id ? { ...t, ...updatedFields } : t
+            ),
+          },
+        };
+      });
 
-      const oldStatusCache = queryClient.getQueryData([
-        queryKeys.tasks.projectTasksByStatus,
-        oldStatus,
-        projectId,
-      ]);
-      const newStatusCache = queryClient.getQueryData([
-        queryKeys.tasks.projectTasksByStatus,
-        currentStatus,
-        projectId,
-      ]);
+      // snapshot all paginated slices for old & new status columns
+      const oldStatusSnapshot = queryClient.getQueriesData<ITask[]>({
+        queryKey: [queryKeys.tasks.projectTasksByStatus, projectId, oldStatus],
+      });
+      const newStatusSnapshot = queryClient.getQueriesData<ITask[]>({
+        queryKey: [
+          queryKeys.tasks.projectTasksByStatus,
+          projectId,
+          currentStatus,
+        ],
+      });
       const oldEpicTasksCache = queryClient.getQueryData([
         queryKeys.epics.epicTasks,
         oldEpicId,
@@ -403,44 +425,156 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
 
       // update old & new status/epic cache
       if (oldStatus !== currentStatus) {
-        queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
-          (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
+        queryClient.setQueriesData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>(
+          {
+            queryKey: [
+              queryKeys.tasks.projectTasksByStatus,
+              projectId,
+              oldStatus,
+            ],
+          },
+          (old) => {
+            if (!old) return old;
+            const filtered = old.response.data.filter((t) => t.id !== task?.id);
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: filtered,
+                meta: {
+                  ...old.response.meta,
+                  totalCount: old.response.meta?.totalCount - 1,
+                },
+              },
+            };
+          }
         );
-        queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, currentStatus, projectId],
-          (old: ITask[]) => {
+        queryClient.setQueriesData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>(
+          {
+            queryKey: [
+              queryKeys.tasks.projectTasksByStatus,
+              projectId,
+              currentStatus,
+            ],
+          },
+          (old) => {
             const optimisticTask = {
               ...task,
               ...updatedFields,
               status: currentStatus,
             } as ITask;
-            return old ? [...old, optimisticTask] : [optimisticTask];
+            if (!old) {
+              return {
+                response: {
+                  data: [optimisticTask],
+                  meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+                },
+              };
+            }
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: [optimisticTask, ...old.response.data],
+                meta: {
+                  ...old.response.meta,
+                  totalCount: (old.response.meta?.totalCount ?? 0) + 1,
+                },
+              },
+            };
+          }
+        );
+      } else {
+        queryClient.setQueriesData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>(
+          {
+            queryKey: [
+              queryKeys.tasks.projectTasksByStatus,
+              projectId,
+              currentStatus,
+            ],
+          },
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: old.response.data.map((t) =>
+                  t.id === task?.id ? { ...t, ...updatedFields } : t
+                ),
+              },
+            };
           }
         );
       }
 
       if (oldEpicId !== currentEpicId) {
-        queryClient.setQueryData(
-          [queryKeys.epics.epicTasks, oldEpicId, projectId],
-          (old: ITask[]) => (old ? old.filter((t) => t.id !== task?.id) : [])
-        );
-        queryClient.setQueryData(
-          [queryKeys.epics.epicTasks, currentEpicId, projectId],
-          (old: ITask[]) => {
+        if (oldEpicId) {
+          queryClient.setQueryData<{
+            response: { data: ITask[]; meta: IMetaFetchedData };
+          }>([queryKeys.epics.epicTasks, oldEpicId, projectId], (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: old.response.data.filter((t) => t.id !== task?.id),
+              },
+            };
+          });
+        }
+        if (currentEpicId) {
+          queryClient.setQueryData<{
+            response: { data: ITask[]; meta: IMetaFetchedData };
+          }>([queryKeys.epics.epicTasks, currentEpicId, projectId], (old) => {
             const optimisticTask = {
               ...task,
               ...updatedFields,
               epic_id: currentEpicId,
             } as ITask;
-            return old ? [...old, optimisticTask] : [optimisticTask];
-          }
-        );
+            if (!old) {
+              return {
+                response: {
+                  data: [optimisticTask],
+                  meta: {} as IMetaFetchedData,
+                },
+              };
+            }
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: [...old.response.data, optimisticTask],
+              },
+            };
+          });
+        }
+      } else if (currentEpicId) {
+        queryClient.setQueryData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>([queryKeys.epics.epicTasks, currentEpicId, projectId], (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            response: {
+              ...old.response,
+              data: old.response.data.map((t) =>
+                t.id === task?.id ? { ...t, ...updatedFields } : t
+              ),
+            },
+          };
+        });
       }
 
       return {
-        oldStatusCache,
-        newStatusCache,
+        oldStatusSnapshot,
+        newStatusSnapshot,
         oldEpicTasksCache,
         newEpicTasksCache,
         oldTasksListCache,
@@ -476,23 +610,23 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
         queryClient.invalidateQueries({
           queryKey: [
             queryKeys.tasks.projectTasksByStatus,
-            oldStatus,
             projectId,
+            oldStatus,
           ],
         });
         queryClient.invalidateQueries({
           queryKey: [
             queryKeys.tasks.projectTasksByStatus,
-            currentStatus,
             projectId,
+            currentStatus,
           ],
         });
       } else {
         queryClient.invalidateQueries({
           queryKey: [
             queryKeys.tasks.projectTasksByStatus,
-            currentStatus,
             projectId,
+            currentStatus,
           ],
         });
       }
@@ -524,22 +658,19 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     onError: (error, _, context) => {
       toast.error(error.message || 'Failed to update task');
 
-      const currentStatus = getValues('status') || TaskStatusEnum.TODO;
-      const oldStatus = previousValues.current.status;
       const currentEpicId = getValues('epic_id') || null;
       const oldEpicId = previousValues.current.epic_id;
       const projectId = task?.project_id;
 
       // restore all caches
       if (context) {
-        queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, oldStatus, projectId],
-          context.oldStatusCache
-        );
-        queryClient.setQueryData(
-          [queryKeys.tasks.projectTasksByStatus, currentStatus, projectId],
-          context.newStatusCache
-        );
+        // restore each paginated slice of old & new status columns
+        context.oldStatusSnapshot?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+        context.newStatusSnapshot?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
         queryClient.setQueryData(
           [queryKeys.epics.epicTasks, oldEpicId, projectId],
           context.oldEpicTasksCache
@@ -588,4 +719,288 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
     taskStatusWatcher: taskStatus,
     isPending,
   };
+};
+// ^ ----------------------  Update Task status Hook  --------------------------
+export const useUpdateTaskStatus = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async ({
+      task,
+      newStatus,
+    }: {
+      task: ITask | undefined;
+      newStatus: TaskStatusEnum;
+      searchTerm?: string;
+    }) => {
+      const updateTaskActionWithId = updateTaskAction.bind(null, task?.id);
+
+      const formData = new FormData();
+      formData.append('status', newStatus);
+      const response = await updateTaskActionWithId(formData);
+      if (!response.success) {
+        if (response.status === 401) {
+          router.replace(
+            `/login?redirectTo=/project/${task?.project_id}/tasks?task_id=${task?.id}`
+          );
+        }
+        throw new Error(response.message || 'Failed to change task status.');
+      }
+      return response;
+    },
+    onMutate: async ({
+      task,
+      newStatus,
+      searchTerm,
+    }: {
+      task: ITask | undefined;
+      newStatus: TaskStatusEnum;
+      searchTerm?: string;
+    }) => {
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.tasks.projectTasksByStatus],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.epics.epicTasks],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [queryKeys.tasks.projectTasksList],
+      });
+
+      const oldStatus = task?.status || TaskStatusEnum.TODO;
+      const projectId = task?.project_id;
+
+      // snapshot task details cache
+      const oldTaskDetailsCache = queryClient.getQueryData([
+        queryKeys.tasks.taskById,
+        projectId,
+        task?.id,
+      ]);
+
+      queryClient.setQueryData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>([queryKeys.tasks.taskById, projectId, task?.id], (old) => {
+        if (!old) {
+          return {
+            response: {
+              data: [{ ...task, status: newStatus } as ITask],
+              meta: {} as IMetaFetchedData,
+            },
+          };
+        }
+        return {
+          ...old,
+          response: {
+            ...old.response,
+            data: old.response.data.map((t) =>
+              t.id === task?.id ? { ...t, status: newStatus } : t
+            ),
+          },
+        };
+      });
+
+      // snapshot & update task list cache
+      const oldTasksListCache = queryClient.getQueryData([
+        queryKeys.tasks.projectTasksList,
+        projectId,
+      ]);
+
+      queryClient.setQueryData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>([queryKeys.tasks.projectTasksList, projectId], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          response: {
+            ...old.response,
+            data: old.response.data.map((t) =>
+              t.id === task?.id ? { ...t, status: newStatus } : t
+            ),
+          },
+        };
+      });
+
+      // snapshot & update epic tasks cache
+      const epicTasksSnapshot = queryClient.getQueriesData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>({
+        queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId],
+      });
+
+      queryClient.setQueriesData<{
+        response: { data: ITask[]; meta: IMetaFetchedData };
+      }>(
+        { queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            response: {
+              ...old.response,
+              data: old.response.data.map((t) =>
+                t.id === task?.id ? { ...t, status: newStatus } : t
+              ),
+            },
+          };
+        }
+      );
+
+      // snapshot all paginated board column slices for old & new status
+      const oldStatusSnapshot = queryClient.getQueriesData<{
+        response: { data: ITask[] };
+      }>({
+        queryKey: [queryKeys.tasks.projectTasksByStatus, projectId, oldStatus],
+      });
+
+      const newStatusSnapshot = queryClient.getQueriesData<{
+        response: { data: ITask[] };
+      }>({
+        queryKey: [queryKeys.tasks.projectTasksByStatus, projectId, newStatus],
+      });
+
+      if (oldStatus !== newStatus) {
+        queryClient.setQueriesData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>(
+          {
+            queryKey: [
+              queryKeys.tasks.projectTasksByStatus,
+              projectId,
+              oldStatus,
+            ],
+          },
+          (old) => {
+            if (!old) return old;
+            const filtered = old.response.data.filter((t) => t.id !== task?.id);
+            return {
+              ...old,
+              response: {
+                ...old.response,
+                data: filtered,
+                meta: {
+                  ...old.response.meta,
+                  totalCount: old.response.meta?.totalCount - 1,
+                },
+              },
+            };
+          }
+        );
+
+        // add the task to the 1st page of the new column
+        const LIMIT = 6;
+        const OFFSET = 0;
+
+        const optimisticTask = { ...task, status: newStatus } as ITask;
+        const firstPageKey = [
+          queryKeys.tasks.projectTasksByStatus,
+          projectId,
+          newStatus,
+          LIMIT,
+          OFFSET,
+          searchTerm,
+        ];
+        queryClient.setQueryData<{
+          response: { data: ITask[]; meta: IMetaFetchedData };
+        }>(firstPageKey, (old) => {
+          if (!old) {
+            return {
+              response: {
+                data: [optimisticTask],
+                meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+              },
+            };
+          }
+          return {
+            ...old,
+            response: {
+              ...old.response,
+              data: [optimisticTask, ...old.response.data],
+              meta: {
+                ...old.response.meta,
+                totalCount: (old.response.meta?.totalCount ?? 0) + 1,
+              },
+            },
+          };
+        });
+      }
+
+      return {
+        oldStatusSnapshot,
+        newStatusSnapshot,
+        epicTasksSnapshot,
+        oldTasksListCache,
+        oldTaskDetailsCache,
+      };
+    },
+    onSuccess: (response, { task, newStatus }) => {
+      if (!response.success) {
+        toast.error(response.message || 'Failed to update task status.');
+        return;
+      }
+
+      toast.success(response.message || 'Task status updated successfully!');
+
+      const oldStatus = task?.status || TaskStatusEnum.TODO;
+
+      const projectId = task?.project_id;
+
+      // invalidate task details & list view
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.taskById, projectId, task?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.tasks.projectTasksList, projectId],
+      });
+
+      // invalidate new & old status
+      if (oldStatus !== newStatus) {
+        queryClient.invalidateQueries({
+          queryKey: [
+            queryKeys.tasks.projectTasksByStatus,
+            oldStatus,
+            projectId,
+          ],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [
+            queryKeys.tasks.projectTasksByStatus,
+            newStatus,
+            projectId,
+          ],
+        });
+      }
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId],
+      });
+    },
+    onError: (error, { task }, context) => {
+      toast.error(error.message || 'Failed to update task status');
+
+      const projectId = task?.project_id;
+
+      // restore all caches from snapshots
+      if (context) {
+        context.oldStatusSnapshot?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+        context.newStatusSnapshot?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+        context.epicTasksSnapshot?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+        queryClient.setQueryData(
+          [queryKeys.tasks.projectTasksList, projectId],
+          context.oldTasksListCache
+        );
+        queryClient.setQueryData(
+          [queryKeys.tasks.taskById, projectId, task?.id],
+          context.oldTaskDetailsCache
+        );
+      }
+    },
+  });
+
+  return { handleUpdateTaskStatus: mutate, isPending };
 };

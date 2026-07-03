@@ -35,7 +35,7 @@ const EpicModal = () => {
     data: epicsTasksData,
     isLoading: isLoadingEpicsTasks,
     error: tasksError,
-  } = useFetchEpicTasks({ epicId: epic?.id as string });
+  } = useFetchEpicTasks({ epicId: epic?.id as string, projectId });
 
   const tasks = epicsTasksData?.response?.data;
 

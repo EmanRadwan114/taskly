@@ -161,8 +161,10 @@ export const useHandleBoardPagination = (params: {
   tasks?: ITask[];
   isFetching?: boolean;
   meta?: IMetaFetchedData;
+  scrollRoot?: React.RefObject<HTMLDivElement | null>;
 }) => {
-  const { currentPage, setCurrentPage, tasks, isFetching, meta } = params;
+  const { currentPage, setCurrentPage, tasks, isFetching, meta, scrollRoot } =
+    params;
 
   const observerTarget = useRef<HTMLDivElement | null>(null);
 
@@ -201,14 +203,18 @@ export const useHandleBoardPagination = (params: {
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0, rootMargin: '100px' }
+      {
+        threshold: 0,
+        rootMargin: '100px',
+        root: scrollRoot?.current ?? null,
+      }
     );
     observer.observe(target);
     return () => {
       if (target) observer.unobserve(target);
       observer.disconnect();
     };
-  }, [hasMore, isFetching, setCurrentPage]);
+  }, [hasMore, isFetching, setCurrentPage, scrollRoot, accumulatedTasks]);
 
   return {
     hasMore,

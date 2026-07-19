@@ -25,3 +25,14 @@ export interface ITaskStatsPerProject {
   project_name: string;
   tasks_count: number;
 }
+
+export interface IStatusKeys {
+  [TaskStatusEnum.TODO]: number;
+  [TaskStatusEnum.IN_PROGRESS]: number;
+  [TaskStatusEnum.DONE]: number;
+  [TaskStatusEnum.BLOCKED]: number;
+  [TaskStatusEnum.IN_REVIEW]: number;
+  [TaskStatusEnum.READY_FOR_PRODUCTION]: number;
+  [TaskStatusEnum.REOPENED]: number;
+  [TaskStatusEnum.READY_FOR_QA]: number;
+}

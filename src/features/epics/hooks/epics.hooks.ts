@@ -161,18 +161,24 @@ export const useFetchEpicById = ({
   epicId,
 }: {
   projectId: string;
-  epicId: string;
+  epicId: string | null;
 }) => {
   return useQuery({
     queryKey: [queryKeys.epics.epicById, projectId, epicId],
-    queryFn: () => fetchEpicById({ projectId, epicId }),
+    queryFn: () => fetchEpicById({ projectId, epicId: epicId as string }),
     staleTime: 60 * 1000, // 1 minute
     enabled: !!projectId && !!epicId,
   });
 };
 
 // ^ ---------------------------- fetch Epic tasks Hook -------------------------
-export const useFetchEpicTasks = ({ epicId, projectId }: { epicId: string, projectId: string }) => {
+export const useFetchEpicTasks = ({
+  epicId,
+  projectId,
+}: {
+  epicId: string;
+  projectId: string;
+}) => {
   return useQuery({
     queryKey: [queryKeys.epics.epicTasks, epicId, projectId],
     queryFn: () => fetchEpicTasks({ epicId }),

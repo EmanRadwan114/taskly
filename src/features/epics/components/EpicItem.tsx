@@ -141,7 +141,9 @@ const EpicItem: React.FC<IProps> = ({ epicItem }) => {
   );
 
   return (
-    <Link href={`/project/${epicItem?.project_id}/epics/${epicItem?.id}`}>
+    <Link
+      href={`/project/${epicItem?.project_id}/epics?epic_id=${epicItem?.id}`}
+    >
       {desktopView}
       {mobileView}
     </Link>

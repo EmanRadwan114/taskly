@@ -14,13 +14,20 @@ import LoadingEpicTasks from '@/features/epics/components/LoadingEpicTasks';
 import TaskDetailsModal from '@/features/tasks/components/task-details/TaskDetailsModal';
 import FetchDataErrorMsg from '@/shared/components/ui/FetchDataErrorMsg';
 import { useFetchEpicById, useFetchEpicTasks } from '../hooks/epics.hooks';
+import Modal from '@/shared/components/ui/Modal';
+import { useHandleModalRoute } from '@/shared/hooks/shared.hooks';
 
 const EpicModal = () => {
   const router = useRouter();
-  const { projectId, epicId } = useParams<{
+  const { projectId } = useParams<{
     projectId: string;
-    epicId: string;
   }>();
+
+  const { handleCloseModal } = useHandleModalRoute({
+    queryKey: 'epic_id',
+  });
+  const epicId = useSearchParams().get('epic_id');
+  const isOpen = !!epicId;
 
   const isTaskDetailsModalOpen = !!useSearchParams().get('task_id');
 
@@ -52,12 +59,13 @@ const EpicModal = () => {
   if (epicError) toast.error('Failed to fetch epic');
 
   return (
-    <div
-      className=" fixed inset-s-0 inset-e-0 top-0 bottom-0 z-999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center"
-      onClick={() => router.back()}
+    <Modal
+      isOpen={isOpen}
+      onClose={handleCloseModal}
+      className="sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto lg:p-8!"
     >
       <div
-        className="bg-white pb-6 lg:pb-8 rounded-lg sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto overflow-y-auto max-h-[80vh] scroll relative flex flex-col gap-5 lg:gap-8"
+        className="bg-white pb-6 lg:pb-8 rounded-lg overflow-y-auto max-h-[80vh] scroll relative flex flex-col gap-5 lg:gap-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* modal content */}
@@ -101,7 +109,7 @@ const EpicModal = () => {
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

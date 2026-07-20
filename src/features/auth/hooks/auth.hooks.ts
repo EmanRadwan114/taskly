@@ -11,6 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 // ^---------------------- Create Account Hook ------------------------
 export const useCreateAccount = () => {
   const router = useRouter();
+  const redirectToParam = useSearchParams().get('redirectTo');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -22,7 +23,11 @@ export const useCreateAccount = () => {
     },
     onSuccess: (response) => {
       toast.success(response.message);
-      router.push('/project');
+      if (redirectToParam) {
+        router.replace(redirectToParam);
+      } else {
+        router.replace('/project');
+      }
     },
     onError: (error) => {
       toast.error(error.message);

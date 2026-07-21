@@ -4,7 +4,12 @@ import {
   createEpicAction,
   updateEpicAction,
 } from '../server-actions/epics.actions';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import {
@@ -13,6 +18,7 @@ import {
   fetchEpicTasks,
   fetchPaginatedEpics,
 } from '../services/epics.services';
+import { FETCH_LIMIT } from '@/shared/utils/variables.utils';
 
 // ^ ---------------------------- Create epic Hook -------------------------
 export const useCreateEpic = (projectId: string) => {
@@ -114,16 +120,18 @@ export const useUpdateEpic = (epicId: string, projectId: string) => {
 };
 
 // ^ ---------------------------- fetch Paginated Epics Hook -------------------------
-export const useFetchPaginatedEpics = ({
+export const useFetchDesktopPaginatedEpics = ({
   projectId,
   limit,
   offset,
   searchTerm,
+  enabled = true,
 }: {
   projectId: string;
   limit?: number;
   offset?: number;
   searchTerm?: string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [
@@ -141,7 +149,47 @@ export const useFetchPaginatedEpics = ({
         searchTerm,
       }),
     staleTime: 60 * 1000, // 1 minute
-    enabled: !!projectId,
+    enabled: !!projectId && enabled,
+  });
+};
+// ^ ---------------------------- fetch Paginated Epics mobile Hook -------------------------
+export const useFetchMobilePaginatedEpics = ({
+  projectId,
+  limit,
+  searchTerm,
+  enabled = true,
+}: {
+  projectId: string;
+  limit?: number;
+  searchTerm?: string;
+  enabled?: boolean;
+}) => {
+  return useInfiniteQuery({
+    queryKey: [
+      queryKeys.epics.paginatedEpics,
+      projectId,
+      'mobile',
+      limit,
+      searchTerm,
+    ],
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && enabled,
+    initialPageParam: 0,
+    queryFn: ({ pageParam = 0 }) =>
+      fetchPaginatedEpics({
+        projectId,
+        limit: limit || FETCH_LIMIT,
+        offset: pageParam as number,
+        searchTerm,
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      const loadedCount = allPages.reduce(
+        (acc, page) => acc + (page?.response?.data?.length || 0),
+        0
+      );
+      const totalCount = lastPage?.response?.meta?.totalCount || 0;
+      return loadedCount < totalCount ? loadedCount : undefined;
+    },
   });
 };
 

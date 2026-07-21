@@ -14,8 +14,9 @@ import TaskMobileCard from './TaskMobileCard';
 import {
   useHandlePagination,
   useHandleSearch,
+  useInfiniteScroll,
+  useMobile,
 } from '@/shared/hooks/shared.hooks';
-import { ITask } from '../../types/tasks.types';
 import ProjectTasksHeader from '../ProjectTasksHeader';
 import SearchStatus from '@/shared/components/ui/SearchStatus';
 import emptyImg from '@/assets/imgs/empty-epics.png';
@@ -23,7 +24,10 @@ import errorImg from '@/assets/imgs/alert.png';
 import EmptyProjectTasks from './EmptyProjectTasks';
 import TasksScrollError from '../TasksScrollError';
 import TaskDetailsModal from '../task-details/TaskDetailsModal';
-import { useFetchTasksList } from '../../hooks/tasks.hooks';
+import {
+  useFetchMobileTasksList,
+  useFetchTasksList,
+} from '../../hooks/tasks.hooks';
 
 interface IProps {
   searchParams: { page: string; task_id: string };
@@ -31,6 +35,7 @@ interface IProps {
 
 const TasksList: React.FC<IProps> = ({ searchParams }) => {
   const { projectId } = useParams();
+  const { isMobile } = useMobile(1024);
 
   const page = Number(searchParams.page);
   const taskIdParam = searchParams.task_id;
@@ -44,36 +49,61 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     setCurrentPage,
   });
 
+  // desktop: regular paginated query
   const {
     data: tasksData,
-    isLoading,
-    error,
-    isFetching,
+    isLoading: isDesktopLoading,
+    isFetching: isDesktopFetching,
+    error: desktopError,
   } = useFetchTasksList({
     projectId: projectId as string,
     limit,
     offset,
     searchTerm: debouncedSearchTerm,
+    enabled: !isMobile,
   });
 
-  const tasks = tasksData?.response?.data || [];
+  const desktopTasksList = tasksData?.response?.data || [];
   const tasksMeta = tasksData?.response?.meta;
 
+  // mobile: infinite scroll query
   const {
-    isMobile,
-    hasMore,
-    observerTarget,
-    accumulatedList: accumulatedTasksList,
-    handleCurrentPage,
-  } = useHandlePagination<ITask>({
-    incomingData: tasks,
-    meta: tasksMeta,
-    isFetching,
-    setCurrentPage,
-    currentPage,
+    data: mobileTasksData,
+    isLoading: isMobileLoading,
+    isFetching: isMobileFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    error: mobileError,
+  } = useFetchMobileTasksList({
+    projectId: projectId as string,
+    limit,
+    searchTerm: debouncedSearchTerm,
+    enabled: isMobile,
   });
 
-  if (tasks?.length === 0 && !isLoading && !debouncedSearchTerm) {
+  const mobileTasksList =
+    mobileTasksData?.pages.flatMap((page) => page?.response?.data || []) || [];
+
+  // desktop page-click handler
+  const { handleCurrentPage } = useHandlePagination({ setCurrentPage });
+
+  // mobile sentinel observer
+  const { observerTarget } = useInfiniteScroll({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
+
+  const activeTasksList = isMobile ? mobileTasksList : desktopTasksList;
+  const activeError = isMobile ? mobileError : desktopError;
+  const showLoadingScreen = isMobile
+    ? isMobileLoading && mobileTasksList.length === 0
+    : isDesktopFetching || (isDesktopLoading && currentPage === 1);
+
+  if (activeError && !debouncedSearchTerm) throw new Error('Failed to fetch tasks');
+
+  if (activeTasksList.length === 0 && !showLoadingScreen && !debouncedSearchTerm) {
     return <EmptyProjectTasks />;
   }
 
@@ -81,16 +111,15 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const desktopView = (
     <div className="hidden lg:flex lg:flex-col lg:flex-1 w-full pb-6">
-      {isFetching && !isMobile ? (
+      {showLoadingScreen ? (
         <LoadingTasksList />
-      ) : debouncedSearchTerm && tasks?.length === 0 && !isLoading ? (
-        // empty search status
+      ) : debouncedSearchTerm && desktopTasksList.length === 0 ? (
         <SearchStatus
           text="No tasks found matching your search"
           imgSrc={emptyImg.src}
           variant="empty"
         />
-      ) : debouncedSearchTerm && error ? (
+      ) : debouncedSearchTerm && desktopError ? (
         <SearchStatus
           text="Failed to fetch tasks"
           imgSrc={errorImg.src}
@@ -115,22 +144,22 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
                 </TableRow>
               </thead>
               <tbody>
-                {tasks?.map((task) => (
+                {desktopTasksList.map((task) => (
                   <TaskListItem task={task} key={task?.id} />
                 ))}
               </tbody>
             </Table>
           </div>
-          {/* pagination */}
+          {/* desktop pagination */}
           <div className="bg-surface-low/20! py-3! px-6!">
             <div className="flex justify-between items-center">
               <span className="text-secondary text-body-sm font-medium">
-                Showing {tasks?.length} of {tasksMeta?.totalCount} tasks
+                Showing {desktopTasksList.length} of {tasksMeta?.totalCount} tasks
               </span>
-              {tasksMeta?.totalPages && tasksMeta?.totalPages > 1 && (
+              {tasksMeta?.totalPages && tasksMeta.totalPages > 1 && (
                 <TasksListPagination
                   currentPage={currentPage}
-                  totalPages={tasksMeta?.totalPages || 1}
+                  totalPages={tasksMeta.totalPages}
                   handleCurrentPage={handleCurrentPage}
                 />
               )}
@@ -145,10 +174,9 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
 
   const mobileView = (
     <div className="lg:hidden flex flex-col gap-3 min-h-screen">
-      {isLoading && currentPage === 1 ? (
+      {showLoadingScreen ? (
         <LoadingTasksList />
-      ) : debouncedSearchTerm && tasks?.length === 0 && !isLoading ? (
-        // empty search status
+      ) : debouncedSearchTerm && mobileTasksList.length === 0 ? (
         <SearchStatus
           text="No tasks found matching your search"
           imgSrc={emptyImg.src}
@@ -156,22 +184,20 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
         />
       ) : (
         <>
-          {accumulatedTasksList?.map((task) => (
+          {mobileTasksList.map((task) => (
             <TaskMobileCard task={task} key={task?.id} />
           ))}
 
-          {/* loadmore on mobile */}
-          {hasMore && (
-            <div
-              ref={observerTarget}
-              className="mt-auto lg:hidden w-full flex items-center justify-center"
-            >
-              {isFetching ? 'Loading More...' : ''}
-            </div>
-          )}
+          {/* loadmore sentinel — always rendered so the observer can attach */}
+          <div
+            ref={observerTarget}
+            className="mt-auto w-full flex items-center justify-center py-4"
+          >
+            {isMobileFetching && 'Loading More...'}
+          </div>
 
           {/* error retry */}
-          {error && <TasksScrollError />}
+          {mobileError && <TasksScrollError />}
         </>
       )}
     </div>

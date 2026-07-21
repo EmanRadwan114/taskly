@@ -14,7 +14,7 @@ Taskly is a full-stack project management web application built with **Next.js 1
 ### 2. Epics
 
 - Organize work into high-level epics scoped to a specific project.
-- View epic details and all tasks linked to an epic via a modal route.
+- View epic details and all tasks linked to an epic via a modal.
 - Desktop pagination + mobile infinite scroll using TanStack Query `useInfiniteQuery`.
 
 ### 3. Task Management

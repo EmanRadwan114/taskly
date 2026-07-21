@@ -82,10 +82,6 @@ export const useHandlePagination = ({
 };
 
 // ^ ------------------------ useInfiniteScroll (mobile IntersectionObserver) -------------------------
-// Attaches an IntersectionObserver to a sentinel <div> ref and calls
-// fetchNextPage() whenever that sentinel enters the viewport.
-// Re-runs whenever hasNextPage / isFetchingNextPage changes so the observer
-// is always live when more pages are available.
 export const useInfiniteScroll = ({
   fetchNextPage,
   hasNextPage,

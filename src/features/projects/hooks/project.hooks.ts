@@ -1,7 +1,7 @@
 import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TProjectInput } from '../validation/project.validation';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import { fetchPaginatedProjects } from '../services/project.services';
@@ -50,18 +50,53 @@ export const useSubmitProject = (projectId?: string) => {
   return { onHandleSubmitProject, isPending, isSuccess };
 };
 
-// ^-------------------- fetch paginated projects --------------------
+// ^-------------------- fetch paginated projects (desktop) --------------------
 export const useFetchPaginatedProjects = ({
   limit,
   offset,
+  enabled = true,
 }: {
   limit?: number;
   offset?: number;
+  enabled?: boolean;
 }) => {
   const userId = useAppSelector((state) => state.auth.user?.sub);
   return useQuery({
     queryKey: [queryKeys.projects.paginatedProjects, limit, offset, userId],
     queryFn: () => fetchPaginatedProjects({ limit, offset }),
     staleTime: 60 * 1000, // 1 minute
+    enabled,
+  });
+};
+
+// ^-------------------- fetch paginated projects (mobile infinite scroll) --------------------
+export const useFetchMobilePaginatedProjects = ({
+  limit,
+  enabled = true,
+}: {
+  limit?: number;
+  enabled?: boolean;
+}) => {
+  const userId = useAppSelector((state) => state.auth.user?.sub);
+  return useInfiniteQuery({
+    queryKey: [
+      queryKeys.projects.paginatedProjects,
+      'mobile',
+      limit,
+      userId,
+    ],
+    staleTime: 60 * 1000, // 1 minute
+    enabled,
+    initialPageParam: 0,
+    queryFn: ({ pageParam = 0 }) =>
+      fetchPaginatedProjects({ limit, offset: pageParam as number }),
+    getNextPageParam: (lastPage, allPages) => {
+      const loadedCount = allPages.reduce(
+        (acc, page) => acc + (page?.response?.data?.length || 0),
+        0
+      );
+      const totalCount = lastPage?.response?.meta?.totalCount || 0;
+      return loadedCount < totalCount ? loadedCount : undefined;
+    },
   });
 };

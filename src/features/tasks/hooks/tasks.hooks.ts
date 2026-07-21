@@ -9,7 +9,12 @@ import { ITask, TaskStatusEnum } from '../types/tasks.types';
 import { IMetaFetchedData } from '@/shared/types/shared.types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import {
   fetchTaskById,
@@ -38,6 +43,9 @@ export const useCreateTask = ({
       queryClient.invalidateQueries({
         queryKey: [queryKeys.tasks.projectTasksByStatus, projectId, status],
       });
+    queryClient.invalidateQueries({
+      queryKey: [queryKeys.tasks.projectTasksList, projectId],
+    });
     if (epicId)
       queryClient.invalidateQueries({
         queryKey: [queryKeys.epics.epicTasks, epicId, projectId],
@@ -134,11 +142,13 @@ export const useFetchTasksList = ({
   limit,
   offset,
   searchTerm,
+  enabled = true,
 }: {
   projectId: string;
   limit: number;
   offset: number;
   searchTerm?: string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [
@@ -150,11 +160,50 @@ export const useFetchTasksList = ({
     ],
     queryFn: () => fetchTasksList({ projectId, limit, offset, searchTerm }),
     staleTime: 60 * 1000, // 1 minute
-    enabled: !!projectId,
+    enabled: !!projectId && enabled,
   });
 };
 
-
+// ^ ---------------------- Fetch Mobile Tasks list Hook (infinite scroll) --------------------------
+export const useFetchMobileTasksList = ({
+  projectId,
+  limit,
+  searchTerm,
+  enabled = true,
+}: {
+  projectId: string;
+  limit: number;
+  searchTerm?: string;
+  enabled?: boolean;
+}) => {
+  return useInfiniteQuery({
+    queryKey: [
+      queryKeys.tasks.projectTasksList,
+      projectId,
+      'mobile',
+      limit,
+      searchTerm,
+    ],
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!projectId && enabled,
+    initialPageParam: 0,
+    queryFn: ({ pageParam = 0 }) =>
+      fetchTasksList({
+        projectId,
+        limit,
+        offset: pageParam as number,
+        searchTerm,
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      const loadedCount = allPages.reduce(
+        (acc, page) => acc + (page?.response?.data?.length || 0),
+        0
+      );
+      const totalCount = lastPage?.response?.meta?.totalCount || 0;
+      return loadedCount < totalCount ? loadedCount : undefined;
+    },
+  });
+};
 
 // ^ --------------------  Fetch Board Column Hook ---------------------
 export const useFetchBoardColumn = ({
@@ -408,7 +457,10 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
                   data: page.response.data.filter((t) => t.id !== task?.id),
                   meta: {
                     ...page.response.meta,
-                    totalCount: Math.max(0, (page.response.meta?.totalCount || 0) - 1),
+                    totalCount: Math.max(
+                      0,
+                      (page.response.meta?.totalCount || 0) - 1
+                    ),
                   },
                 },
               })),
@@ -438,7 +490,10 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
                   {
                     response: {
                       data: [optimisticTask],
-                      meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+                      meta: {
+                        totalCount: 1,
+                        totalPages: 1,
+                      } as IMetaFetchedData,
                     },
                   },
                 ],
@@ -864,7 +919,10 @@ export const useUpdateTaskStatus = () => {
                   data: page.response.data.filter((t) => t.id !== task?.id),
                   meta: {
                     ...page.response.meta,
-                    totalCount: Math.max(0, (page.response.meta?.totalCount || 0) - 1),
+                    totalCount: Math.max(
+                      0,
+                      (page.response.meta?.totalCount || 0) - 1
+                    ),
                   },
                 },
               })),
@@ -891,7 +949,10 @@ export const useUpdateTaskStatus = () => {
                   {
                     response: {
                       data: [optimisticTask],
-                      meta: { totalCount: 1, totalPages: 1 } as IMetaFetchedData,
+                      meta: {
+                        totalCount: 1,
+                        totalPages: 1,
+                      } as IMetaFetchedData,
                     },
                   },
                 ],

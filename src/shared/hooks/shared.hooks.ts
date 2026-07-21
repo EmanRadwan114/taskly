@@ -60,71 +60,17 @@ export const useMobile = (breakPoint: number = 768) => {
   return { isMobile };
 };
 
-// ^ ------------------------ Use Handle Pagination Hook -------------------------
-export const useHandlePagination = <T extends { id: string | number }>({
-  incomingData,
-  meta,
-  isFetching,
+// ^ ------------------------ useHandlePagination (desktop page-click) -------------------------
+// Syncs the clicked page number into state and the URL ?page= param.
+export const useHandlePagination = ({
   setCurrentPage,
-  currentPage,
-}: IUseHandlePagination<T>) => {
+}: {
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const observerTarget = useRef<HTMLDivElement | null>(null);
 
-  const hasMore = meta?.totalPages ? currentPage < meta.totalPages : false;
-
-  const { isMobile } = useMobile(1024);
-
-  const [accumulatedList, setAccumulatedList] = useState<T[]>([]);
-
-  useEffect(() => {
-    if (!incomingData || !isMobile) {
-      setAccumulatedList([]);
-      return;
-    }
-
-    //reset after search
-    if (currentPage === 1) {
-      setAccumulatedList(incomingData);
-      return;
-    }
-
-    setAccumulatedList((prev) => {
-      const existingIds = new Set(prev.map((item) => item.id));
-
-      const newItemsOnly = incomingData.filter(
-        (item) => !existingIds.has(item.id)
-      );
-
-      if (newItemsOnly.length === 0) return prev;
-      return [...prev, ...newItemsOnly];
-    });
-  }, [incomingData, isMobile, currentPage]);
-
-  // Infinite Scroll Observer Configuration
-  useEffect(() => {
-    const target = observerTarget.current;
-    if (!target || !isMobile || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entires) => {
-        const entry = entires[0];
-        if (entry.isIntersecting && !isFetching) {
-          setCurrentPage((prev) => prev + 1);
-        }
-      },
-      { threshold: 0, rootMargin: '50px' }
-    );
-    observer.observe(target);
-    return () => {
-      if (target) observer.unobserve(target);
-      observer.disconnect();
-    };
-  }, [isMobile, hasMore, isFetching, setCurrentPage]);
-
-  // Desktop Page Click Link Sync Handler
   const handleCurrentPage = (page: number) => {
     setCurrentPage(page);
     const newSearchParams = new URLSearchParams(searchParams.toString());
@@ -132,13 +78,43 @@ export const useHandlePagination = <T extends { id: string | number }>({
     router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
   };
 
-  return {
-    isMobile,
-    hasMore,
-    observerTarget,
-    accumulatedList,
-    handleCurrentPage,
-  };
+  return { handleCurrentPage };
+};
+
+// ^ ------------------------ useInfiniteScroll (mobile IntersectionObserver) -------------------------
+// Attaches an IntersectionObserver to a sentinel <div> ref and calls
+// fetchNextPage() whenever that sentinel enters the viewport.
+// Re-runs whenever hasNextPage / isFetchingNextPage changes so the observer
+// is always live when more pages are available.
+export const useInfiniteScroll = ({
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+}: {
+  fetchNextPage: () => void;
+  hasNextPage: boolean | undefined;
+  isFetchingNextPage: boolean;
+}) => {
+  const observerTarget = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target || !hasNextPage || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchNextPage();
+      },
+      { threshold: 0, rootMargin: '100px' }
+    );
+    observer.observe(target);
+    return () => {
+      observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  return { observerTarget };
 };
 
 // ^ ------------------------ Use Handle Search Hook -------------------------

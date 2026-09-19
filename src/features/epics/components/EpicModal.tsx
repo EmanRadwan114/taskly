@@ -59,57 +59,59 @@ const EpicModal = () => {
   if (epicError) toast.error('Failed to fetch epic');
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleCloseModal}
-      className="sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto lg:p-8!"
-    >
-      <div
-        className="bg-white pb-6 lg:pb-8 rounded-lg overflow-y-auto max-h-[80vh] scroll relative flex flex-col gap-5 lg:gap-8"
-        onClick={(e) => e.stopPropagation()}
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+        className="sm:w-3/4 lg:w-2/3 xl:w-1/2 sm:mx-auto lg:p-8!"
       >
-        {/* modal content */}
-        {isLoadingEpic ? <LoadingEpicDetails /> : <EpicDetails epic={epic} />}
+        <div
+          className="bg-white pb-6 lg:pb-8 rounded-lg overflow-y-auto max-h-[80vh] scroll relative flex flex-col gap-5 lg:gap-8"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* modal content */}
+          {isLoadingEpic ? <LoadingEpicDetails /> : <EpicDetails epic={epic} />}
 
-        {/* tasks section */}
-        <div className="flex flex-col gap-4 lg:gap-6 px-6 lg:px-8">
-          {/* tasks list */}
-          {isLoadingEpic || isLoadingEpicsTasks ? (
-            <LoadingEpicTasks />
-          ) : tasksError ? (
-            <FetchDataErrorMsg message="Failed to fetch tasks" />
-          ) : !tasks?.length ? (
-            <EmptyEpicTasks />
-          ) : (
-            <>
-              {/* header */}
-              <div className="flex justify-between items-center">
-                <h2 className="text-label-sm text-secondary lg:font-semibold lg:text-slate-dark lg:text-heading-6 lg:leading-7 lg:capitalize">
-                  Tasks
-                </h2>
-                {/* mobile badge */}
-                <Badge className="py-0.5 px-2 bg-surface-md rounded-xl lg:hidden">
-                  {tasks?.length} tasks
-                </Badge>
-                {/* desktop link */}
-                <LinkButton
-                  href={`/project/${projectId}/tasks/new?epic=${epic?.id}`}
-                  variant="ghost"
-                  className="p-0! hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
-                >
-                  <PlusIcon className="w-2.75" />
-                  Add task
-                </LinkButton>
-              </div>
-              {/* tasks list */}
-              <EpicTasks tasks={tasks} />
-
-              {!!isTaskDetailsModalOpen && <TaskDetailsModal />}
-            </>
-          )}
+          {/* tasks section */}
+          <div className="flex flex-col gap-4 lg:gap-6 px-6 lg:px-8">
+            {/* tasks list */}
+            {isLoadingEpic || isLoadingEpicsTasks ? (
+              <LoadingEpicTasks />
+            ) : tasksError ? (
+              <FetchDataErrorMsg message="Failed to fetch tasks" />
+            ) : !tasks?.length ? (
+              <EmptyEpicTasks />
+            ) : (
+              <>
+                {/* header */}
+                <div className="flex justify-between items-center">
+                  <h2 className="text-label-sm text-secondary lg:font-semibold lg:text-slate-dark lg:text-heading-6 lg:leading-7 lg:capitalize">
+                    Tasks
+                  </h2>
+                  {/* mobile badge */}
+                  <Badge className="py-0.5 px-2 bg-surface-md rounded-xl lg:hidden">
+                    {tasks?.length} tasks
+                  </Badge>
+                  {/* desktop link */}
+                  <LinkButton
+                    href={`/project/${projectId}/tasks/new?epic=${epic?.id}`}
+                    variant="ghost"
+                    className="p-0! hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
+                  >
+                    <PlusIcon className="w-2.75" />
+                    Add task
+                  </LinkButton>
+                </div>
+                {/* tasks list */}
+                <EpicTasks tasks={tasks} />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+
+      {!!isTaskDetailsModalOpen && <TaskDetailsModal />}
+    </>
   );
 };
 

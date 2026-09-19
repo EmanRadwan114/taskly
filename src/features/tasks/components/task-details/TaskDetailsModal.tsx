@@ -56,7 +56,7 @@ const TaskDetailsModal: React.FC = ({}) => {
       value: '',
       label: 'Select an epic...',
     },
-    ...epicsList?.map((epic:IEpics) => ({
+    ...epicsList?.map((epic: IEpics) => ({
       value: epic.id,
       label: isMobile ? epic?.epic_id : `${epic?.epic_id} (${epic?.title})`,
     })),

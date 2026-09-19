@@ -101,9 +101,14 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
     ? isMobileLoading && mobileTasksList.length === 0
     : isDesktopFetching || (isDesktopLoading && currentPage === 1);
 
-  if (activeError && !debouncedSearchTerm) throw new Error('Failed to fetch tasks');
+  if (activeError && !debouncedSearchTerm)
+    throw new Error('Failed to fetch tasks');
 
-  if (activeTasksList.length === 0 && !showLoadingScreen && !debouncedSearchTerm) {
+  if (
+    activeTasksList.length === 0 &&
+    !showLoadingScreen &&
+    !debouncedSearchTerm
+  ) {
     return <EmptyProjectTasks />;
   }
 
@@ -154,7 +159,8 @@ const TasksList: React.FC<IProps> = ({ searchParams }) => {
           <div className="bg-surface-low/20! py-3! px-6!">
             <div className="flex justify-between items-center">
               <span className="text-secondary text-body-sm font-medium">
-                Showing {desktopTasksList.length} of {tasksMeta?.totalCount} tasks
+                Showing {desktopTasksList.length} of {tasksMeta?.totalCount}{' '}
+                tasks
               </span>
               {tasksMeta?.totalPages && tasksMeta.totalPages > 1 && (
                 <TasksListPagination

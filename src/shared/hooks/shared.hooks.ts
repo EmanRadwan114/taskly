@@ -61,7 +61,6 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ useHandlePagination (desktop page-click) -------------------------
-// Syncs the clicked page number into state and the URL ?page= param.
 export const useHandlePagination = ({
   setCurrentPage,
 }: {

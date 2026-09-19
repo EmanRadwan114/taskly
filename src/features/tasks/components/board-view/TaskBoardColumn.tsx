@@ -8,9 +8,7 @@ import PlusBorderIcon from '@/assets/icons/plus-border.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import LoadingBoardColumn from './LoadingBoardColumn';
 import { toast } from 'react-toastify';
-import {
-  useFetchBoardColumn,
-} from '../../hooks/tasks.hooks';
+import { useFetchBoardColumn } from '../../hooks/tasks.hooks';
 import { formateTaskStatus } from '@/shared/utils/functions.client.utils';
 import { useEffect, useRef } from 'react';
 import TasksScrollError from '../TasksScrollError';

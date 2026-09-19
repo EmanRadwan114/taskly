@@ -61,7 +61,6 @@ export const useMobile = (breakPoint: number = 768) => {
 };
 
 // ^ ------------------------ useHandlePagination (desktop page-click) -------------------------
-// Syncs the clicked page number into state and the URL ?page= param.
 export const useHandlePagination = ({
   setCurrentPage,
 }: {
@@ -82,10 +81,6 @@ export const useHandlePagination = ({
 };
 
 // ^ ------------------------ useInfiniteScroll (mobile IntersectionObserver) -------------------------
-// Attaches an IntersectionObserver to a sentinel <div> ref and calls
-// fetchNextPage() whenever that sentinel enters the viewport.
-// Re-runs whenever hasNextPage / isFetchingNextPage changes so the observer
-// is always live when more pages are available.
 export const useInfiniteScroll = ({
   fetchNextPage,
   hasNextPage,

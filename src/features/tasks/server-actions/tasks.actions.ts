@@ -90,31 +90,30 @@ export const updateTaskAction = async (
     };
   }
 
-  // form values
-  const title = formData?.get('title') as string;
-  const description = formData?.get('description') as string;
-  const status = formData?.get('status') as string;
-  const assignee_id = formData?.get('assignee_id') as string;
-  const due_date = formData?.get('due_date') as string;
-  const epic_id = formData?.get('epic_id') as string;
+  const values: Partial<TTaskInput> = {};
 
-  const values: {
-    title?: string;
-    description?: string;
-    status?: TaskStatusEnum;
-    assignee_id?: string | null;
-    due_date?: string;
-    epic_id?: string | null;
-  } = {};
-
-  if (title) values.title = title;
-  if (description) values.description = description;
-  if (status) values.status = (status as TaskStatusEnum) || TaskStatusEnum.TODO;
-  if (assignee_id) values.assignee_id = assignee_id;
-  else values.assignee_id = null;
-  if (due_date) values.due_date = due_date;
-  if (epic_id) values.epic_id = epic_id;
-  else values.epic_id = null;
+  if (formData.has('title')) {
+    values.title = formData.get('title') as string;
+  }
+  if (formData.has('description')) {
+    values.description = formData.get('description') as string;
+  }
+  if (formData.has('status')) {
+    const status = formData.get('status') as string;
+    values.status = (status as TaskStatusEnum) || TaskStatusEnum.TODO;
+  }
+  if (formData.has('assignee_id')) {
+    const assignee_id = formData.get('assignee_id') as string;
+    values.assignee_id = assignee_id || null;
+  }
+  if (formData.has('due_date')) {
+    const due_date = formData.get('due_date') as string;
+    if (due_date) values.due_date = due_date;
+  }
+  if (formData.has('epic_id')) {
+    const epic_id = formData.get('epic_id') as string;
+    values.epic_id = epic_id || null;
+  }
 
   try {
     await updateTask({

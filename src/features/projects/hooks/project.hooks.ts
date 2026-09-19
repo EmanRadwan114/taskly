@@ -1,7 +1,12 @@
 import { projectAction } from '../server-actions/project.actions';
 import { toast } from 'react-toastify';
 import { TProjectInput } from '../validation/project.validation';
-import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/shared/libs/tanstack-query/query-keys';
 import { fetchPaginatedProjects } from '../services/project.services';
@@ -79,12 +84,7 @@ export const useFetchMobilePaginatedProjects = ({
 }) => {
   const userId = useAppSelector((state) => state.auth.user?.sub);
   return useInfiniteQuery({
-    queryKey: [
-      queryKeys.projects.paginatedProjects,
-      'mobile',
-      limit,
-      userId,
-    ],
+    queryKey: [queryKeys.projects.paginatedProjects, 'mobile', limit, userId],
     staleTime: 60 * 1000, // 1 minute
     enabled,
     initialPageParam: 0,

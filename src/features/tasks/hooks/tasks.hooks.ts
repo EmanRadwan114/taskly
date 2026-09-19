@@ -298,12 +298,16 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const taskEpicId = task?.epic?.id || task?.epic_id || null;
+  const taskAssigneeId =
+    task?.assignee?.id || (task as any)?.assignee_id || null;
+
   const previousValues = useRef({
     title: task?.title || '',
     status: task?.status || TaskStatusEnum.TODO,
     description: task?.description || '',
-    assignee_id: task?.assignee?.id || null,
-    epic_id: task?.epic?.id || null,
+    assignee_id: taskAssigneeId,
+    epic_id: taskEpicId,
     due_date: task?.due_date || '',
   });
 
@@ -322,11 +326,35 @@ export const useUpdateTaskDetails = (task: ITask | undefined) => {
       title: task?.title || '',
       status: task?.status || TaskStatusEnum.TODO,
       description: task?.description || '',
-      assignee_id: task?.assignee?.id || '',
-      epic_id: task?.epic?.id || '',
+      assignee_id: taskAssigneeId || '',
+      epic_id: taskEpicId || '',
       due_date: task?.due_date || '',
     },
   });
+
+  useEffect(() => {
+    if (task) {
+      const currentEpicId = task?.epic?.id || task?.epic_id || null;
+      const currentAssigneeId =
+        task?.assignee?.id || (task as any)?.assignee_id || null;
+      previousValues.current = {
+        title: task?.title || '',
+        status: task?.status || TaskStatusEnum.TODO,
+        description: task?.description || '',
+        assignee_id: currentAssigneeId,
+        epic_id: currentEpicId,
+        due_date: task?.due_date || '',
+      };
+      reset({
+        title: task?.title || '',
+        status: task?.status || TaskStatusEnum.TODO,
+        description: task?.description || '',
+        assignee_id: currentAssigneeId || '',
+        epic_id: currentEpicId || '',
+        due_date: task?.due_date || '',
+      });
+    }
+  }, [task?.id, reset]);
 
   const taskStatus = watch('status');
 
@@ -858,17 +886,18 @@ export const useUpdateTaskStatus = () => {
         };
       });
 
+      const taskEpicId = task?.epic?.id || task?.epic_id;
       // snapshot & update epic tasks cache
       const epicTasksSnapshot = queryClient.getQueriesData<{
         response: { data: ITask[]; meta: IMetaFetchedData };
       }>({
-        queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId],
+        queryKey: [queryKeys.epics.epicTasks, taskEpicId, projectId],
       });
 
       queryClient.setQueriesData<{
         response: { data: ITask[]; meta: IMetaFetchedData };
       }>(
-        { queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId] },
+        { queryKey: [queryKeys.epics.epicTasks, taskEpicId, projectId] },
         (old) => {
           if (!old) return old;
           return {
@@ -1027,8 +1056,9 @@ export const useUpdateTaskStatus = () => {
           ],
         });
       }
+      const taskEpicId = task?.epic?.id || task?.epic_id;
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.epics.epicTasks, task?.epic?.id, projectId],
+        queryKey: [queryKeys.epics.epicTasks, taskEpicId, projectId],
       });
     },
     onError: (error, { task }, context) => {
